@@ -1,0 +1,90 @@
+%%% File encoding: UTF-8
+%%% äöüÄÖÜß  <-- keine deutschen Umlaute hier? UTF-faehigen Editor verwenden!
+
+\documentclass[bachelor,german]{hgbthesis}
+% Zulässige Class Options: 
+%   Typ der Arbeit: diplom, master (default), bachelor, praktikum 
+%   Hauptsprache: german (default), english
+%%%----------------------------------------------------------
+
+\RequirePackage[utf8]{inputenc}		% Bei der Verw. von lualatex oder xelatex entfernen!
+
+\graphicspath{{images/}}    % Abbildungsverzeichnis
+\logofile{beuth_basis}				% Name des Logo-PDFs in images/ (\logofile{}, wenn kein Logo gewünscht)
+\bibliography{literatur}  	% Name der Biblatex-Literaturdatei (.bib)
+
+%%%----------------------------------------------------------
+% Angaben für die Titelei (Titelseite, Erklärung etc.)
+%%%----------------------------------------------------------
+
+%%% Einträge für ALLE Arbeiten: -----------------------------
+\title{Simulation von Brandszenarien zur Ermittlung von Sprinklerauslösezeiten mit FDS im Vergleich zur VDI 6019 Blatt 1}
+\author{Niklas A. Wittkämper}
+\studiengang{der Beuth Hochschule für Technik}
+\studienort{Berlin}
+\abgabedatum{2019}{12}{17}	% {YYYY}{MM}{DD}
+
+%%% Zusätzlich für eine Bachelorarbeit: ---------------------
+\nummer{849934}   % Stud-ID, z.B. 1310238045-A  
+% (A = 1. Bachelorarbeit)
+\semester{Sommersemester 2019} 
+\gegenstand{Fachbereich} 
+\betreuer{Prüfungskommission: Prof. Dr. Finke und Dipl.-Ing. Peter Thiel} % oder \betreuerin{..}
+
+%%% Restriktive Lizenformel anstatt CC (nur für Typ master) -
+%\strictlicense
+
+%%%----------------------------------------------------------
+\begin{document}
+%%%----------------------------------------------------------
+\addtocontents{toc}{\vspace{-3ex}}
+%%%----------------------------------------------------------
+\frontmatter                    % Titelei (röm. Seitenzahlen)
+%%%----------------------------------------------------------
+\newgeometry{hoffset=-0.04cm, textwidth=16cm, voffset=3cm, textheight=25cm}
+\maketitle
+\restoregeometry
+\includepdf[offset=-0.5cm -2cm,noautoscale=true,addtotoc={1,chapter,1,Aufgabenstellung,1},pagecommand={\thispagestyle{plain}}]{images/Aufgabenstellung.pdf}
+
+\begin{onehalfspace}
+\setlength{\cftbeforetoctitleskip}{1em}
+\tableofcontents
+
+%\include{front/vorwort} % Optional. Ggf. weglassen
+
+\include{front/kurzfassung}		
+%\include{front/abstract}			
+\printnomenclature
+%%%----------------------------------------------------------
+\mainmatter  % Hauptteil (ab hier arab. Seitenzahlen)
+%%%----------------------------------------------------------
+
+\include{chapters/einleitung}
+\include{chapters/grundlagen}
+\include{chapters/hauptteil}
+\include{chapters/versuchsauswertung}
+\include{chapters/fazit}
+
+
+%%%----------------------------------------------------------
+\appendix                                            % Anhang 
+%%%----------------------------------------------------------
+\include{back/anhang_b}	% Inhalt der CD-ROM/DVD
+\include{back/anhang_a}	% Technische Ergänzungen
+
+
+%\include{back/anhang_c}	% Chronologische Liste der Änderungen
+%\include{back/anhang_d}	% Quelltext dieses Dokuments
+
+%%%----------------------------------------------------------
+\MakeBibliography   
+
+% Quellenverzeichnis
+%%%----------------------------------------------------------
+%%% Messbox zur Druckkontrolle ------------------------------
+\include{back/erklaerung}
+%\include{back/messbox}
+\end{onehalfspace}
+%%%----------------------------------------------------------
+\end{document}
+%%%----------------------------------------------------------

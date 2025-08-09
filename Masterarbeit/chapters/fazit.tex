@@ -1,0 +1,65 @@
+\chapter{Fazit und Ausblick}
+\label{cha:Fazit}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{comment}
+Sprinklerauslösezeiten vorauszusagen gestaltet sich aufgrund vieler verschiedener Einflussgrößen schwierig. Zwar gibt es Berechnungsansätze, welche idealisierte Brandvorgänge abbilden können, es fehlen jedoch wichtige Variablen wie \zB die in den vorherigen Kapiteln angesprochene spezifische maximale Wärmefreisetzungsrate oder die Wärmestrahlung.
+Wie in dieser Arbeit aufgezeigt wird, kann FDS mit großer Übereinstimmung zu den Berechnungen Sprinklerauslösezeiten vorhersagen. Es gilt in nachfolgenden Arbeiten zu untersuchen, wie gut FDS auch komplexere und der Realität nähere Brandszenarien abbilden kann. 
+Außerdem sollten weitere Parameter, die in dieser Arbeit nicht beachtet werden, genauer untersucht werden. Was passiert, wenn sich das Auslöseelement im Windschatten des Sprinklerarms befindet? Wie wirkt sich ein Unterzug an der Decke auf die Rauchausbreitung und Auslösezeit aus?
+FDS kann bei diesen Fragen Hilfestellung leisten, allerdings sind intrinsische Herausforderungen, wie \zB die Gridauflösung und -aufteilung zuerst zu bewältigen. Die Rechendauer für die simulierten Räume in dieser Arbeit betrug meist ca. 18~Stunden. Wenn Brandszenarien mit mehreren zusammenhängenden Räumen oder gar ganze Gebäude simuliert werden sollen, steigt natürlich auch die Rechendauer \bzw die Qualität der Ergebnisse nimmt mit einer geringeren Auflösung ab.
+
+Die VDI-Richtlinie 6019-1:2006 entspricht nicht mehr dem derzeitigen wissenschaftlichen Stand, wie diese Arbeit bestätigen konnte, allerdings befindet sie sich momentan in der Erneuerung. Die in den Tabellen der VDI 6019-1 angeführten Sprinklerauslösezeiten sind zu hoch angesetzt. Simulationen, die angestellt werden um Brandschutzkonzepte zu validieren und Entrauchungsanlagen auszulegen, benötigen Informationen zum Sprinklerverhalten. Mithilfe dieser Auslösezeiten kann bestimmt werden, wann die Wärmefreisetzungsrate durch die Sprinkleranlage begrenzt wird und welche Menge an Rauch freigesetzt wird. Somit kann geschlussfolgert werden, dass zu lange Sprinklerauslösezeiten zu überdimensionierten Entrauchungsanlagen führen. Größere Kanäle und Anlagen brauchen mehr Platz und erhöhen die Kosten.
+In Zukunft könnte mithilfe von FDS die Simulation des Brandherdes und der Sprinkler zusammen mit Entrauchungssimulationen durchgeführt werden, allerdings sind die oben genannten Einschränkungen von FDS zu berücksichtigen. 
+
+Bei der Entstehung dieser Arbeit wird ein zweiter Vergleich mit den Berechnungen des SFPE-Handbooks gezogen, da diese die aktuellen Berechnungsansätze für Sprinklerauslösezeiten beinhalten. FDS liefert eine überzeugende Übereinstimmung der Sprinklerauslösezeiten zu den Berechnungen. Abweichungen betragen meist nur wenige Sekunden. Große Unregelmäßigkeiten treten meist erst auf, wenn die gebräuchlichen Nennöffnungstemperaturen der Sprinklerauslöselemente bereits überschritten wurden. Auch niedrige maximale spezifische Wärmefreisetzungsraten unterstützen die Berechnungsansätze, müssen allerdings genauer untersucht werden. Diese Arbeit zeigt auf, dass FDS in der Lage ist, Sprinklerauslösezeiten zufriedenstellend vorherzusagen.  
+\end{comment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Sprinklerauslösezeiten berechnen bzw. simulieren zu können, ist entscheidend für eine gewissenhafte und korrekte Entrauchungssimulation. Zu welchem Zeitpunkt die Sprinkleranlage auslöst, bestimmt, wann die Wärmefreisetzungsrate begrenzt und die Alarmierungskette in Gang gesetzt wird. Anschließend kann damit berechnet werden, welche Mengen an Rauch freigesetzt werden. Mit diesen Daten werden Brandschutzkonzepte überprüft und Entrauchungsanlagen ausgelegt. Zu klein dimensionierte Entrauchungsanlagen führen im Notfall zu einer Gefährdung von Menschenleben durch mangelnde Rauchfreihaltung der Flucht- und Rettungswege. Überdimensionierte Anlagen dagegen benötigen mehr Platz und erhöhen die Baukosten. Da die Leistung der zweiten Brandphase exponentiell ansteigt, entscheiden wenige Minuten über Wärmefreisetzungsraten im Megawattbereich.
+
+Wie diese Arbeit aufzeigt, kann FDS mit großer Übereinstimmung zu den Berechnungen des SFPE-Handbooks Sprinklerauslösezeiten vorhersagen. Die Untersuchung des C-Faktors ergibt, dass sowohl die Literatur, als auch die angestellten Simulationen im Vergleich zu den Berechnungen einen C-Faktor von 0~(m/s)$^{0,5}$ unterstützen.
+Große Unregelmäßigkeiten treten meist erst auf, wenn die gebräuchlichen Nenn\-öff\-nungs\-tem\-pe\-ra\-tur\-en der Sprinklerauslöseelemente bereits überschritten wurden. Auch niedrige maximale spezifische Wärmefreisetzungsraten unterstützen die Berechnungsansätze, müssen allerdings genauer untersucht werden. 
+%Diese Arbeit zeigt auf, dass FDS in der Lage ist, Sprinklerauslösezeiten hinreichend vorherzusagen.  
+
+Die VDI-Richtlinie 6019-1:2006 entspricht nicht mehr dem derzeitigen wissenschaftlichen Stand, wie diese Arbeit bestätigen konnte, allerdings befindet sie sich aus diesem Grund in der Überarbeitung. Die in den Tabellen der VDI 6019-1 angeführten Sprinklerauslösezeiten sind zu hoch angesetzt. Es wird sich hier auf eine wissenschaftliche Veröffentlichung berufen, die fehlerhafte Formeln beinhaltet.
+
+Die Rechendauer für die simulierten Räume in dieser Arbeit betrug meist ca. 18~Stunden. Wenn Brandszenarien mit mehreren zusammenhängenden Räumen oder gar großvolumige Bereiche mit komplexen Geometrien simuliert werden sollen, steigt damit auch die Rechendauer \bzw die Qualität der Ergebnisse nimmt mit einer geringeren Auflösung ab.
+
+Es gilt in nachfolgenden Arbeiten zu analysieren, wie gut FDS auch komplexere und der Realität nähere Brandszenarien abbilden kann. 
+Außerdem sollten weitere Parameter, die in dieser Arbeit nicht beachtet werden, genauer untersucht werden. Was passiert, wenn sich das Auslöseelement im Windschatten des Sprinklerarms befindet? Wie wirkt sich ein Unterzug an der Decke auf die Rauchausbreitung und Auslösezeit aus?
+FDS kann bei diesen Fragen Hilfestellung leisten, allerdings sind intrinsische Herausforderungen wie \zB die Gridauflösung und -aufteilung zuerst zu bewältigen. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{comment}
+Insgesamt kann davon ausgegangen werden, dass in Zukunft immer mehr Brandschutzkonzepte mithilfe von CFD-Software validiert werden. 
+
+ Echte Brandversuche sind sehr teuer und stellen keine wirtschaftliche Alternative dar.
+
+zeigt aber auch die vielen möglichkeiten von fds auf
+
+In Deutschland beträgt die maximale Auslösezeit für Sprinkler gemäß VDI 6019 Blatt 1{\cite{VDI6019B1}} 900 Sekunden. 
+Fazit:
+
+langsam ansteigende Elementtemperatur führt zu ungenaueren ergebnissen mit fds 
+
+
+
+brandherd am boden oft unrealistisch. bei räumen mit hoher Deckenhöhe befindet sich die Brandlast wahrscheinlich auch weiter unter der Decke.
+
+
+
+
+Sprinkler dürfen auch nicht zu früh öffnen 
+
+SFPE Handbuch geht nicht auf die max. spez. Wärmefreisetzungsrate
+
+
+was in zukunft beachtet werden muss:
+\begin{itemize}
+    \item HRR Kurve ist treppenförmig. entspricht nicht genau der t2 kurve
+    \item unterschiedliche gasarten müssten untersucht werden
+    \item Modell muss weiter verbessert werden
+\end{itemize}
+
+\end{comment}

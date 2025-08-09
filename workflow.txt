@@ -1,0 +1,53 @@
+4. Workflow: Arbeiten und Synchronisieren
+
+Jetzt kommt der tägliche Ablauf.
+
+Am Anfang deiner Arbeitssession (auf jedem PC)
+
+Bevor du mit dem Schreiben beginnst, hole dir immer den neuesten Stand aus dem Online-Repository.
+
+    Öffne den master-thesis Ordner in VS Code.
+
+    Öffne das Terminal direkt in VS Code (Strg + Ö oder View > Terminal).
+
+    Führe den folgenden Befehl aus:
+    Bash
+
+    git pull
+
+    Dieser Befehl lädt alle Änderungen herunter, die du z.B. am anderen PC gemacht hast.
+
+Während des Arbeitens
+
+    Schreibe in den .tex Dateien.
+
+    Um deine Arbeit als PDF zu sehen, öffne die Haupt-.tex-Datei (z.B. thesis.tex). Klicke oben rechts auf das "Build LaTeX project"-Symbol (ein grünes Dreieck) in der LaTeX Workshop Leiste.
+
+    Die Vorschau (View LaTeX PDF) öffnet sich automatisch in einem neuen Tab in VS Code.
+
+Am Ende deiner Arbeitssession (auf jedem PC)
+
+Wenn du deine Arbeit für den Tag beendest oder den Computer wechselst, speichere deine Änderungen online.
+
+    Führe im VS Code Terminal die folgenden Befehle aus:
+    Bash
+
+    git add .
+    git commit -m "Eine kurze Beschreibung deiner Änderungen, z.B. 'Kapitel 2.1 überarbeitet'"
+    git push
+
+    git add .: Fügt alle geänderten Dateien zum "Paket" hinzu, das du schnüren möchtest.
+
+    git commit -m "...": "Versiegelt" das Paket und gibt ihm eine Beschreibung. Gute Beschreibungen sind Gold wert!
+
+    git push: Lädt das versiegelte Paket auf GitHub hoch.
+
+Zusammenfassender Workflow
+
+    Start: git pull
+
+    Arbeiten: Schreiben, programmieren, kompilieren...
+
+    Ende: git add ., git commit -m "...", git push
+
+Wenn du diesen Ablauf beibehältst, sind dein Privat- und Arbeits-PC immer auf dem gleichen Stand und du hast zusätzlich eine vollständige Historie deiner Arbeit. Viel Erfolg bei deiner Masterarbeit! 🚀
