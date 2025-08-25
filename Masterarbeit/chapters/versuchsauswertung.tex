@@ -92,89 +92,6 @@ Tab.~\ref{tab:RTIErgebnisse} verdeutlicht die hohe Übereinstimmung der Simulati
     \label{fig:RTIVergleich}
 \end{figure}
 
-\begin{table}\centering
-\caption{Vergleich der Sprinklerauslösezeiten (in s) zwischen Simulationen, Berechnungen nach SFPE-Handbuch und VDI-Tabellenwerten für verschiedene Nennöffnungstemperaturen (Trd; in °C)  und RTI (in (m$\cdot$s)$^{0,5}$) ($\alpha=0{,}047$~kW/s², $H=3$~m).}
-\label{tab:RTIErgebnisse}
-\begin{tabu} to 0.85\textwidth{@{}X[c]X[c]X[c]X[c]X[c]X[c]X[c]X@{}} \toprule
-   Trd &            & RTI 27 & RTI 50 & RTI 80 & RTI 120 & RTI 180 \\
-    \midrule
-    & Sim.       & 91     & 102    & 116    & 129     & 145     \\
- 57 & SFPE       & 91     & 104    & 117    & 130     & 146     \\
-    & VDI        & 125     & 140    & 150    & 165     & 175     \\
-    \midrule
-    & Sim.       & 102 & 116    & 129    & 144     & 159     \\
-  68& SFPE       & 102    & 116    & 129    & 144     & 162     \\
-    & VDI        & 145    & 155    & 170    & 185     & 196     \\
-    \midrule
-    & Sim.       & 114 & 126    & 141    & 154     & 171     \\
-  79& SFPE       & 112    & 126    & 141    & 156     & 175     \\
-    & VDI        & 165    & 175    & 185    & 200     & 215     \\
-    \midrule
-    & Sim.       & 126 & 140    & 153    & 168     & 180     \\
-  93& SFPE       & 125    & 139    & 154    & 171     & 191     \\
-    & VDI        & 185    & 195    & 205    & 220     & 235     \\
-    \midrule
-    & Sim.       & 161 & 189    & 182    & 200     & 217     \\
- 141& SFPE       & 163    & 178    & 194    & 213     & 236     \\
-    & VDI        & 245    & 255    & 270    & 285     & 300     \\
-    \midrule
-    & Sim.       & 178 & 191    & 210    & 223     & 245     \\
- 182& SFPE       & 193    & 208    & 224    & 244     & 268     \\
-    & VDI        & 295    & 305    & 315    & 335     & 350     \\
-    \bottomrule
-\end{tabu}
-\end{table}
-
-\FloatBarrier
-
-\subsection{Vergleich Raumhöhen}
-\label{sec:VergleichRaumhöhen}
-
-Die nachfolgenden Simulationen werden mit einem RTI von 50~(m$\cdot$s)$^{0,5}$ und einem Brand\-in\-ten\-si\-täts\-ko\-ef\-fi\-zien\-ten von 0,047~kW/s² durchgeführt.
-Abb. \ref{fig:RaumhoehenVergleich} zeigt den Verlauf der Sprinklerelementtemperaturen der Simulationen im Vergleich zu denen der SFPE-Berechnungen. Die Simulationsdatenpunkte werden als durchgezogene Linie und die Berechnungsdatenpunkte als punktierte Linie dargestellt. Es werden die Raumhöhen 3~m, 6~m und 8~m betrachtet. Aus den Kurven lässt sich ableiten, dass je größer die Raumhöhe ist, desto langsamer die Sprinklerelementtemperatur ansteigt. 
-Während wie im vorherigen Abschnitt bereits besprochen eine Abweichung der Simulationsergebnisse von den Berechnungsergebnissen erst ab ca. 170~s zu beobachten ist, kommt es bei den anderen Raumhöhen schon früher zu geringen Abweichungen. Die Verläufe der Simulationen mit den beiden größeren Raumhöhen steigen ab ca. 150~s langsamer an als die Berechnungsverläufe im Gegensatz zum Verlauf der Raumhöhe mit 3~m. 
-
-Obwohl die Simulationsergebnisse nur leicht versetzt zu den Berechnungsergebnissen sind, bedeutet der langsame Temperaturanstieg, dass schon geringe Abweichungen der beiden Datensätze zu großen Differenzen in den Auslösezeiten führen, wie in Tab. \ref{tab:RaumhoeheErgebnisse} zu erkennen ist. Auch wenn die Zeitunterschiede bei einer niedrigen Raumhöhe nur wenige Sekunden betragen, liegen die Abweichungen bei den Raumhöhen 6~m \bzw 8~m meist bei über 10~s.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{images/RaumhoehenVergleich.pdf}
-    \caption{Verlauf der Sprinklerelementtemperatur bei verschiedenen Raumhöhen mit Vergleich zu Berechnungen nach SFPE-Handbuch ($\alpha=0{,}047$~kW/s², RTI $=50$~m).}
-    \label{fig:RaumhoehenVergleich}
-\end{figure}
-
-\begin{table}\centering
-\caption{Vergleich der Sprinklerauslösezeiten (in s) zwischen Simulationen, Berechnungen nach SFPE-Handbuch und VDI-Tabellenwerten für verschiedene Nennöffnungstemperaturen (Trd; in °C)  und Raumhöhen ($\alpha=0{,}047$~kW/s², RTI $=50$~m).}
-\label{tab:RaumhoeheErgebnisse}
-\begin{tabu} to 0.7\textwidth{@{}X[c]X[c]X[c]X[c]X[c]X@{}} \toprule
-Trd    &        &H = 3 m  & H = 6 m          & H = 8 m          \\
-        \midrule
-            & Sim.      & 102   & 143              & 170              \\
- 57         & SFPE      & 104   & 135              & 157              \\
-            & VDI       & 140   & 185              & 220              \\
-          \midrule
-            & Sim.      & 116   & 165              & 194              \\
- 68         & SFPE      & 116   & 153              & 179              \\
-            & VDI       & 155   & 210              & 250              \\
-          \midrule
-            & Sim.      & 126   & 183              & 212              \\
-79          & SFPE      & 126   & 169              & 200              \\
-            & VDI       & 175   & 240              & 285              \\
-          \midrule
-            & Sim.      & 140   & 210              & 259              \\
- 93         & SFPE      & 139   & 189              & 226              \\
-            & VDI       & 195   & 270              & 320              \\
-          \midrule
-            & Sim.      & 189   & 271              & \textgreater 300 \\
-  141       & SFPE      & 178   & 252              & 306              \\
-            & VDI       & 255   & 365              & 440              \\
-          \midrule
-            & Sim.      & 191   & \textgreater 300 & \textgreater 300         \\
- 182        & SFPE      & 208   & 301              & 371            \\
-            & VDI       & 305   & 440              & 535            \\
-        \bottomrule
-\end{tabu}
-\end{table}
 
 In den Abb. \ref{fig:GastempVergleich} und \ref{fig:GasgeschwVergleich} werden die Gastemperatur und Gasgeschwindigkeit am Sprinklerkopf näher betrachtet. Starke Unterschiede lassen sich bei der Temperatur beobachten. Im Schnitt fällt die Gastemperatur je höher der Abstand zwischen Brandherd und Decke ist. Da bei größerer Raumhhöhe mehr Umgebungsluft in den Plume induziert wird, kühlt der Plume stärker ab und der Volumenstrom an der Decke vergrößert sich. 
 Eine stärkere Fluktuation der Rauchgastemperatur ist bei $H$~=~3~m ab ca. 170~s festzustellen, welche zum Teil über 300~K beträgt. Dies ist womöglich ein Grund für den starken Anstieg der Sprinklerelementtemperatur in Abb. \ref{fig:RaumhoehenVergleich}. Unregelmäßigkeiten wie diese sind eventuell auf eine Überschreitung des Plumes an einer Meshgrenze zurückzuführen. Auch eine numerische Instabilität der Simulation ab diesem Zeitpunkt ist nicht auszuschließen.
@@ -204,44 +121,6 @@ Die Rauchgastemperatur am Sprinklerkopf weist keine bedeutsamen Abweichungen bei
 Die nachfolgenden Simulationen werden mit einem RTI von 50~(m$\cdot$s)$^{0,5}$ und einer Raumhöhe von 3~m durchgeführt. Abb. \ref{fig:AlphaVergleich} zeigt den Verlauf der Sprinklerelementtemperaturen der Simulationen im Vergleich zu denen der SFPE-Berechnungen.
 Die Simulationsdatenpunkte werden als durchgezogene Linie und die Berechnungsdatenpunkte als punktierte Linie dargestellt. Es werden Koeffizienten von 0,012~kW/s², 0,047~kW/s² und  0,188~kW/s² betrachtet. Je höher der Brandintensitätskoeffizient, desto schneller steigt die Sprinklerauslösetemperatur an.
 Während der Verlauf der Simulation mit 0,012~kW/s² eine sehr hohe Übereinstimmung aufzeigt, ist dies bei den anderen beiden Simulationen nur bis ca. 90~s, \bzw 170~s der Fall. Tab. \ref{tab:AlphasErgebnisse} verdeutlicht die Abweichungen der Auslösezeiten zwischen Simulationen, SFPE-Berechnungen und VDI-Tabellenwerten. Differenzen betragen zwischen den Simulations- und Berechnungswerten meist nur wenige Sekunden.
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{images/AlphaVergleich.pdf}
-    \caption{Verlauf der Sprinklerelementtemperatur bei verschiedenen Brand\-in\-ten\-si\-täts\-ko\-ef\-fi\-zien\-ten mit Vergleich zu Berechnungen nach SFPE-Handbuch (H $=3$~m, RTI $=50$~(m/s)$^{0,5}$).}
-    \label{fig:AlphaVergleich}
-\end{figure}
-\begin{table}\centering
-\caption{Vergleich der Sprinklerauslösezeiten (in s) zwischen Simulationen, Berechnungen nach SFPE-Handbuch und VDI-Tabellenwerten für verschiedene Nennöffnungstemperaturen (Trd; in °C)  und Brand\-in\-ten\-si\-täts\-ko\-ef\-fi\-zien\-ten (in~kW/s²) (H $=3$~m, RTI $=50$~(m/s)$^{0,5}$).}
-\label{tab:AlphasErgebnisse}
-\begin{tabu} to 0.7\textwidth{@{}X[c]X[c]X[c]X[c]X[c]X@{}} \toprule
-Trd &            & $\alpha$ = 0,012 & $\alpha$ = 0,047 & $\alpha$ = 0,188 \\
-    \midrule
-   & Sim. & 170              & 102              & 60               \\
-57  & SFPE       & 167              & 104              & 66               \\
-    & VDI        & 240              & 105              & 120              \\
-        \midrule
-    & Sim. & 200              & 116              & 67               \\
-68  & SFPE       & 189              & 116              & 73               \\
-    & VDI        & 275              & 120              & 120              \\
-        \midrule
-    & Sim. & 219              & 126              & 74               \\
-79  & SFPE       & 209              & 126              & 79               \\
-    & VDI        & 310              & 130              & 120              \\
-        \midrule
-    & Sim. & 259              & 140              & 81               \\
-93  & SFPE       & 234              & 139              & 80               \\
-    & VDI        & 350              & 140              & 120              \\
-        \midrule
-    & Sim. & \textgreater 300 & 189              & 97               \\
-141 & SFPE       & 310              & 178              & 106              \\
-    & VDI        & 475              & 180              & 145              \\
-        \midrule
-    & Sim. & \textgreater 300 & 191              & 110              \\
-182 & SFPE       & 370              & 208              & 121              \\
-    & VDI        & 570              & 215              & 165             \\
-        \bottomrule
-\end{tabu}
-\end{table}
 
 
 \subsection{Auswertung}
@@ -321,10 +200,12 @@ Allerdings beträgt die Sprinklerelementtemperatur zum Zeitpunkt von 170~s bei b
 
 
 Bei den Verläufen mit 6~m und 8~m ist keine große Abweichung erkennbar. Dies wird auch ersichtlich in Tab. \ref{tab:altBrandherdErgebnisse}, welche die Ergebnisse der verschiedenen Auslösezeiten zusätzlich noch mit den Berechnungen nach SFPE-Handbook und VDI-Tabelle vergleicht.
+% filepath: c:\Users\SESA766787\Desktop\Masterarbeit\master-thesis\Masterarbeit\chapters\versuchsauswertung.tex
+% ...existing code...
 \begin{table}\centering
 \caption{Vergleich der Sprinklerauslösezeiten (in s) zwischen Simulationen mit $\Dot{q}_{max}=500$~kW/m² (Sim.*), $\Dot{q}_{max}=5386$~kW/m² (Sim.), Berechnungen nach SFPE-Handbuch und VDI-Tabellenwerten für verschiedene Nennöffnungstemperaturen (Trd; in °C)  und Raumhöhen ($\alpha=0{,}047$~kW/s², RTI $=50$~(m/s)$^{0,5}$).}
 \label{tab:altBrandherdErgebnisse}
-\begin{tabu} to 0.7\textwidth{@{}X[c]X[c]X[c]X[c]X[c]X@{}} \toprule
+\begin{tabularx}{0.7\textwidth}{@{}*{6}{>{\centering\arraybackslash}X}@{}} \toprule
 Trd                 &       & H = 3 m & H = 6 m          & H = 8 m          \\
     \midrule
 \multirow{4}{*}{57} & Sim.* & 105     & 142              & 163              \\
@@ -357,7 +238,7 @@ Trd                 &       & H = 3 m & H = 6 m          & H = 8 m          \\
                     & SFPE  & 208     & 301              & 371              \\
                     & VDI   & 215     & 310              & 380              \\
     \bottomrule
-\end{tabu}
+\end{tabularx}
 \end{table}
 Differenzen größer 10~s zwischen den beiden Simulationen sind erst ab Nennauslösetemperaturen größer 141~°C zu erkennen. Dabei liegen Auslösezeiten der Simulationen mit $\Dot{q}_{max}=500$~kW/m² aufgrund des flacheren Anstiegs der Sprinklerelementtemperatur grundsätzlich höher.
 
@@ -443,42 +324,3 @@ Zuletzt wird in Abb.~\ref{fig:PlotEcken} die Isoflächen der Luftgeschwindigkeit
     \caption{Vektordarstellung am Sprinklerkopf bei Sekunde 70 (H = 3~m, $\alpha=0,047$ kW/s², C = 0, Trd = 68~°C).}
     \label{fig:PlotEcken}
 \end{figure}
-
-
-
-
-
-
-
-
-
-
-
-
-
-\begin{comment}
-\begin{figure}%
-\centering
-\subfigure[][]{%
-\label{fig:visA1}%
-\includegraphics[width=.45\textwidth]{images/FDSBilder/VisuelleAuswertung1.png}}%
-\hspace{8pt}%
-\subfigure[][]{%
-\label{fig:visA2}%
-\includegraphics[width=.45\textwidth]{images/FDSBilder/VisuelleAuswertung2.png}}\\
-\subfigure[][]{%
-\label{fig:visA3}%
-\includegraphics[width=.45\textwidth]{images/FDSBilder/VisuelleAuswertung3.png}}%
-\hspace{8pt}%
-\subfigure[][]{%
-\label{fig:visA4}%
-\includegraphics[width=.45\textwidth]{images/FDSBilder/VisuelleAuswertung4.png}}%
-\caption{Brandverlauf mit Sprinkleraktivierung bei H = 3~m, $\alpha=0,047$ kW/s², C = 0, Trd = 68~°C.
-\subref{fig:visA1} describes the first subfigure;
-\subref{fig:visA2} describes the second subfigure;
-\subref{fig:visA3} describes the third subfigure;
-and,\subref{fig:visA4} describes the last subfigure.}%
-\label{fig:visA}%
-\end{figure}
-\end{comment} 
-

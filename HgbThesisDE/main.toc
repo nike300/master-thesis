@@ -34,3 +34,5 @@
 \contentsline {chapter}{\numberline {C}Fragebogen}{11}{appendix.C}%
 \contentsline {chapter}{\numberline {D}La\-TeX\xspace -Quellcode}{12}{appendix.D}%
 \contentsline {chapter}{Quellenverzeichnis}{13}{appendix*.6}%
+\contentsline {section}{Literatur}{13}{section*.7}%
+\contentsline {section}{Online-Quellen}{13}{section*.8}%
