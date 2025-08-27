@@ -3,11 +3,12 @@
 
 #show: clean-hda.with(
   title: "Evaluation von Typst zur Erstellung einer Abschlussarbeit",
+  subtitle: "Untertitel für einer Arbeit",
   authors: (
-    (name: "Max Mustermann", student-id: "7654321", course-of-studies: "Informatik", course: "Masterthesis", city:"Darmstadt"),
+    (name: "Max Mustermann", student-id: "7654321", course-of-studies: "Informatik", course: "Masterthesis", city:"Darmstadt", company: ((name: "MouseTec GmbH", post-code: "70435", city: "Karlsruhe"))),
   ),
   type-of-thesis: "Bachelorarbeit",
-  at-university: true, // if true the company name on the title page and the confidentiality statement are hidden
+  at-university: false, // if true the company name on the title page and the confidentiality statement are hidden
   bibliography: bibliography("sources.bib"),
   date: datetime.today(),
   glossary: glossary-entries, // displays the glossary terms defined in "glossary.typ"
