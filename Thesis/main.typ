@@ -3,17 +3,19 @@
 
 #show: clean-hda.with(
   title: "Evaluation von Typst zur Erstellung einer Abschlussarbeit",
-  subtitle: "Untertitel für einer Arbeit",
+//  subtitle: "Untertitel für einer Arbeit",
   authors: (
-    (name: "Max Mustermann", student-id: "7654321", course-of-studies: "Informatik", course: "Masterthesis", city:"Darmstadt", company: ((name: "MouseTec GmbH", post-code: "70435", city: "Karlsruhe"))),
+    (name: "Niklas Wittkämper", student-id: "1382664", course-of-studies: "Gebäudeautomation", 
+    // course: " ", 
+    city:"Darmstadt", company: ((name: "Schneider Electric GmbH", city: "Berlin"))),
   ),
-  type-of-thesis: "Bachelorarbeit",
+  type-of-thesis: "Masterarbeit",
   at-university: false, // if true the company name on the title page and the confidentiality statement are hidden
   bibliography: bibliography("sources.bib"),
   date: datetime.today(),
   glossary: glossary-entries, // displays the glossary terms defined in "glossary.typ"
   language: "de", // en, de
-  supervisor: (ref: "Prof. Dr. Daniel Düsentrieb", co-ref: "Prof. Dr. Daniel Düsentrieb"),
+  supervisor: (ref: "Prof. Dr.-Ing. Martin Höttecke", co-ref: "Prof. Dr. Daniel Düsentrieb"),
   university: "Hochschule Darmstadt - University of Applied Sciences",
   university-location: "Darmstadt",
   university-short: "h_da",
@@ -23,13 +25,26 @@
 
 = Einleitung
 
-#lorem(100)
+= Einführung in die Jahresverschattung
+== Nutzen von Verschattungssystemen
+== Arten von Verschattungssystemen
+== Mathematische Grundlagen und solare Geometrie
+=== Solarkonstante und Globalstrahlung
+=== Sonnenstand
+=== Winkel der Sonnenstrahlung
+=== Berechnung der Verschattungswirkung
 
-#lorem(80)
 
-#lorem(120)
+= Marktanalyse
+== GA-Tools
+== Simulationssoftware
 
-= Erläuterungen
+= Toolentwicklung
+== Modul 1
+== Modul 2
+== Modul 3
+
+= Vorlage
 
 Im folgenden werden einige nützliche Elemente und Funktionen zum Erstellen von Typst-Dokumenten mit diesem Template erläutert.
 

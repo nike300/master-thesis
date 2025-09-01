@@ -38,7 +38,7 @@
   glossary: none,
   bib-style: "ieee",
   math-numbering: "(1)",
-  logo-left: image("hda.svg"),
+  logo-left: image("Logo Kombi.png", width: 170mm),
   logo-right: none,
   ignored-link-label-keys-for-highlighting: (),
   body,

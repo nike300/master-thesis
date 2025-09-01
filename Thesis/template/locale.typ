@@ -1,3 +1,8 @@
+#let TITLEPAGE_COMPANY = (
+  "de": "Firma",
+  "en": "Company",
+)
+
 #let TITLEPAGE_SECTION_B = (
   "de": "Studiengang ",
   "en": "Course of Studies ",
@@ -14,17 +19,17 @@
 )
 
 #let TITLEPAGE_STUDENT_ID_AND_COURSE = (
-  "de": "Matrikelnummer, Kurs:",
+  "de": "Matrikelnummer:",
   "en": "Student ID, Course:",
 )
 
 #let TITLEPAGE_SUPERVISOR_REF = (
-  "de": "Referent",
+  "de": "Erstgutachter",
   "en": "Examiner",
 )
 
 #let TITLEPAGE_SUPERVISOR_COREF = (
-  "de": "Korreferent",
+  "de": "Zweitgutachter",
   "en": "Co-Examiner",
 )
 

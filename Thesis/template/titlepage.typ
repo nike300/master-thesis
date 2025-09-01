@@ -177,7 +177,7 @@
       stack(
         dir: ttb,
         for author in authors {
-          text([#author.student-id, #author.course])
+          text([#author.student-id])
           linebreak()
         }
       ),

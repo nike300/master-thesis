@@ -147,10 +147,6 @@
       panic("Student ID of '" + author.name + "' is missing. Specify a student ID for each author in the 'authors' attribute of the template.")
     }
 
-    if ("course" not in author or author.course == none or author.course == "") {
-      panic("Course of '" + author.name + "' is missing. Specify a course for each author in the 'authors' attribute of the template.")
-    }
-
     if ("course-of-studies" not in author or author.course-of-studies == none or author.course-of-studies == "") {
       panic("Course of studies of '" + author.name + "' is missing. Specify a course of studies for each author in the 'authors' attribute of the template.")
     }
