@@ -1,6 +1,6 @@
 #let TITLEPAGE_COMPANY = (
-  "de": "Firma",
-  "en": "Company",
+  "de": "Firma:",
+  "en": "Company:",
 )
 
 #let TITLEPAGE_SECTION_B = (
