@@ -15,7 +15,7 @@
   date: datetime.today(),
   glossary: glossary-entries, // displays the glossary terms defined in "glossary.typ"
   language: "de", // en, de
-  supervisor: (ref: "Prof. Dr.-Ing. Martin Höttecke", co-ref: "Prof. Dr. Daniel Düsentrieb"),
+  supervisor: (ref: "Prof. Dr.-Ing. Martin Höttecke", co-ref: "Matthias Fabian"),
   university: "Hochschule Darmstadt - University of Applied Sciences",
   university-location: "Darmstadt",
   university-short: "h_da",
@@ -115,7 +115,6 @@ Abbildungen und Tabellen (mit entsprechenden Beschriftungen) werden wie folgt er
 
 === Abbildungen
 
-#figure(caption: "Eine Abbildung", image(width: 4cm, "assets/ts.svg"))
 
 === Tabellen
 
@@ -172,6 +171,9 @@ Für Literaturverweise verwendet man die `cite`-Funktion oder die Kurzschreibwei
 Tabellen, Abbildungen und andere Elemente können mit einem Label in spitzen Klammern gekennzeichnet werden (die Tabelle oben hat z.B. das Label `<table>`). Sie kann dann mit `@table` referenziert werden. Das ergibt im konkreten Fall: @table
 
 = Fazit
+sdfsdf
+sdfsdf
+== efefefef
 
 #lorem(50)
 
