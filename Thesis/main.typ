@@ -2,7 +2,7 @@
 #import "glossary.typ": glossary-entries
 
 #show: clean-hda.with(
-  title: "Evaluation von Typst zur Erstellung einer Abschlussarbeit",
+  title: "Dynamische Verschattungssysteme zur Jahresverschattung in der Gebäudeautomation",
 //  subtitle: "Untertitel für einer Arbeit",
   authors: (
     (name: "Niklas Wittkämper", student-id: "1382664", course-of-studies: "Gebäudeautomation", 
@@ -27,10 +27,20 @@
 Die VDI 6011-1 @vdi6011-1 beschreibt die Grundlagen und allgemeinen Anforderungen für die Lichttechnik, insbesondere im Hinblick auf die Optimierung von Tageslichtnutzung und künstlicher Beleuchtung. 
 
 = Einführung in die Jahresverschattung
+== Bergrifflichkeiten
+=== Jahresverschattung
+=== Lamellennachführung
 == Nutzen von Verschattungssystemen
 === Blendschutz
-=== etc
-== Arten von Verschattungssystemen
+=== Energetischer Nutzen
+=== Lichtnutzen
+
+== Arten von beweglichen Verschattungssystemen
+=== Jalousien
+==== Außenjalousien
+was ist das, vorteile nachteile
+==== Innenjalousien
+==== Zwischenraumjalousien
 == Mathematische Grundlagen und solare Geometrie
 === Solarkonstante und Globalstrahlung
 === Sonnenstand
@@ -78,6 +88,9 @@ Die Datenblätter von Herstellern wie Warema, Somfy etc. basieren auf den Messve
 = Marktanalyse
 == GA-Tools
 == Simulationssoftware
+
+= Überlegungsansätze
+
 
 = Toolentwicklung
 == Modul 1
@@ -171,12 +184,5 @@ Für Literaturverweise verwendet man die `cite`-Funktion oder die Kurzschreibwei
 Tabellen, Abbildungen und andere Elemente können mit einem Label in spitzen Klammern gekennzeichnet werden (die Tabelle oben hat z.B. das Label `<table>`). Sie kann dann mit `@table` referenziert werden. Das ergibt im konkreten Fall: @table
 
 = Fazit
-sdfsdf
-sdfsdf
-== efefefef
-
-#lorem(50)
-
-#lorem(120)
-
-#lorem(80)
+= KI-Disclaimer
+- Gemini 2.5 Pro Deep Research: Recherche für Marktanalyse; Vorschläge für Technologiestack der Anwendung
