@@ -12,7 +12,6 @@
   abstract,
   appendix,
   university,
-  university-location,
   supervisor,
   date,
   city,
@@ -55,7 +54,6 @@
 
   let string-attributes = (
     university: university,
-    university-location: university-location,
     university-short: university-short,
   )
 

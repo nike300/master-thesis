@@ -13,7 +13,7 @@
     long: "Application Programming Interface",
   ),
   (
-    key: "HTTP",
+    key: "http",
     short: "HTTP",
     long: "Hypertext Transfer Protocol",
   ),

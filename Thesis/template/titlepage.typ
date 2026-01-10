@@ -13,7 +13,6 @@
   subtitle,
   type-of-thesis,
   university,
-  university-location,
   at-university,
   date-format,
   show-confidentiality-statement,
@@ -127,7 +126,7 @@
   v(0.25 * page-grid)
 
   // university
-  text(university + [ ] + university-location)
+  text(university)
 
 
   // ---------- Author(s) ---------------------------------------
