@@ -17,4 +17,9 @@
     short: "HTTP",
     long: "Hypertext Transfer Protocol",
   ),
+  (
+    key: "g-wert",
+    short: "g-Wert",
+    long: "Energiedurchlassgrad",
+  ),
 )

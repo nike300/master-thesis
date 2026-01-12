@@ -26,36 +26,49 @@
 Die VDI 6011-1 @vdi6011-1 beschreibt die Grundlagen und allgemeinen Anforderungen für die Lichttechnik, insbesondere im Hinblick auf die Optimierung von Tageslichtnutzung und künstlicher Beleuchtung.
 "tageslichtorientierte Planung" (siehe https://gebaeudedigital.de/schwerpunkt/licht-und-schatten/sonnenschutz-und-licht-zusammen-gedacht/)
 
-= Einführung in die Jahresverschattung
+= Einführung
 == Begrifflichkeiten
 === Jahresverschattung
 === Lamellennachführung
 === Tageslichtverorgungsfaktor
 
-== Arten der Verschattung
-=== Verschattung durch unbewegliche Bauteile
-z.B. Fensterbänke, Vordächer, Überhänge
-=== Verschattung durch Topographie
-z.B. Hügel, Bäume, andere natürliche Elemente
-=== Verschattung durch andere Gebäude
+== Arten der solaren Exposition und Verschattung
 
-== Arten von beweglichen Verschattungssystemen
-Vielleicht aufteilen in innen und außenliegende systeme?
-*Vertikalmarkisen:*
-Ausfahrbare, wetterfeste Textilbahnen, die vertikal an der Außenseite von Fenstern angebracht werden. Sie bieten Schutz vor direkter Sonneneinstrahlung und reduzieren den Wärmeertrag im Innenraum.
+Die auf die Gebäudehülle treffende Solarstrahlung wird nicht nur durch den Sonnenstand, sondern maßgeblich durch feste und variable Hindernisse im Strahlengang beeinflusst. Für die Auslegung und Regelung von dynamischen Verschattungssystemen ist es notwendig, diese Einflussfaktoren zu kategorisieren. Dabei wird primär zwischen gebäudeseitigen (Eigenverschattung), umgebungsbedingten (Fremdverschattung) und meteorologischen Faktoren unterschieden.
 
-*Rollläden:*
-Bestehen aus horizontalen Lamellen, die sich zu einer kompakten Einheit aufrollen lassen. Sie bieten sowohl Sonnenschutz als auch Einbruchschutz und können manuell oder motorisiert betrieben werden.
+=== Unbewegliche Bauteile (Eigenverschattung)
+Die Eigenverschattung resultiert aus der Geometrie des Baukörpers selbst. Feste architektonische Elemente blockieren die direkte Sonneneinstrahlung in Abhängigkeit vom Einstrahlwinkel. Zu diesen Elementen zählen:
 
-*Jalousien:*
-Bestehen aus horizontalen oder vertikalen Lamellen, die in ihrem Winkel verstellt werden können, um die Lichtmenge zu regulieren. Sie ermöglichen eine flexible Steuerung des Lichteinfalls und der Privatsphäre.
+- Auskragungen wie Vordächer, Balkone oder Gesimse.
+- Die Fensterlaibung (die Tiefe des Fensters in der Wand), welche insbesondere bei steilen Einstrahlwinkeln relevant wird.
+- Vertikale Elemente wie Lisenen oder Fassadenschwerter.
 
-*Raffstores:*
-Ähnlich wie Jalousien, jedoch mit robusteren Lamellen aus Metall oder Kunststoff. Sie bieten eine effektive Kontrolle über Licht und Wärme und sind besonders langlebig.
+Diese Art der Verschattung ist statisch und durch die Architektur festgelegt. Sie wirkt oft saisonal selektiv: Ein gut dimensionierter Dachüberstand kann beispielsweise die hochstehende Sommersonne abschirmen (Wärmeschutz), lässt aber die flachstehende Wintersonne zur passiven solaren Erwärmung passieren.
+
+=== Umliegende Topographie und Bebauung (Fremdverschattung)
+Die Fremdverschattung umfasst alle Hindernisse, die nicht Teil des betrachteten Gebäudes sind, aber den Horizontverlauf verändern. Diese Faktoren sind standortspezifisch und müssen in der Regelung als externe Randbedingungen betrachtet werden.
+
+==== Topographie und Vegetation
+Natürliche Erhebungen wie Hügel oder Berge verkürzen die effektive Sonnenscheindauer, indem sie den sichtbaren Horizont anheben. Vegetation (Bäume, Hecken) nimmt eine Sonderrolle ein: Während Nadelbäume als statische Hindernisse betrachtet werden können, variiert die Transparenz von Laubbäumen saisonal. Im Sommer bieten sie hohen Strahlungsschutz, im Winter lassen sie nach Laubabwurf mehr Licht und Wärme passieren.
+
+==== Umliegende Bebauung
+In städtischen Kontexten (Urban Canyons) wird der solare Ertrag maßgeblich durch Nachbargebäude reduziert. Diese werfen Schlagschatten, die je nach Tages- und Jahreszeit über die Fassade wandern. Für die Gebäudeautomation ist dies relevant, da Sensoren am Dach möglicherweise Sonne registrieren, während das Erdgeschoss bereits im Schatten des Nachbarhauses liegt.
+
+=== Meteorologische Einflüsse (Atmosphärische Dämpfung)
+Im Gegensatz zu den geometrischen Hindernissen stellen Wolken keine feste Barriere dar, sondern wirken als Filter. Sie reduzieren die direkte Solarstrahlung und wandeln sie in diffuse Strahlung um. Dieser Vorgang ist hochdynamisch und schwer vorhersehbar. Für die Steuerung von Verschattungssystemen bedeutet dies, dass nicht nur die Position der Sonne, sondern auch die aktuelle Intensität der Strahlung (Meteorologie) kontinuierlich erfasst werden muss, um unnötiges Schließen der Behänge bei Bewölkung zu vermeiden.
+
+== Arten von dynamischen Verschattungssystemen
+
+/ Vertikalmarkisen: bestehen aus wetterfesten Stoffbahnen, die senkrecht vor dem Fenster geführt werden. Je nach Dichte und Farbe des Gewebes lässt sich die Sonneneinstrahlung reduzieren, wobei oft noch eine Sichtverbindung nach draußen möglich bleibt. Sie eignen sich gut, um ein Aufheizen der Räume zu verringern.
+
+/ Rollläden: setzen sich aus miteinander verbundenen Profilstäben zusammen, die auf eine Welle aufgewickelt werden. Im geschlossenen Zustand bieten sie eine sehr gute Abdunkelung und Wärmedämmung. Für eine genaue Lichtlenkung sind sie jedoch weniger geeignet, da sie den Lichteinfall kaum dosieren können, sondern das Fenster meist nur freigeben oder verschließen.
+
+/ Innenliegende Jalousien: zeichnen sich durch wendbare Lamellen aus, die eine präzise Dosierung des Lichteinfalls ermöglichen. Sie dienen vorwiegend dem Blendschutz. Aus energetischer Sicht sind sie jedoch weniger effizient als außenliegende Lösungen, da die solare Strahlung erst innerhalb der thermischen Gebäudehülle absorbiert oder reflektiert wird.
+
+/ Außenliegende Jalousien (Raffstores): müssen den Witterungen außerhalb der Gebäudehülle standhalten und sind in der Gebäudeautomation  besonders wichtig, da sich ihre Lamellen dem Sonnenstand anpassen lassen. Dies ermöglicht es, Funktionalitäten im Bezug auf Nutzerkomfort und Energieeffizienz zu gewährleisten.
 
 
-*Weitere Systeme:*
-z.B. Außenrollos, Screens, Gardinen, Großlamellen
+/ Weitere Systeme: z.B. Außenrollos, Screens, elektrochromes Glas, Gardinen, Großlamellen etc.
 
 == Nutzen von Verschattungssystemen
 
@@ -125,7 +138,7 @@ Relevanz: Dies ist die wichtigste Produktnorm für Sonnenschutz. Sie definiert, 
 
 Kernpunkte: Sie klassifiziert Produkte anhand von Kennwerten wie:
 
-Thermischer Komfort: Gesamtenergiedurchlassgrad (g tot), der angibt, wie viel Sonnenenergie durch das Fenster-Sonnenschutz-System ins Rauminnere gelangt.
+Thermischer Komfort: @g-wert, der angibt, wie viel Sonnenenergie durch das Fenster-Sonnenschutz-System ins Rauminnere gelangt.
 
 Visueller Komfort: Lichttransmissionsgrad (τ v), Blendschutz (Klassen 0-4), Sichtverbindung nach draußen.
 Die Datenblätter von Herstellern wie Warema, Somfy etc. basieren auf den Messverfahren dieser Norm.
