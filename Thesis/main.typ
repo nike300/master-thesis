@@ -31,6 +31,8 @@ Die VDI 6011-1 @vdi6011-1 beschreibt die Grundlagen und allgemeinen Anforderunge
 === Jahresverschattung
 === Lamellennachführung
 === Tageslichtverorgungsfaktor
+=== Cut-Off-WInkel
+Cut-Off bezeichnet die ideale Lamellenstellung, bei der die direkte Sonneneinstrahlung abgehalten wird, aber dennoch genügend diffuses Tageslicht zur Raumbeleuchtung genutzt wird
 
 == Arten der solaren Exposition und Verschattung
 
@@ -108,10 +110,26 @@ Nutzen für Nutzer:
 == Mathematische Grundlagen und solare Geometrie
 === Solarkonstante und Globalstrahlung
 === Sonnenstand
+= Berechnungsgrundlagen der Sonnenposition
+
+Für die algorithmische Bestimmung der Verschattungsposition ist die Transformation von der lokalen Zeit $t_(loc)$ in die Wahre Ortszeit (WOZ) notwendig. Die Korrektur erfolgt unter Berücksichtigung der Zeitgleichung $E$ und der geographischen Länge $\lambda$:
+
+$ t_(WOZ) = t_(loc) + E + 4 dot (\lambda - \lambda_(ref)) $
+
+Wobei $\lambda_(ref)$ den Referenzmeridian der Zeitzone beschreibt. Die Berechnung der Sonnenhöhe $\gamma_s$ erfolgt anschließend über sphärische Trigonometrie:
+
+$ \sin(\gamma_s) = \sin(\phi) \sin(\delta) + \cos(\phi) \cos(\delta) \cos(\omega) $
+
+Hierbei stehen:
+- $\phi$ für die geographische Breite des Standorts
+- $\delta$ für die Deklination der Sonne
+- $\omega$ für den Stundenwinkel
+
+Für die praktische Implementierung in der Gebäudeautomation wird in dieser Arbeit der Algorithmus nach Grena @grena2012 verwendet, da dieser eine für die Ansteuerung von Jalousieaktoren hinreichende Genauigkeit bei reduzierter Rechenkomplexität bietet.
 === Winkel der Sonnenstrahlung
 === Berechnung der Verschattungswirkung
 
-== Normenübersicht
+== Richtlinien und gesetzliche Vorgaben
 === GEG
 Gesetz zur Einsparung von Energie und zur Nutzung erneuerbarer Energien zur Wärme- und Kälteerzeugung in Gebäuden (Gebäudeenergiegesetz - GEG)
 § 14 Sommerlicher Wärmeschutz
