@@ -167,7 +167,24 @@ Die Datenblätter von Herstellern wie Warema, Somfy etc. basieren auf den Messve
 == GA-Tools
 == Simulationssoftware
 
-= Überlegungsansätze
+= Allgemeine Gedanken
+- Es braucht eine Wetterstation, die direkte und indirekte Sonnenstrahlung misst oder? Weil der direkte Strahlungsanteil ist ja unterschiedlich für jedes Fenster, der diffuse auch zum Teil, allerdings ja weniger.... obwohl, stimmt nicht, da z.B. in New York ein Hochhaus auf einer mittleren Etage, ja auch fast kein diffuses Sonnenlicht abbekommt. *Allerdings ist diffus total irrelevant, was den Blendschutz anbelangt.* Bezüglich der restlichen Funktionen, wie z.B. Energieeinsparung und Tageslichtnutzung sieht es anders aus. Für die Tageslichtnutzung gibt es ja mehrere Fälle:
+  - Direkte Strahlung auf das Fenster: 
+  - Nur indirekte Strahlung auf das Fenster:
+
+= Lösungssansätze
+== Mathematische Berechnung
+Um die Verschattung eines Fensters durch umliegende Strukturen zu verschiedenen Zeitpunkten berechnen zu können, bedarf es folgender Informationen:
+- 
+== Computerunterstützte Simulation
+=== Anforderungen
+=== Stack
+- Option 1: IFC-Modell wird in Welt geladen
+- Option 2: Gebäude wird schnell entworfen mit 3D-Tools
+- Voraussetzung für weitere Bearbeitung: Jedes Fenster muss logisch benannt sein, damit später die Zuordnung zum Raumcontroller funktioniert.
+- Laden der umliegenden Strukturen in die Welt
+- Verschattungssimulation erfolgt für jedes einzelne Fenster
+- Exportieren der Berechnungsdaten auf den Controller
 
 
 = Toolentwicklung
