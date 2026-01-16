@@ -172,10 +172,23 @@ Die Datenblätter von Herstellern wie Warema, Somfy etc. basieren auf den Messve
   - Direkte Strahlung auf das Fenster: 
   - Nur indirekte Strahlung auf das Fenster:
 
+- Thema, werden verschiedene Punkte auf einem Fenster gerechnet oder nur der Mittelpunkt?
+  - Bei großen Fenster- oder Glasflächen wäre es gut, verschiedene Punkte zu berechnen, um dann mithilfe einer OR-Verschaltung im Raumcontroller zu gewährleisten, dass auch in den Grenzfällen es zu keiner Blendung kommt.
+
+- Die Strahlung zu berechnen ist sehr kompliziert und hängt ab von verschiedenen meteorologischen Begebenheiten. Wahrscheinlich macht es Sinn sich in dieser Arbeit nur auf die direkt Strahlung zu konzentrieren, da es sonst zu kompliziert wird. Auch sollte ich wahrscheinlich ein Kapitel nur zur Wetterstation machen und wie diese am Besten ausgeführt sein soll (Misst direkte und indirekte Strahlung). Auch die Positionierung auf dem Dach und was sich dadurch für Abhängigkeiten ergeben können ist interessant (z.B. was ist, wenn durch ein loch im himmel die wetterstation bestrahlt wird, aber nicht das Fenster an sich? ...vlt. auch egal, da die Dauer wo sowas eintritt noch in eine hysterese der Jalousie fallen würde von der RA)
+
 = Lösungssansätze
-== Mathematische Berechnung
+
+== Berechnung des Sonnenstandes (Grundlage)
+
+== Geometrische Projektionsverfahren (Horizontmaske)
 Um die Verschattung eines Fensters durch umliegende Strukturen zu verschiedenen Zeitpunkten berechnen zu können, bedarf es folgender Informationen:
+- Höhe des zu berechnenden Fensters (wahrscheinlich Mittelpunkt)
 - 
+== Vektorielle Schnittprüfung (Ray Casting)
+
+== Profilwinkel-Methode (Vereinfachung)
+
 == Computerunterstützte Simulation
 === Anforderungen
 === Stack
