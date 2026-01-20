@@ -2,8 +2,8 @@
 #import "glossary.typ": glossary-entries
 
 #show: clean-hda.with(
-  title: "Dynamische Verschattungssysteme zur Jahresverschattung in der Gebäudeautomation",
-//  subtitle: "Untertitel für einer Arbeit",
+  title: "Entwicklung einer durchgängigen Prozesskette zur Integration dynamischer Verschattungssimulationen in die Gebäudeautomation",
+  subtitle: "Von der Anforderungsdefinition bis zum operativen Betrieb.",
   authors: (
     (name: "Niklas Wittkämper", student-id: "1382664", course-of-studies: "Gebäudeautomation", 
     // course: " ", 
@@ -48,7 +48,7 @@ Die Eigenverschattung resultiert aus der Geometrie des Baukörpers selbst. Feste
 Diese Art der Verschattung ist statisch und durch die Architektur festgelegt. Sie wirkt oft saisonal selektiv: Ein gut dimensionierter Dachüberstand kann beispielsweise die hochstehende Sommersonne abschirmen (Wärmeschutz), lässt aber die flachstehende Wintersonne zur passiven solaren Erwärmung passieren.
 
 === Umliegende Topographie und Bebauung (Fremdverschattung)
-Die Fremdverschattung umfasst alle Hindernisse, die nicht Teil des betrachteten Gebäudes sind, aber den Horizontverlauf verändern. Diese Faktoren sind standortspezifisch und müssen in der Regelung als externe Randbedingungen betrachtet werden.
+Die Fremdverschattung umfasst alle Hindernisse, die nicht Teil des betrachteten Gebäudes sind, aber den Horizontverlauf verändern. Diese Faktoren sind standortspezifisch und müssen in der Regelung als externe Randbedingungen betrachtet werden. 
 
 ==== Topographie und Vegetation
 Natürliche Erhebungen wie Hügel oder Berge verkürzen die effektive Sonnenscheindauer, indem sie den sichtbaren Horizont anheben. Vegetation (Bäume, Hecken) nimmt eine Sonderrolle ein: Während Nadelbäume als statische Hindernisse betrachtet werden können, variiert die Transparenz von Laubbäumen saisonal. Im Sommer bieten sie hohen Strahlungsschutz, im Winter lassen sie nach Laubabwurf mehr Licht und Wärme passieren.
@@ -162,134 +162,62 @@ Thermischer Komfort: @g-wert, der angibt, wie viel Sonnenenergie durch das Fenst
 Visueller Komfort: Lichttransmissionsgrad (τ v), Blendschutz (Klassen 0-4), Sichtverbindung nach draußen.
 Die Datenblätter von Herstellern wie Warema, Somfy etc. basieren auf den Messverfahren dieser Norm.
 
+= Einleitung
+== Problemstellung
+// Diskrepanz zwischen Planung (Simulation) und Realisierung (Automation).
+== Zielsetzung
+// Entwicklung einer durchgängigen Prozesskette (Data Workflow).
+== Forschungsfrage
 
-= Marktanalyse
-== GA-Tools
-== Simulationssoftware
+= Theoretische Grundlagen
+== Dynamische Jahresverschattung
+// Physikalische Prinzipien und Ziele (Energie vs. Komfort).
+== Digitale Planungsmethoden
+// BIM, IFC, Simulationswerkzeuge (Überblick).
+== Standards der Gebäudeautomation
+// VDI 3814 (Schwerpunkt: Datenpunkte & Raumautomation), BACnet (Objekte).
 
-= Allgemeine Gedanken
-- Es braucht eine Wetterstation, die direkte und indirekte Sonnenstrahlung misst oder? Weil der direkte Strahlungsanteil ist ja unterschiedlich für jedes Fenster, der diffuse auch zum Teil, allerdings ja weniger.... obwohl, stimmt nicht, da z.B. in New York ein Hochhaus auf einer mittleren Etage, ja auch fast kein diffuses Sonnenlicht abbekommt. *Allerdings ist diffus total irrelevant, was den Blendschutz anbelangt.* Bezüglich der restlichen Funktionen, wie z.B. Energieeinsparung und Tageslichtnutzung sieht es anders aus. Für die Tageslichtnutzung gibt es ja mehrere Fälle:
-  - Direkte Strahlung auf das Fenster: 
-  - Nur indirekte Strahlung auf das Fenster:
+= Analyse des Informationsbedarfs (Phase 1: Vor der Simulation)
+// NEU: Hier gehst du darauf ein, was die Software überhaupt braucht.
+== Geometrische Anforderungen
+// Detaillierungsgrad des 3D-Modells (LOD), Relevanz von Nachbargebäuden/Bäumen.
+== Meteorologische Daten
+// Wetterdatensätze (TRY - Test Reference Years), Strahlungsdaten.
+== Materialtechnische Parameter
+// Transmissionsgrade, Reflexionsgrade der Lamellen/Textilien.
 
-- Thema, werden verschiedene Punkte auf einem Fenster gerechnet oder nur der Mittelpunkt?
-  - Bei großen Fenster- oder Glasflächen wäre es gut, verschiedene Punkte zu berechnen, um dann mithilfe einer OR-Verschaltung im Raumcontroller zu gewährleisten, dass auch in den Grenzfällen es zu keiner Blendung kommt.
+= Definition der Schnittstellenanforderungen (Phase 2: Simulationsergebnisse)
+// Was kommt aus der Simulation heraus?
+== Identifikation relevanter Steuergrößen
+// (z.B. Lamellenwinkel, Behanghöhe, Verschattungsfaktor).
+== Zeitliche und räumliche Auflösung
+// Pro Fenster? Pro Fassade? 15-Minuten-Werte vs. Echtzeitberechnung.
+== Anforderungen an das Datenformat für den Export
+// CSV, XML, IFC-Properties - was ist lesbar für die GA?
 
-- Die Strahlung zu berechnen ist sehr kompliziert und hängt ab von verschiedenen meteorologischen Begebenheiten. Wahrscheinlich macht es Sinn sich in dieser Arbeit nur auf die direkt Strahlung zu konzentrieren, da es sonst zu kompliziert wird. Auch sollte ich wahrscheinlich ein Kapitel nur zur Wetterstation machen und wie diese am Besten ausgeführt sein soll (Misst direkte und indirekte Strahlung). Auch die Positionierung auf dem Dach und was sich dadurch für Abhängigkeiten ergeben können ist interessant (z.B. was ist, wenn durch ein loch im himmel die wetterstation bestrahlt wird, aber nicht das Fenster an sich? ...vlt. auch egal, da die Dauer wo sowas eintritt noch in eine hysterese der Jalousie fallen würde von der RA)
+= Konzeption der Integrationsprozesses (Phase 3: Der Workflow)
+// Das Kernstück deiner Arbeit: Wie kommen die Daten von Phase 2 in die Steuerung?
+== Prozessmodell für den Datenaustausch
+// Wer liefert wann was? (Rollen: Architekt -> Simulant -> Systemintegrator).
+== Daten-Mapping und Adressierung
+// Wie ordnet man den Simulationswert dem richtigen Aktor zu? (Naming Conventions, AKS/BKS).
+== Umgang mit dynamischen vs. statischen Daten
+// Werden Tabellen in die SPS geladen oder Parameter fest parametriert?
 
-= Lösungssansätze
+= Handlungsempfehlung für die Inbetriebnahme (Reduziert)
+// Statt "Betrieb" fokusieren wir uns auf den "Handover".
+== Checkliste für den Systemintegrator
+// Wie prüft man, ob die importierten Daten plausibel sind? (Sanity Check).
+== Fallback-Strategien
+// Was passiert, wenn die Simulationsdaten fehlen oder fehlerhaft sind?
 
-== Berechnung des Sonnenstandes (Grundlage)
+= Diskussion und Fazit
+== Zusammenfassung der Ergebnisse
+== Grenzen des entwickelten Prozesses
+== Ausblick
 
-== Geometrische Projektionsverfahren (Horizontmaske)
-Um die Verschattung eines Fensters durch umliegende Strukturen zu verschiedenen Zeitpunkten berechnen zu können, bedarf es folgender Informationen:
-- Höhe des zu berechnenden Fensters (wahrscheinlich Mittelpunkt)
-- 
-== Vektorielle Schnittprüfung (Ray Casting)
+= Literaturverzeichnis
 
-== Profilwinkel-Methode (Vereinfachung)
-
-== Computerunterstützte Simulation
-=== Anforderungen
-=== Stack
-- Option 1: IFC-Modell wird in Welt geladen
-- Option 2: Gebäude wird schnell entworfen mit 3D-Tools
-- Voraussetzung für weitere Bearbeitung: Jedes Fenster muss logisch benannt sein, damit später die Zuordnung zum Raumcontroller funktioniert.
-- Laden der umliegenden Strukturen in die Welt
-- Verschattungssimulation erfolgt für jedes einzelne Fenster
-- Exportieren der Berechnungsdaten auf den Controller
-
-
-= Toolentwicklung
-== Modul 1
-== Modul 2
-== Modul 3
-
-= Vorlage
-
-Im folgenden werden einige nützliche Elemente und Funktionen zum Erstellen von Typst-Dokumenten mit diesem Template erläutert.
-
-== Ausdrücke und Abkürzungen
-
-Verwende die `gls`-Funktion, um Ausdrücke aus dem Glossar einzufügen, die dann dorthin verlinkt werden. Ein Beispiel dafür ist: 
-
-Im diesem Kapitel wird eine #gls("Softwareschnittstelle") beschrieben. Man spricht in diesem Zusammenhang auch von einem #gls("API"). Die Schnittstelle nutzt Technologien wie das #gls("http").
-
-Das Template nutzt das `glossarium`-Package für solche Glossar-Referenzen. In der zugehörigen #link("https://typst.app/universe/package/glossarium/", "Dokumentation") werden noch weitere Varianten für derartige Querverweise gezeigt. Dort ist auch im Detail erläutert, wie das Glossar aufgebaut werden kann.
-
-
-== Listen
-
-Es gibt Aufzählungslisten oder nummerierte Listen:
-
-- Dies
-- ist eine
-- Aufzählungsliste
-
-+ Und
-+ hier wird
-+ alles nummeriert.
-
-== Abbildungen und Tabellen
-
-Abbildungen und Tabellen (mit entsprechenden Beschriftungen) werden wie folgt erstellt.
-
-=== Abbildungen
-
-
-=== Tabellen
-
-#figure(
-  caption: "Eine Tabelle",
-  table(
-    columns: (1fr, 50%, auto),
-    inset: 10pt,
-    align: horizon,
-    table.header(
-      [],
-      [*Area*],
-      [*Parameters*],
-    ),
-
-    text("cylinder.svg"),
-    $ pi h (D^2 - d^2) / 4 $,
-    [
-      $h$: height \
-      $D$: outer radius \
-      $d$: inner radius
-    ],
-
-    text("tetrahedron.svg"), $ sqrt(2) / 12 a^3 $, [$a$: edge length],
-  ),
-)<table>
-
-== Programm Quellcode
-
-Quellcode mit entsprechender Formatierung wird wie folgt eingefügt:
-
-#figure(
-  caption: "Ein Stück Quellcode",
-  sourcecode[```ts
-    const ReactComponent = () => {
-      return (
-        <div>
-          <h1>Hello World</h1>
-        </div>
-      );
-    };
-
-    export default ReactComponent;
-    ```],
-)
-
-
-== Verweise
-
-Für Literaturverweise verwendet man die `cite`-Funktion oder die Kurzschreibweise mit dem \@-Zeichen:
-- `#cite(form: "prose", <iso18004>)` ergibt: \ #cite(form: "prose", <iso18004>)
-- Mit `@iso18004` erhält man: @iso18004
-
-Tabellen, Abbildungen und andere Elemente können mit einem Label in spitzen Klammern gekennzeichnet werden (die Tabelle oben hat z.B. das Label `<table>`). Sie kann dann mit `@table` referenziert werden. Das ergibt im konkreten Fall: @table
 
 = Fazit
 = KI-Disclaimer
