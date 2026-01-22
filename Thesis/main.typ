@@ -34,27 +34,6 @@ Die VDI 6011-1 @vdi6011-1 beschreibt die Grundlagen und allgemeinen Anforderunge
 === Cut-Off-WInkel
 Cut-Off bezeichnet die ideale Lamellenstellung, bei der die direkte Sonneneinstrahlung abgehalten wird, aber dennoch genügend diffuses Tageslicht zur Raumbeleuchtung genutzt wird
 
-== Arten der solaren Exposition und Verschattung
-
-Die auf die Gebäudehülle treffende Solarstrahlung wird nicht nur durch den Sonnenstand, sondern maßgeblich durch feste und variable Hindernisse im Strahlengang beeinflusst. Für die Auslegung und Regelung von dynamischen Verschattungssystemen ist es notwendig, diese Einflussfaktoren zu kategorisieren. Dabei wird primär zwischen gebäudeseitigen (Eigenverschattung), umgebungsbedingten (Fremdverschattung) und meteorologischen Faktoren unterschieden.
-
-=== Unbewegliche Bauteile (Eigenverschattung)
-Die Eigenverschattung resultiert aus der Geometrie des Baukörpers selbst. Feste architektonische Elemente blockieren die direkte Sonneneinstrahlung in Abhängigkeit vom Einstrahlwinkel. Zu diesen Elementen zählen:
-
-- Auskragungen wie Vordächer, Balkone oder Gesimse.
-- Die Fensterlaibung (die Tiefe des Fensters in der Wand), welche insbesondere bei steilen Einstrahlwinkeln relevant wird.
-- Vertikale Elemente wie Lisenen oder Fassadenschwerter.
-
-Diese Art der Verschattung ist statisch und durch die Architektur festgelegt. Sie wirkt oft saisonal selektiv: Ein gut dimensionierter Dachüberstand kann beispielsweise die hochstehende Sommersonne abschirmen (Wärmeschutz), lässt aber die flachstehende Wintersonne zur passiven solaren Erwärmung passieren.
-
-=== Umliegende Topographie und Bebauung (Fremdverschattung)
-Die Fremdverschattung umfasst alle Hindernisse, die nicht Teil des betrachteten Gebäudes sind, aber den Horizontverlauf verändern. Diese Faktoren sind standortspezifisch und müssen in der Regelung als externe Randbedingungen betrachtet werden. 
-
-==== Topographie und Vegetation
-Natürliche Erhebungen wie Hügel oder Berge verkürzen die effektive Sonnenscheindauer, indem sie den sichtbaren Horizont anheben. Vegetation (Bäume, Hecken) nimmt eine Sonderrolle ein: Während Nadelbäume als statische Hindernisse betrachtet werden können, variiert die Transparenz von Laubbäumen saisonal. Im Sommer bieten sie hohen Strahlungsschutz, im Winter lassen sie nach Laubabwurf mehr Licht und Wärme passieren.
-
-==== Umliegende Bebauung
-In städtischen Kontexten (Urban Canyons) wird der solare Ertrag maßgeblich durch Nachbargebäude reduziert. Diese werfen Schlagschatten, die je nach Tages- und Jahreszeit über die Fassade wandern. Für die Gebäudeautomation ist dies relevant, da Sensoren am Dach möglicherweise Sonne registrieren, während das Erdgeschoss bereits im Schatten des Nachbarhauses liegt.
 
 === Meteorologische Einflüsse (Atmosphärische Dämpfung)
 Im Gegensatz zu den geometrischen Hindernissen stellen Wolken keine feste Barriere dar, sondern wirken als Filter. Sie reduzieren die direkte Solarstrahlung und wandeln sie in diffuse Strahlung um. Dieser Vorgang ist hochdynamisch und schwer vorhersehbar. Für die Steuerung von Verschattungssystemen bedeutet dies, dass nicht nur die Position der Sonne, sondern auch die aktuelle Intensität der Strahlung (Meteorologie) kontinuierlich erfasst werden muss, um unnötiges Schließen der Behänge bei Bewölkung zu vermeiden.
@@ -130,7 +109,21 @@ Für die praktische Implementierung in der Gebäudeautomation wird in dieser Arb
 === Berechnung der Verschattungswirkung
 für tageslichtnutzung muss nichts berechnet werden, da man einfach über einen helligkeitssensor geht. Es wäre allerdings theoretisch möglich mithilfe von mathematischen modellen die strahlung zu berechnen, um damit das licht zu steuern oder???
 
-== Richtlinien und gesetzliche Vorgaben
+= Einleitung
+== Problemstellung
+// Diskrepanz zwischen Planung (Simulation) und Realisierung (Automation).
+== Zielsetzung
+// Entwicklung einer durchgängigen Prozesskette (Data Workflow).
+== Forschungsfrage
+
+= Theoretische Grundlagen
+== Dynamische Jahresverschattung
+Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel von Energieeffizienz und Nutzerkomfort.
+// Physikalische Prinzipien und Ziele (Energie vs. Komfort).
+== Digitale Planungsmethoden
+// BIM, IFC, Simulationswerkzeuge (Überblick).
+== Standards der Gebäudeautomation
+// VDI 3814 (Schwerpunkt: Datenpunkte & Raumautomation), BACnet (Objekte).
 === GEG
 Gesetz zur Einsparung von Energie und zur Nutzung erneuerbarer Energien zur Wärme- und Kälteerzeugung in Gebäuden (Gebäudeenergiegesetz - GEG)
 § 14 Sommerlicher Wärmeschutz
@@ -162,25 +155,35 @@ Thermischer Komfort: @g-wert, der angibt, wie viel Sonnenenergie durch das Fenst
 Visueller Komfort: Lichttransmissionsgrad (τ v), Blendschutz (Klassen 0-4), Sichtverbindung nach draußen.
 Die Datenblätter von Herstellern wie Warema, Somfy etc. basieren auf den Messverfahren dieser Norm.
 
-= Einleitung
-== Problemstellung
-// Diskrepanz zwischen Planung (Simulation) und Realisierung (Automation).
-== Zielsetzung
-// Entwicklung einer durchgängigen Prozesskette (Data Workflow).
-== Forschungsfrage
+= Analyse des Informationsbedarfs
 
-= Theoretische Grundlagen
-== Dynamische Jahresverschattung
-// Physikalische Prinzipien und Ziele (Energie vs. Komfort).
-== Digitale Planungsmethoden
-// BIM, IFC, Simulationswerkzeuge (Überblick).
-== Standards der Gebäudeautomation
-// VDI 3814 (Schwerpunkt: Datenpunkte & Raumautomation), BACnet (Objekte).
-
-= Analyse des Informationsbedarfs (Phase 1: Vor der Simulation)
-// NEU: Hier gehst du darauf ein, was die Software überhaupt braucht.
+// NEU:  (Phase 1 Vor der Simulation) Hier gehst du darauf ein, was die Software überhaupt braucht.
+- Zugriff auf Datensätzen von umliegenden Gebäuden und Strukturen. Diese können z.B. über Open-Source-Angebote bereitgestellt werden (Google Maps, Open Street Maps, etc.)
 == Geometrische Anforderungen
+Die auf die Gebäudehülle treffende Solarstrahlung wird nicht nur durch den Sonnenstand, sondern maßgeblich durch feste und variable Hindernisse im Strahlengang beeinflusst. Für die Auslegung und Regelung von dynamischen Verschattungssystemen ist es notwendig, diese Einflussfaktoren zu kategorisieren. Dabei wird primär zwischen gebäudeseitigen (Eigenverschattung), umgebungsbedingten (Fremdverschattung) und meteorologischen Faktoren unterschieden.
+
+=== Unbewegliche Bauteile (Eigenverschattung)
+Die Eigenverschattung resultiert aus der Geometrie des Baukörpers selbst. Feste architektonische Elemente blockieren die direkte Sonneneinstrahlung in Abhängigkeit vom Einstrahlwinkel. Zu diesen Elementen zählen:
+
+- Auskragungen wie Vordächer, Balkone oder Gesimse.
+- Die Fensterlaibung (die Tiefe des Fensters in der Wand), welche insbesondere bei steilen Einstrahlwinkeln relevant wird.
+- Vertikale Elemente wie Lisenen oder Fassadenschwerter.
+
+Diese Art der Verschattung ist statisch und durch die Architektur festgelegt. Sie wirkt oft saisonal selektiv: Ein gut dimensionierter Dachüberstand kann beispielsweise die hochstehende Sommersonne abschirmen (Wärmeschutz), lässt aber die flachstehende Wintersonne zur passiven solaren Erwärmung passieren.
+
+=== Umliegende Topographie und Bebauung (Fremdverschattung)
+Die Fremdverschattung umfasst alle Hindernisse, die nicht Teil des betrachteten Gebäudes sind, aber den Horizontverlauf verändern. Diese Faktoren sind standortspezifisch und müssen in der Regelung als externe Randbedingungen betrachtet werden. 
+
+==== Topographie und Vegetation
+Natürliche Erhebungen wie Hügel oder Berge verkürzen die effektive Sonnenscheindauer, indem sie den sichtbaren Horizont anheben. Vegetation (Bäume, Hecken) nimmt eine Sonderrolle ein: Während Nadelbäume als statische Hindernisse betrachtet werden können, variiert die Transparenz von Laubbäumen saisonal. Im Sommer bieten sie hohen Strahlungsschutz, im Winter lassen sie nach Laubabwurf mehr Licht und Wärme passieren.
+
+==== Umliegende Bebauung
+In städtischen Kontexten (Urban Canyons) wird der solare Ertrag maßgeblich durch Nachbargebäude reduziert. Diese werfen Schlagschatten, die je nach Tages- und Jahreszeit über die Fassade wandern. Für die Gebäudeautomation ist dies relevant, da Sensoren am Dach möglicherweise Sonne registrieren, während das Erdgeschoss bereits im Schatten des Nachbarhauses liegt.
+
 // Detaillierungsgrad des 3D-Modells (LOD), Relevanz von Nachbargebäuden/Bäumen.
+- Umgebungsdaten
+- Gebäudedaten
+
 == Meteorologische Daten
 // Wetterdatensätze (TRY - Test Reference Years), Strahlungsdaten.
 == Materialtechnische Parameter
