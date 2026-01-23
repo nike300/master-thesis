@@ -107,7 +107,7 @@ Hierbei stehen:
 Für die praktische Implementierung in der Gebäudeautomation wird in dieser Arbeit der Algorithmus nach Grena (source) verwendet, da dieser eine für die Ansteuerung von Jalousieaktoren hinreichende Genauigkeit bei reduzierter Rechenkomplexität bietet.
 === Winkel der Sonnenstrahlung
 === Berechnung der Verschattungswirkung
-für tageslichtnutzung muss nichts berechnet werden, da man einfach über einen helligkeitssensor geht. Es wäre allerdings theoretisch möglich mithilfe von mathematischen modellen die strahlung zu berechnen, um damit das licht zu steuern oder???
+für tageslichtnutzung muss nichts berechnet werden, da man einfach über einen Helligkeitssensor geht. Es wäre allerdings theoretisch möglich mithilfe von mathematischen Modellen die Strahlung zu berechnen, um damit das licht zu steuern oder???
 
 = Einleitung
 == Problemstellung
@@ -119,8 +119,28 @@ für tageslichtnutzung muss nichts berechnet werden, da man einfach über einen 
 = Theoretische Grundlagen
 == Dynamische Jahresverschattung
 Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel von Energieeffizienz und Nutzerkomfort.
+#let definition(title, body) = {
+  block(
+    fill: luma(240),
+    stroke: (left: 1pt + black, right: 1pt + black),
+    inset: 1em,
+    width: 100%,
+    radius: (right: 5pt),
+    [
+      #text(weight: "bold")[#title] \
+      #body
+    ]
+  )
+}
+
+#definition("Jahresverschattung")[
+  Die Jahresverschattung bezeichnet die zeitabhängige Veränderung der solaren Exposition auf der Gebäudehülle im Verlauf eines meteorologischen Jahres. Sie ist das Resultat der Interaktion zwischen dem dynamischen Sonnenstand, der Gebäudeorientierung sowie der umgebenden Bebauung und Vegetation. Im Kontext der Gebäudeautomation definiert sie die zeitlichen und räumlichen Randbedingungen, unter denen ein variabler Sonnenschutz agieren muss.
+]
+Die Jahresverschattungssimulation bezeichnet ein simulationsgestütztes Verfahren zur Analyse und Steuerung des solaren Energie- und Lichteintrags in ein Gebäude über den Zeitraum eines vollständigen meteorologischen Jahres. Im Gegensatz zu statischen Verschattungselementen oder reinen Echtzeit-Helligkeitsregelungen basiert sie auf der zeitabhängigen Interaktion zwischen dem astronomischen Sonnenstand, der Gebäudegeometrie sowie der umgebenden Bebauung. Ziel ist die Ermittlung optimaler Positionierungsstrategien für variable Sonnenschutzsysteme, um ein Gleichgewicht zwischen der Minimierung thermischer Lasten (sommerlicher Wärmeschutz), der Maximierung solarer Gewinne (winterlicher Heizbedarf) und der Gewährleistung des visuellen Komforts (Blendfreiheit bei maximaler Tageslichtnutzung) sicherzustellen.
 // Physikalische Prinzipien und Ziele (Energie vs. Komfort).
-== Digitale Planungsmethoden
+== Digitale Planungsmethoden (Datenformate?)
+Wenn früher vor allem Papierpläne zum Datenkommunikationsaustausch im Planungsprozess verwendet wurden, gibt es mittlerweile eine Vielzahl an digitalen Möglichkeiten. Etabliert über die letzten Jahrzehnte, haben sich vor allem 2D-Grundrissdateien, die z.B. im proprietären Austauschformat dwg zwischen Architekten und Ingenieuren geteilt wurden. Während diese Methode heutzutage noch weite Anwendung findet, greifen die auf 3D-Modellen basierenden Austauschformate weiter um sich. Bereits einfache 3D-Modelle bieten große Vorteile bei der Verständlichkeit und Dichte der übermittelnden geometrischen Informationen. Zusätzlich ist es möglich im Rahmen eines BIM-Modells semantische Daten mit zu übermitteln. Das hierfür benutzte Austauschformat IFC bietet wichtige Funktionalitäten, um für die Verschattungssimulation relevante Daten zu  teilen.
+
 // BIM, IFC, Simulationswerkzeuge (Überblick).
 == Standards der Gebäudeautomation
 // VDI 3814 (Schwerpunkt: Datenpunkte & Raumautomation), BACnet (Objekte).
@@ -192,7 +212,7 @@ In städtischen Kontexten (Urban Canyons) wird der solare Ertrag maßgeblich dur
 = Definition der Schnittstellenanforderungen (Phase 2: Simulationsergebnisse)
 // Was kommt aus der Simulation heraus?
 == Identifikation relevanter Steuergrößen
-// (z.B. Lamellenwinkel, Behanghöhe, Verschattungsfaktor).
+(z.B. Lamellenwinkel, Behanghöhe, Verschattungsfaktor).
 == Zeitliche und räumliche Auflösung
 // Pro Fenster? Pro Fassade? 15-Minuten-Werte vs. Echtzeitberechnung.
 == Anforderungen an das Datenformat für den Export
@@ -205,6 +225,7 @@ In städtischen Kontexten (Urban Canyons) wird der solare Ertrag maßgeblich dur
 == Daten-Mapping und Adressierung
 // Wie ordnet man den Simulationswert dem richtigen Aktor zu? (Naming Conventions, AKS/BKS).
 == Umgang mit dynamischen vs. statischen Daten
+Es stellt sich die Frage, wie die Verschattungsdaten sinnvoll in die Programme für die Behänge integriert werden.
 // Werden Tabellen in die SPS geladen oder Parameter fest parametriert?
 
 = Handlungsempfehlung für die Inbetriebnahme (Reduziert)
@@ -226,5 +247,9 @@ In städtischen Kontexten (Urban Canyons) wird der solare Ertrag maßgeblich dur
 = KI-Disclaimer
 
 - Gemini 2.5 Pro Deep Research: Recherche für Marktanalyse; Vorschläge für Technologiestack der Anwendung
-- Gemini 3.0 Pro
+- Gemini 3.0 Pro: Sparringpartner, Recherche, Entwicklung der Forschungsfrage, Generierung von Ideen
 - Perplexity AI: Recherche zu Normen und technischen Grundlagen
+
+Es wird ausdrücklich darauf hingewiesen, dass die endgültige Verantwortung für die inhaltliche Richtigkeit, die kritische Reflexion und die Interpretation der Ergebnisse beim Autor/der Autorin dieser Arbeit liegt.
+
+Die KI diente lediglich als Werkzeug und nicht als Ersatz für das kritische und analytische Denken des Forschenden.
