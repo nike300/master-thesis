@@ -112,6 +112,18 @@ für tageslichtnutzung muss nichts berechnet werden, da man einfach über einen 
 = Einleitung
 == Problemstellung
 // Diskrepanz zwischen Planung (Simulation) und Realisierung (Automation).
+//Die Gebäudeautomation hat ein Problem bei der Simulation und Integration von Verschattungsberechnungen in Gebäuden: Der Engineering-Aufwand ist sehr hoch... Da in der Zukunft allerdings immer weniger personelle Ressourcen zur Verfügung stehen werden und der Sonnenschutz im Zuge des Klimawandels eine immer bedeutendere Rolle einnehmen wird, ist es notwendig die gesamte Prozesskette neu zu betrachten. Es gilt, integrierte Lösungen zu finden, damit der Datenfluss vom Gebäudemodell des Architekten bis hin zur Systemintegration
+//  der Verschattungsdaten gut funktioniert. 
+
+Die Steuerung automatisierter Fassadensysteme erfolgt in der heutigen Gebäudepraxis überwiegend reaktiv auf Basis lokaler Sensorik. Helligkeits- und Strahlungssensoren erfassen den Ist-Zustand der Umgebung, können jedoch komplexe geometrische Situationen wie den Schattenwurf durch Nachbarbebauung oder die Eigenverschattung der Fassade nur unzureichend abbilden. Dies führt im Betrieb häufig zu ineffizienten Fahrbewegungen der Behänge, die weder den visuellen Komfort noch den sommerlichen Wärmeschutz optimal bedienen.
+
+Um diese Defizite auszugleichen, bieten moderne softwaregestützte Methoden die Möglichkeit, den Schattenwurf präzise vorauszuberechnen. Die praktische Anwendung scheitert jedoch derzeit an massiven Ineffizienzen innerhalb der digitalen Prozesskette, die sich sowohl in der Datenbeschaffung als auch in der Datenverwertung manifestieren.
+
+Ein vorgelagertes Hindernis besteht in der mangelnden Simulationsfähigkeit der architektonischen Ausgangsdaten. Zwar liegen zunehmend digitale Bauwerksmodelle (BIM) vor, diese sind jedoch häufig für visuelle oder konstruktive Zwecke optimiert und entsprechen nicht den Anforderungen einer geometrischen Verschattungssimulation. Inkonsistente Geometrien, fehlende semantische Informationen oder ein unpassender Detaillierungsgrad (Level of Information Need) erzwingen eine zeitintensive manuelle Aufbereitung und Bereinigung der Modelle, bevor eine Berechnung überhaupt möglich ist.
+
+Das nachgelagerte Problem betrifft die fehlende Prozessdefinition für die Datenintegration der Ergebnisse: Selbst wenn validierte Simulationsdaten vorliegen, existiert kein standardisierter Workflow, um diese ohne manuellen Mehraufwand direkt in die Steuerungslogik der Raumautomation zu überführen. Der derzeitige Engineering-Prozess sieht in der Regel nicht vor, dass die Simulationssoftware bereits das finale Datenformat für die Automationsstation bereitstellt.
+
+Angesichts sinkender personeller Ressourcen im Engineering und der steigenden Notwendigkeit, Gebäude klimaresilient zu betreiben, stellen diese Medienbrüche an beiden Enden der Simulationsphase ein kritisches Hemmnis dar. Es ist daher notwendig, die Prozesskette ganzheitlich zu betrachten und Lösungen zu entwickeln, die den Datenfluss vom Gebäudemodell des Architekten bis hin zur Systemintegration der Verschattungsdaten durchgängig und aufwandsarm gestalten.
 == Zielsetzung
 // Entwicklung einer durchgängigen Prozesskette (Data Workflow).
 == Forschungsfrage
