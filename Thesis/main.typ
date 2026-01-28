@@ -126,9 +126,76 @@ Das nachgelagerte Problem betrifft die fehlende Prozessdefinition für die Daten
 Angesichts sinkender personeller Ressourcen im Engineering und der steigenden Notwendigkeit, Gebäude klimaresilient zu betreiben, stellen diese Medienbrüche an beiden Enden der Simulationsphase ein kritisches Hemmnis dar. Es ist daher notwendig, die Prozesskette ganzheitlich zu betrachten und Lösungen zu entwickeln, die den Datenfluss vom Gebäudemodell des Architekten bis hin zur Systemintegration der Verschattungsdaten durchgängig und aufwandsarm gestalten.
 == Zielsetzung
 // Entwicklung einer durchgängigen Prozesskette (Data Workflow).
-== Forschungsfrage
+Das übergeordnete Ziel dieser Arbeit ist die Entwicklung einer durchgängigen Prozesskette zur Integration dynamischer Verschattungssimulationen in die Gebäudeautomation. Es soll ein strukturierter Workflow definiert werden, der den Informationsfluss von der digitalen Planung (BIM) bis zur operativen Steuerungsebene der Raumautomation automatisiert und standardisiert.
+
+Um die technische Machbarkeit und den praktischen Nutzen dieses Ansatzes zu validieren, verfolgt die Arbeit folgende Teilziele:
+
+1.  **Analyse der Schnittstellen:** Identifikation der notwendigen Datenpunkte und Formate auf Basis der VDI 3814 (Gebäudeautomation) und IFC (Industry Foundation Classes).
+2.  **Entwicklung eines Proof of Concept (PoC):** Implementierung eines prototypischen Simulations-Workflows unter Verwendung von Open-Source-Technologien (Blender, Python). Dieser Prototyp soll demonstrieren, wie geometrische Verschattungsdaten automatisiert aus einem IFC-Modell extrahiert, berechnet und in ein maschinenlesbares Format für Automationsstationen überführt werden können.
+3.  **Ableitung von Handlungsempfehlungen:** Erstellung eines Leitfadens für Fachplaner und Systemintegratoren, der die notwendigen Datenanforderungen und Prüfschritte für die Inbetriebnahme beschreibt.
+
+Die Arbeit schließt somit die Lücke zwischen theoretischem Simulationspotenzial und praktischer Anwendung, indem sie nicht nur das "Was", sondern durch den softwaretechnischen Demonstrator auch das "Wie" der Integration beantwortet.
+== Aufbau der Arbeit
+Die vorliegende Arbeit gliedert sich in sieben Kapitel, die den Prozess von der theoretischen Analyse bis zur praktischen Validierung abbilden.
+
+*Kapitel 2* legt die theoretischen Grundlagen. Hier werden die physikalischen Prinzipien der dynamischen Jahresverschattung erläutert sowie die relevanten Standards der digitalen Planung (BIM, IFC) und der Gebäudeautomation (VDI 3814, BACnet) definiert. Ein besonderer Fokus liegt auf der Diskrepanz zwischen geometrischer Simulation und operativer Steuerungstechnik.
+
+*Kapitel 3* analysiert den Informationsbedarf vor der Simulation (Phase 1). Es wird untersucht, welche geometrischen und semantischen Anforderungen an digitale Bauwerksmodelle gestellt werden müssen, um eine automatisierte Weiterverarbeitung zu ermöglichen. Dabei werden Kriterien wie der Detaillierungsgrad (LOD) und die Qualität der Umgebungsdaten betrachtet.
+
+*Kapitel 4* widmet sich den Anforderungen an die Simulationsergebnisse (Phase 2). Ziel ist die Definition einer standardisierten Schnittstelle, die festlegt, welche Steuergrößen (z. B. Lamellenwinkel, Verschattungsgrad) in welcher zeitlichen und räumlichen Auflösung an die Automation übergeben werden müssen.
+
+*Kapitel 5* bildet den Kern der Arbeit und beschreibt die Konzeption und prototypische Umsetzung des Integrationsprozesses (Phase 3). Auf Basis der erarbeiteten Anforderungen wird ein Workflow entwickelt, der unter Verwendung von Open-Source-Technologien (Blender, Python) die Extraktion, Berechnung und den Export der Verschattungsdaten demonstriert.
+
+*Kapitel 6* leitet aus den Erkenntnissen des Prototyps konkrete Handlungsempfehlungen für die Inbetriebnahme ab. Es werden Prüfmechanismen und Checklisten vorgestellt, die Systemintegratoren bei der Validierung externer Simulationsdaten unterstützen.
+
+*Kapitel 7* fasst die Ergebnisse zusammen, diskutiert die Limitationen des entwickelten Ansatzes und gibt einen Ausblick auf weiterführende Forschungsfelder im Bereich der adaptiven Fassadensteuerung.
 
 = Theoretische Grundlagen
+== 2.1 Physikalische und geometrische Grundlagen
+
+In diesem Kapitel werden die astronomischen und geometrischen Gesetzmäßigkeiten hergeleitet, die für die Berechnung des Schattenwurfs maßgeblich sind. Zudem erfolgt eine Klassifizierung der aktorischen Komponenten und der zu optimierenden Zielgrößen.
+
+=== Sonnenbahnmechanik
+- Begriffsdefinitionen: Azimut ($alpha$) und Elevation ($gamma$).
+- Zeitgleichung: Unterschied zwischen wahrer Ortszeit (WOZ) und gesetzlicher Zeit (wichtig für die Simulation).
+- Vektorbasierte Darstellung: Definition des Sonnenstandsvektors $vec(S)$, da dieser später in Blender für das Raycasting benötigt wird.
+
+// Definition der Parameter
+Wie Duffie und Beckman @Duffie2013 herleiten, sind für die Berechnung der Wahren Ortszeit (WOZ) folgende Parameter notwendig:
+
+- $t_"std"$: Gesetzliche Ortszeit (Local Standard Time) in Stunden.
+- $n$: Tag des Jahres (1 bis 365).
+- $lambda_"loc"$: Geografischer Längengrad des Standorts (in Grad).
+- $lambda_"std"$: Bezugslängengrad der Zeitzone (z. B. $15 degree$ für MEZ).
+- $E$: Zeitgleichung (Equation of Time) in Minuten.
+
+Die Wahre Ortszeit $t_"WOZ"$ berechnet sich wie folgt #footnote[Vorzeichenkonvention gemäß ISO 6709 (Ost positiv). Duffie/Beckman verwenden hier invertierte Vorzeichen (West positiv).]:
+
+$ t_"WOZ" = t_"std" + 4 dot (lambda_"loc" - lambda_"std") + E $
+
+Die Zeitgleichung $E$ korrigiert die Unregelmäßigkeiten der Erdbahn (Ellipsenform und Neigung):
+
+$ B &= (n - 1) dot frac(360, 365) \
+E &= 229.18 dot (0.000075 + 0.001868 cos(B) - 0.032077 sin(B) \
+  &- 0.014615 cos(2B) - 0.040849 sin(2B)) $
+
+Der Term $4 dot (lambda_"loc" - lambda_"std")$ resultiert aus der Erdrotation: Die Erde dreht sich um $15 degree$ pro Stunde, was $4 "min"/degree$ entspricht. Dieser Korrekturfaktor ist statisch für einen Gebäudestandort, während $E$ sich täglich ändert.
+
+=== 2.1.2 Geometrie der Verschattung
+- Fremdverschattung: Durch Nachbargebäude oder Topografie (statisch).
+- Eigenverschattung: Durch Fassadenvorsprünge oder Laibungen (statisch).
+- Mathematische Grundlagen: Kurze Einführung in die Projektionsberechnung (Schnittpunkt Gerade mit Ebene), um die Brücke zur späteren Raycasting-Methode zu schlagen.
+
+=== 2.1.3 Klassifizierung steuerbarer Sonnenschutzsysteme
+- Systeme mit einem Freiheitsgrad (z. B. Rollläden, Screens): Variable Position $h$ (0-100%).
+- Systeme mit zwei Freiheitsgraden (z. B. Raffstore/Jalousien): Variablen Position $h$ und Lamellenwinkel $lambda$.
+- Relevanz für die Automation: Je komplexer das System, desto wichtiger ist die präzise Simulation des Winkels.
+
+=== 2.1.4 Bauphysikalische und lichttechnische Zielgrößen
+- Sommerlicher Wärmeschutz (Energieeintrag minimieren).
+- Visueller Komfort (Blendung vermeiden).
+- Tageslichtautonomie (Kunstlicht minimieren).
+- Konfliktpotenzial: Erläuterung der konkurrierenden Ziele (z. B. Blendschutz vs. Tageslicht) und warum eine dynamische Simulation hier besser ist als eine starre Regelung.
 == Dynamische Jahresverschattung
 Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel von Energieeffizienz und Nutzerkomfort.
 #let definition(title, body) = {
@@ -241,15 +308,17 @@ Es stellt sich die Frage, wie die Verschattungsdaten sinnvoll in die Programme f
 // Werden Tabellen in die SPS geladen oder Parameter fest parametriert?
 
 = Handlungsempfehlung für die Inbetriebnahme (Reduziert)
-// Statt "Betrieb" fokusieren wir uns auf den "Handover".
+// Statt "Betrieb" fokussieren wir uns auf den "Handover".
 == Checkliste für den Systemintegrator
 // Wie prüft man, ob die importierten Daten plausibel sind? (Sanity Check).
 == Fallback-Strategien
 // Was passiert, wenn die Simulationsdaten fehlen oder fehlerhaft sind?
 
+= Proof of Concept Verschattungssimulation
+
 = Diskussion und Fazit
 == Zusammenfassung der Ergebnisse
-== Grenzen des entwickelten Prozesses
+== Grenzen und Limitierungen
 == Ausblick
 
 = Literaturverzeichnis

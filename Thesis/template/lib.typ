@@ -251,30 +251,43 @@
     v(page-grid, weak: true)
   }
 
-  show heading.where(level: 1): it => {
-    set par(leading: 0pt, justify: false)
+ show heading.where(level: 1): it => {
+    set par(justify: false)
     pagebreak()
+    
     context{ 
       if in-body.get() {
         v(page-grid * 1.5)
-        place(
-          top + right,
-          //dx: 25pt, // move further right, adjust as needed
-          dy: page-grid * 0.55,         // no vertical shift
-          text(counter(heading).display(), 
-            top-edge: "bounds",
-            size: h1-size, weight: 0, luma(43.53%),
-            font: "New Computer Modern Math" 
-          )
-        )
-        text(               // heading text on separate line
-          it.body, size: h1-size,
-          top-edge: 0em, 
-          bottom-edge: 0em,
-        )
+        
+        // --- ÄNDERUNG: Alles in EINEN Container-Block ---
+        // Damit teilen sich Nummer und Text den gleichen Ursprung.
+        block(width: 100%, below: 1em)[
+           
+           // 1. Die Nummer (absolut oben rechts INNERHALB dieses Blocks)
+           #place(top + right,
+             text(counter(heading).display(), 
+               size: h1-size, 
+               weight: 0, 
+               fill: luma(43.53%),
+               font: "New Computer Modern Math",
+               // WICHTIG: "cap-height" statt "bounds" für präzise Ausrichtung am Text
+               top-edge: "cap-height" 
+             )
+           )
+           
+           // 2. Der Titel selbst
+           #set par(leading: 0.3em) 
+           #text(
+             it.body, 
+             size: h1-size,
+             top-edge: "cap-height"
+           )
+        ]
+
       } else {
+        // Anhang-Formatierung (unverändert)
         v(2 * page-grid) 
-        text(size: 2 * page-grid, counter(heading).display() + h(0.5em) + it.body)   // appendix
+        text(size: 2 * page-grid, counter(heading).display() + h(0.5em) + it.body) 
       }
     }
   }
