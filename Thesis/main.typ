@@ -151,16 +151,27 @@ Die vorliegende Arbeit gliedert sich in sieben Kapitel, die den Prozess von der 
 *Kapitel 7* fasst die Ergebnisse zusammen, diskutiert die Limitationen des entwickelten Ansatzes und gibt einen Ausblick auf weiterführende Forschungsfelder im Bereich der adaptiven Fassadensteuerung.
 
 = Theoretische Grundlagen
-== 2.1 Physikalische und geometrische Grundlagen
+== Physikalische und geometrische Grundlagen
 
 In diesem Kapitel werden die astronomischen und geometrischen Gesetzmäßigkeiten hergeleitet, die für die Berechnung des Schattenwurfs maßgeblich sind. Zudem erfolgt eine Klassifizierung der aktorischen Komponenten und der zu optimierenden Zielgrößen.
 
 === Sonnenbahnmechanik
+
+
+Guck mal hier das Bild (@SonnenstandWinkelbezeichnung)
+
 - Begriffsdefinitionen: Azimut ($alpha$) und Elevation ($gamma$).
-- Zeitgleichung: Unterschied zwischen wahrer Ortszeit (WOZ) und gesetzlicher Zeit (wichtig für die Simulation).
 - Vektorbasierte Darstellung: Definition des Sonnenstandsvektors $vec(S)$, da dieser später in Blender für das Raycasting benötigt wird.
 
-// Definition der Parameter
+#figure(
+  image("assets/SonnenstandWinkelbezeichnung.png", width: 60%),
+  caption: [
+    Winkelbezeichnungen des Sonnenstandes @Quaschning
+  ],
+)<SonnenstandWinkelbezeichnung>
+
+
+==== Wahre Ortszeit
 Wie Duffie und Beckman @Duffie2013 herleiten, sind für die Berechnung der Wahren Ortszeit (WOZ) folgende Parameter notwendig:
 
 - $t_"std"$: Gesetzliche Ortszeit (Local Standard Time) in Stunden.
@@ -180,6 +191,96 @@ E &= 229.18 dot (0.000075 + 0.001868 cos(B) - 0.032077 sin(B) \
   &- 0.014615 cos(2B) - 0.040849 sin(2B)) $
 
 Der Term $4 dot (lambda_"loc" - lambda_"std")$ resultiert aus der Erdrotation: Die Erde dreht sich um $15 degree$ pro Stunde, was $4 "min"/degree$ entspricht. Dieser Korrekturfaktor ist statisch für einen Gebäudestandort, während $E$ sich täglich ändert.
+
+==== Stundenwinkel ($omega$)
+Um die zeitliche Komponente in die geometrische Berechnung einzuführen, wird die Wahre Ortszeit ($t_"WOZ"$) in den Stundenwinkel $omega$ umgerechnet. Da die Erde sich um $15 degree$ pro Stunde dreht, gilt:
+
+$ omega = (t_"WOZ" - 12) dot 15 degree $
+
+Dabei entspricht $omega = 0 degree$ dem solaren Mittag (Sonne exakt im Süden). Vormittagswerte sind negativ, Nachmittagswerte positiv.
+
+==== Sonnendeklination 
+ $delta$ ist der Winkel zwischen der Verbindungslinie Erde-Sonne und der Äquatorebene. Sie ist also die Neigung der Erde in Relation zur Sonne und variiert im Jahresverlauf zwischen $-23,45 degree$ (Wintersonnenwende) und $+23,45 degree$ (Sommersonnenwende).
+
+Für die Bestimmung der Sonnenposition wird in dieser Arbeit das Berechnungsverfahren gemäß der aktuellen europäischen Norm *DIN EN 17037* (Tageslicht in Gebäuden) angewendet @dinen17037.
+
+Die Sonnendeklination $delta$ wird hierbei als winkelabhängige Fourier-Reihe in Grad ($degree$) berechnet. Ausgangsbasis ist die Tageszahl $J$ (1 für 1. Januar bis 365 für 31. Dezember) und der daraus abgeleitete Jahreswinkel $J'$:
+
+$ J' = 360 degree dot frac(J, 365) $
+
+Die Deklination $delta(J)$ ergibt sich gemäß Gleichung D.3 der Norm:
+
+$ delta(J) &= 0.3948 \
+  &- 23.2559 dot cos(J' + 9.1 degree) \
+  &- 0.3915 dot cos(2 dot J' + 5.4 degree) \
+  &- 0.1764 dot cos(3 dot J' + 26.0 degree) $ <deklinationsgleichung>
+
+#block(inset: 8pt, fill: luma(240))[
+  *Hinweis zur Implementierung:*
+  Die Koeffizienten der DIN-Formel liefern das Ergebnis in Grad. Für die geometrische Weiterverarbeitung im Simulationsmodell (siehe @Chapter5[Kapitel]) erfolgt eine Umrechnung in das Bogenmaß (Radiant).
+]
+
+==== Sonnenhöhenwinkel (Elevation)
+Der Sonnenhöhenwinkel $gamma_s$ beschreibt den vertikalen Winkel zwischen der horizontalen Ebene und dem Mittelpunkt der Sonnenscheibe. Er ist maßgeblich für die effektive Einstrahlung auf Fassadenflächen sowie für die Berechnung der Schattenlängen.
+
+Basierend auf dem geografischen Breitengrad $phi$, der zuvor berechneten Deklination $delta$ und dem Stundenwinkel $omega$ ergibt sich der Höhenwinkel aus der grundlegenden Gleichung der sphärischen Astronomie:
+
+$ sin(gamma_s) = sin(phi) dot sin(delta) + cos(phi) dot cos(delta) dot cos(omega) $
+
+Durch Umstellung nach $gamma_s$ erhält man den expliziten Winkel:
+
+$ gamma_s = arcsin(sin(phi) dot sin(delta) + cos(phi) dot cos(delta) dot cos(omega)) $
+
+Dabei gelten folgende Randbedingungen:
+- $gamma_s > 0 degree$: Die Sonne steht über dem Horizont (Tag).
+- $gamma_s <= 0 degree$: Die Sonne steht unter dem Horizont (Nacht/Dämmerung).
+
+#block(inset: 8pt, fill: luma(240))[
+  *Relevanz für die Simulation:*
+  In der Prozesskette (Kapitel 5) dient die Prüfung $gamma_s > 0$ als erster Filter ("Early Exit"). Ist der Wert negativ, muss kein aufwendiges Raycasting durchgeführt werden, da keine direkte Verschattung möglich ist.
+]
+
+==== Sonnenazimut (Richtungswinkel) nach DIN 5034
+Der Sonnenazimut $alpha_s$ beschreibt die horizontale Himmelsrichtung der Sonne. In Übereinstimmung mit der Norm *DIN 5034-1* (Abschnitt 3.18) und geodätischen Standards ist der Bezugspunkt die *geografische Nordrichtung*. Der Winkel wird im Uhrzeigersinn von $0 degree$ (Nord) bis $360 degree$ gemessen.
+
+Damit gelten folgende Hauptrichtungen:
+- Nord: $0 degree$ / $360 degree$
+- Ost: $90 degree$
+- Süd: $180 degree$
+- West: $270 degree$
+
+Die Berechnung erfolgt in zwei Schritten. Zunächst wird ein temporärer Winkel $alpha'_s$ relativ zum Süden (Solar-Azimut) bestimmt, wie er in solarthermischen Algorithmen üblich ist:
+
+$ alpha'_s = arccos(frac(sin(gamma_s) dot sin(phi) - sin(delta), cos(gamma_s) dot cos(phi))) $
+
+Anschließend erfolgt die Transformation in das Nord-bezogene Koordinatensystem (0..360°) unter Berücksichtigung des Stundenwinkels $omega$:
+
+$ alpha_s = cases(
+  180 degree - alpha'_s & "für" omega < 0 " (Vormittag: Ost-Sektor)",
+  180 degree + alpha'_s & "für" omega >= 0 " (Nachmittag: West-Sektor)"
+) $
+
+#block(inset: 8pt, fill: luma(240))[
+  *Vorteil für die Simulation:*
+  Diese Definition (Nord = $0 degree$, im Uhrzeigersinn) entspricht exakt dem Koordinatensystem gängiger 3D-Software und GIS-Daten (z. B. BlenderCompass), was die geometrische Transformation der Vektoren im "Proof of Concept" (Kapitel 5) erheblich vereinfacht, da keine zusätzliche Rotation notwendig ist.
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 === 2.1.2 Geometrie der Verschattung
 - Fremdverschattung: Durch Nachbargebäude oder Topografie (statisch).
@@ -314,7 +415,7 @@ Es stellt sich die Frage, wie die Verschattungsdaten sinnvoll in die Programme f
 == Fallback-Strategien
 // Was passiert, wenn die Simulationsdaten fehlen oder fehlerhaft sind?
 
-= Proof of Concept Verschattungssimulation
+= Proof of Concept Verschattungssimulation <Chapter5>
 
 = Diskussion und Fazit
 == Zusammenfassung der Ergebnisse
