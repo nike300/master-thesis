@@ -130,9 +130,9 @@ Das übergeordnete Ziel dieser Arbeit ist die Entwicklung einer durchgängigen P
 
 Um die technische Machbarkeit und den praktischen Nutzen dieses Ansatzes zu validieren, verfolgt die Arbeit folgende Teilziele:
 
-1.  **Analyse der Schnittstellen:** Identifikation der notwendigen Datenpunkte und Formate auf Basis der VDI 3814 (Gebäudeautomation) und IFC (Industry Foundation Classes).
-2.  **Entwicklung eines Proof of Concept (PoC):** Implementierung eines prototypischen Simulations-Workflows unter Verwendung von Open-Source-Technologien (Blender, Python). Dieser Prototyp soll demonstrieren, wie geometrische Verschattungsdaten automatisiert aus einem IFC-Modell extrahiert, berechnet und in ein maschinenlesbares Format für Automationsstationen überführt werden können.
-3.  **Ableitung von Handlungsempfehlungen:** Erstellung eines Leitfadens für Fachplaner und Systemintegratoren, der die notwendigen Datenanforderungen und Prüfschritte für die Inbetriebnahme beschreibt.
+1.  *Analyse der Schnittstellen:* Identifikation der notwendigen Datenpunkte und Formate auf Basis der VDI 3814 (Gebäudeautomation) und IFC (Industry Foundation Classes).
+2.  *Entwicklung eines Proof of Concept (PoC):* Implementierung eines prototypischen Simulations-Workflows unter Verwendung von Open-Source-Technologien (Blender, Python). Dieser Prototyp soll demonstrieren, wie geometrische Verschattungsdaten automatisiert aus einem IFC-Modell extrahiert, berechnet und in ein maschinenlesbares Format für Automationsstationen überführt werden können.
+3.  *Ableitung von Handlungsempfehlungen:* Erstellung eines Leitfadens für Fachplaner und Systemintegratoren, der die notwendigen Datenanforderungen und Prüfschritte für die Inbetriebnahme beschreibt.
 
 Die Arbeit schließt somit die Lücke zwischen theoretischem Simulationspotenzial und praktischer Anwendung, indem sie nicht nur das "Was", sondern durch den softwaretechnischen Demonstrator auch das "Wie" der Integration beantwortet.
 == Aufbau der Arbeit
@@ -156,23 +156,17 @@ Die vorliegende Arbeit gliedert sich in sieben Kapitel, die den Prozess von der 
 In diesem Kapitel werden die astronomischen und geometrischen Gesetzmäßigkeiten hergeleitet, die für die Berechnung des Schattenwurfs maßgeblich sind. Zudem erfolgt eine Klassifizierung der aktorischen Komponenten und der zu optimierenden Zielgrößen.
 
 === Sonnenbahnmechanik
-
-
-Guck mal hier das Bild (@SonnenstandWinkelbezeichnung)
-
-- Begriffsdefinitionen: Azimut ($alpha$) und Elevation ($gamma$).
-- Vektorbasierte Darstellung: Definition des Sonnenstandsvektors $vec(S)$, da dieser später in Blender für das Raycasting benötigt wird.
+Für eine exakte Verschattungssimulation muss die Position der Sonne bekannt sein. Im Folgenden werden die Berechnungsgrundlagen für die Wahre Ortszeit, den Stundenwinkel sowie für Deklination, Höhenwinkel und Azimut dargelegt (siehe @fig-sonne).
 
 #figure(
   image("assets/SonnenstandWinkelbezeichnung.png", width: 60%),
   caption: [
     Winkelbezeichnungen des Sonnenstandes @Quaschning
   ],
-)<SonnenstandWinkelbezeichnung>
-
+)<fig-sonne>
 
 ==== Wahre Ortszeit
-Wie Duffie und Beckman @Duffie2013 herleiten, sind für die Berechnung der Wahren Ortszeit (WOZ) folgende Parameter notwendig:
+Wie Duffie und Beckman @Duffie2013 herleiten, sind für die Berechnung der Wahren Ortszeit ($t_"WOZ"$) folgende Parameter notwendig:
 
 - $t_"std"$: Gesetzliche Ortszeit (Local Standard Time) in Stunden.
 - $n$: Tag des Jahres (1 bis 365).
@@ -180,17 +174,17 @@ Wie Duffie und Beckman @Duffie2013 herleiten, sind für die Berechnung der Wahre
 - $lambda_"std"$: Bezugslängengrad der Zeitzone (z. B. $15 degree$ für MEZ).
 - $E$: Zeitgleichung (Equation of Time) in Minuten.
 
-Die Wahre Ortszeit $t_"WOZ"$ berechnet sich wie folgt #footnote[Vorzeichenkonvention gemäß ISO 6709 (Ost positiv). Duffie/Beckman verwenden hier invertierte Vorzeichen (West positiv).]:
+Die Wahre Ortszeit berechnet sich wie folgt #footnote[Vorzeichenkonvention gemäß ISO 6709 (Ost positiv). Duffie/Beckman verwenden hier invertierte Vorzeichen (West positiv).]:
 
-$ t_"WOZ" = t_"std" + 4 dot (lambda_"loc" - lambda_"std") + E $
+$ t_"WOZ" = t_"std" + frac(4 dot (lambda_"loc" - lambda_"std") + E, 60) $
 
-Die Zeitgleichung $E$ korrigiert die Unregelmäßigkeiten der Erdbahn (Ellipsenform und Neigung):
+Der Divisor 60 ist notwendig, um die Zeitkorrekturen (Minuten) in das Format der Basiszeit (Stunden) zu überführen. Die Zeitgleichung $E$ (in Minuten) wird angenähert durch:
 
-$ B &= (n - 1) dot frac(360, 365) \
-E &= 229.18 dot (0.000075 + 0.001868 cos(B) - 0.032077 sin(B) \
+$ E &= 229.18 dot (0.000075 + 0.001868 cos(B) - 0.032077 sin(B) \
   &- 0.014615 cos(2B) - 0.040849 sin(2B)) $
 
-Der Term $4 dot (lambda_"loc" - lambda_"std")$ resultiert aus der Erdrotation: Die Erde dreht sich um $15 degree$ pro Stunde, was $4 "min"/degree$ entspricht. Dieser Korrekturfaktor ist statisch für einen Gebäudestandort, während $E$ sich täglich ändert.
+mit dem Hilfswinkel $B$:
+$ B &= (n - 1) dot frac(360, 365) $
 
 ==== Stundenwinkel ($omega$)
 Um die zeitliche Komponente in die geometrische Berechnung einzuführen, wird die Wahre Ortszeit ($t_"WOZ"$) in den Stundenwinkel $omega$ umgerechnet. Da die Erde sich um $15 degree$ pro Stunde dreht, gilt:
@@ -199,12 +193,11 @@ $ omega = (t_"WOZ" - 12) dot 15 degree $
 
 Dabei entspricht $omega = 0 degree$ dem solaren Mittag (Sonne exakt im Süden). Vormittagswerte sind negativ, Nachmittagswerte positiv.
 
-==== Sonnendeklination 
- $delta$ ist der Winkel zwischen der Verbindungslinie Erde-Sonne und der Äquatorebene. Sie ist also die Neigung der Erde in Relation zur Sonne und variiert im Jahresverlauf zwischen $-23,45 degree$ (Wintersonnenwende) und $+23,45 degree$ (Sommersonnenwende).
+==== Sonnendeklination ($delta$)
+$delta$ ist der Winkel zwischen der Verbindungslinie Erde-Sonne und der Äquatorebene. Sie beschreibt die Neigung der Erde in Relation zur Sonne und variiert im Jahresverlauf zwischen $-23,45 degree$ und $+23,45 degree$.
 
-Für die Bestimmung der Sonnenposition wird in dieser Arbeit das Berechnungsverfahren gemäß der aktuellen europäischen Norm *DIN EN 17037* (Tageslicht in Gebäuden) angewendet @dinen17037.
-
-Die Sonnendeklination $delta$ wird hierbei als winkelabhängige Fourier-Reihe in Grad ($degree$) berechnet. Ausgangsbasis ist die Tageszahl $J$ (1 für 1. Januar bis 365 für 31. Dezember) und der daraus abgeleitete Jahreswinkel $J'$:
+Für die Bestimmung der Sonnenposition wird das Berechnungsverfahren gemäß DIN EN 17037 (Tageslicht in Gebäuden) angewendet @dinen17037.
+Ausgangsbasis für die Sonnendeklination $delta$ ist die Tageszahl $J$ (1 für 1. Januar bis 365 für 31. Dezember) und der daraus abgeleitete Jahreswinkel $J'$:
 
 $ J' = 360 degree dot frac(J, 365) $
 
@@ -217,11 +210,11 @@ $ delta(J) &= 0.3948 \
 
 #block(inset: 8pt, fill: luma(240))[
   *Hinweis zur Implementierung:*
-  Die Koeffizienten der DIN-Formel liefern das Ergebnis in Grad. Für die geometrische Weiterverarbeitung im Simulationsmodell (siehe @Chapter5[Kapitel]) erfolgt eine Umrechnung in das Bogenmaß (Radiant).
+  Die Koeffizienten liefern das Ergebnis in Grad. Für die geometrische Weiterverarbeitung im Simulationsmodell (siehe @Chapter5[Kapitel]) erfolgt eine Umrechnung in das Bogenmaß (Radiant).
 ]
 
-==== Sonnenhöhenwinkel (Elevation)
-Der Sonnenhöhenwinkel $gamma_s$ beschreibt den vertikalen Winkel zwischen der horizontalen Ebene und dem Mittelpunkt der Sonnenscheibe. Er ist maßgeblich für die effektive Einstrahlung auf Fassadenflächen sowie für die Berechnung der Schattenlängen.
+==== Sonnenhöhenwinkel ($gamma_s$)
+Der Sonnenhöhenwinkel beschreibt den vertikalen Winkel zwischen der horizontalen Ebene und dem Mittelpunkt der Sonnenscheibe. Er ist maßgeblich für die effektive Einstrahlung auf Fassadenflächen sowie für die Berechnung der Schattenlängen.
 
 Basierend auf dem geografischen Breitengrad $phi$, der zuvor berechneten Deklination $delta$ und dem Stundenwinkel $omega$ ergibt sich der Höhenwinkel aus der grundlegenden Gleichung der sphärischen Astronomie:
 
@@ -240,29 +233,19 @@ Dabei gelten folgende Randbedingungen:
   In der Prozesskette (Kapitel 5) dient die Prüfung $gamma_s > 0$ als erster Filter ("Early Exit"). Ist der Wert negativ, muss kein aufwendiges Raycasting durchgeführt werden, da keine direkte Verschattung möglich ist.
 ]
 
-==== Sonnenazimut (Richtungswinkel) nach DIN 5034
-Der Sonnenazimut $alpha_s$ beschreibt die horizontale Himmelsrichtung der Sonne. In Übereinstimmung mit der Norm *DIN 5034-1* (Abschnitt 3.18) und geodätischen Standards ist der Bezugspunkt die *geografische Nordrichtung*. Der Winkel wird im Uhrzeigersinn von $0 degree$ (Nord) bis $360 degree$ gemessen.
+==== Sonnenazimut ($alpha_s$)
+Der Sonnenazimut beschreibt die horizontale Himmelsrichtung der Sonne. In Übereinstimmung mit der Norm DIN 5034-1 ist der Bezugspunkt die geografische Nordrichtung. Der Winkel wird im Uhrzeigersinn von $0 degree$ (Nord) bis $360 degree$ gemessen.
 
-Damit gelten folgende Hauptrichtungen:
-- Nord: $0 degree$ / $360 degree$
-- Ost: $90 degree$
-- Süd: $180 degree$
-- West: $270 degree$
-
-Die Berechnung erfolgt in zwei Schritten. Zunächst wird ein temporärer Winkel $alpha'_s$ relativ zum Süden (Solar-Azimut) bestimmt, wie er in solarthermischen Algorithmen üblich ist:
-
-$ alpha'_s = arccos(frac(sin(gamma_s) dot sin(phi) - sin(delta), cos(gamma_s) dot cos(phi))) $
-
-Anschließend erfolgt die Transformation in das Nord-bezogene Koordinatensystem (0..360°) unter Berücksichtigung des Stundenwinkels $omega$:
+Die Berechnung erfolgt abhängig von der Wahren Ortszeit @Quaschning:
 
 $ alpha_s = cases(
-  180 degree - alpha'_s & "für" omega < 0 " (Vormittag: Ost-Sektor)",
-  180 degree + alpha'_s & "für" omega >= 0 " (Nachmittag: West-Sektor)"
+  180 degree - arccos(frac(sin(gamma_s) dot sin(phi) - sin(delta), cos(gamma_s) dot cos(phi))) & "für" t_"WOZ" <= 12,
+  180 degree + arccos(frac(sin(gamma_s) dot sin(phi) - sin(delta), cos(gamma_s) dot cos(phi))) & "für" t_"WOZ" > 12
 ) $
 
 #block(inset: 8pt, fill: luma(240))[
   *Vorteil für die Simulation:*
-  Diese Definition (Nord = $0 degree$, im Uhrzeigersinn) entspricht exakt dem Koordinatensystem gängiger 3D-Software und GIS-Daten (z. B. BlenderCompass), was die geometrische Transformation der Vektoren im "Proof of Concept" (Kapitel 5) erheblich vereinfacht, da keine zusätzliche Rotation notwendig ist.
+  Diese Definition (Nord = $0 degree$, im Uhrzeigersinn) entspricht dem Koordinatensystem gängiger 3D-Software und GIS-Daten.
 ]
 
 
@@ -282,10 +265,57 @@ $ alpha_s = cases(
 
 
 
-=== 2.1.2 Geometrie der Verschattung
-- Fremdverschattung: Durch Nachbargebäude oder Topografie (statisch).
-- Eigenverschattung: Durch Fassadenvorsprünge oder Laibungen (statisch).
-- Mathematische Grundlagen: Kurze Einführung in die Projektionsberechnung (Schnittpunkt Gerade mit Ebene), um die Brücke zur späteren Raycasting-Methode zu schlagen.
+=== Geometrie der Verschattung
+Nachdem die Position der Sonne bestimmt wurde, muss im nächsten Schritt geprüft werden, ob die direkte Sichtlinie zwischen einem betrachteten Punkt auf der Fassade (z. B. Fenstermittelpunkt) und der Sonne durch Hindernisse unterbrochen wird.
+
+==== Der Sonnenvektor
+Für die geometrische Simulation in 3D-Umgebungen ist die sphärische Darstellung (Winkel) oft unpraktisch. Stattdessen wird die Sonnenposition als normierter Richtungsvektor $vec(S)$ im kartesischen Koordinatensystem definiert. 
+
+Unter der Annahme eines Z-up-Koordinatensystems (z. B. in IFC-Modellen üblich, $Z$ zeigt zum Zenit, $Y$ nach Norden) berechnet sich der Sonnenvektor aus Azimut $alpha_s$ und Elevation $gamma_s$:
+
+$ vec(S) = mat(
+  sin(alpha_s) dot cos(gamma_s);
+  cos(alpha_s) dot cos(gamma_s);
+  sin(gamma_s)
+) $
+
+Dieser Vektor zeigt vom Ursprung zur Sonne. Für die Verschattungsberechnung wird der Vektor invertiert ($-vec(S)$), um die Einstrahlungsrichtung zu simulieren.
+
+==== Klassifizierung der Verschattungstypen
+Man unterscheidet in der Simulation zwei wesentliche Ursachen für den Schattenwurf:
+
+- *Fremdverschattung:* Verursacht durch Objekte außerhalb der eigenen Gebäudehülle, wie Nachbarbebauung, Vegetation oder Topografie. Diese Geometrien sind im Betrieb statisch, müssen aber im digitalen Modell (IFC/CityGML) präzise abgebildet sein.
+- *Eigenverschattung:* Verursacht durch die Gebäudegeometrie selbst, z. B. durch Fassadenvorsprünge, Balkone oder die Laibungstiefe des Fensters. Besonders die Laibungstiefe spielt bei steilen Sonnenständen eine kritische Rolle für das Vorausschauen des effektiven Lichteintrag.
+
+==== Das Raycasting-Verfahren
+Zur Ermittlung des Verschattungsstatus wird in modernen Simulationstools das *Raycasting* (Strahlenverfolgung) eingesetzt. Dabei wird ein theoretischer Sehstrahl $R(t)$ vom Referenzpunkt $P_0$ (z. B. Fenstermitte) in Richtung der Sonne gesendet:
+
+$ R(t) = P_0 + t dot vec(S) quad "mit" t > 0 $
+
+Der Algorithmus prüft, ob dieser Strahl ein beliebiges Polygon der Umgebungsszene (Mesh) schneidet (Intersection Test).
+
+$ S_"status" = cases(
+  1 & "wenn Schnittpunkt existiert (Schatten)",
+  0 & "wenn kein Schnittpunkt existiert (Sonne)"
+) $
+
+Für eine differenzierte Betrachtung (z. B. "50% verschattet") wird die Fensterfläche in ein Raster aus Sub-Punkten unterteilt (Sampling). Der Verschattungsgrad $F_s$ ergibt sich dann aus dem Verhältnis der verschatteten Punkte $n_"schatten"$ zur Gesamtpunktzahl $N$:
+
+$ F_s = frac(n_"schatten", N) $
+
+==== Erweiterung: Raytracing und Reflexionen
+Während das Raycasting primär die binäre Sichtbarkeit (Schatten/Sonne) prüft, erweitert das *Raytracing* dieses Prinzip um die rekursive Verfolgung von Lichtstrahlen nach deren Interaktion mit Oberflächen.
+
+Dies ist relevant für die Simulation von:
+- *Spiegelungen:* Zusätzlicher Energieeintrag durch reflektierende Glasfassaden gegenüberliegender Gebäude.
+- *Diffuse Streuung:* Aufhellung von Räumen durch helle Umgebungsflächen.
+
+Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung dar:
+1.  *Rechenaufwand:* Die Komplexität steigt mit der Anzahl der "Bounces" (Lichtsprünge) exponentiell an.
+2.  *Datenqualität:* Für eine korrekte Berechnung sind physikalische Materialparameter (Reflexionsgrad, Rauheit) im gesamten 3D-Modell notwendig, die in der Praxis oft fehlen (siehe Kapitel ???).
+
+*Abgrenzung für diese Arbeit:*
+???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in Standard-IFC-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (Kapitel 5) auf das geometrische *Raycasting*. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (Kapitel 7) diskutiert.
 
 === 2.1.3 Klassifizierung steuerbarer Sonnenschutzsysteme
 - Systeme mit einem Freiheitsgrad (z. B. Rollläden, Screens): Variable Position $h$ (0-100%).
