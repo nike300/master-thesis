@@ -86,29 +86,6 @@ Nutzen für Nutzer:
 === Energetischer Nutzen
 === Lichtnutzen
 
-== Mathematische Grundlagen und solare Geometrie
-=== Solarkonstante und Globalstrahlung
-=== Sonnenstand
-=== Berechnungsgrundlagen der Sonnenposition
-
-Für die algorithmische Bestimmung der Verschattungsposition ist die Transformation von der lokalen Zeit $t_("loc")$ in die Wahre Ortszeit ($t_("WOZ")$) notwendig. Die Korrektur erfolgt unter Berücksichtigung der Zeitgleichung $E$ und der geographischen Länge $lambda$:
-
-$ t_("WOZ") = t_("loc") + E + 4 dot (lambda - lambda_("ref")) $
-
-Wobei $lambda_("ref")$ den Referenzmeridian der Zeitzone beschreibt. Die Berechnung der Sonnenhöhe $gamma_s$ erfolgt anschließend über sphärische Trigonometrie:
-
-$ sin(gamma_s) = sin(phi) dot sin(delta) + cos(phi) dot cos(delta) dot cos(omega) $
-
-Hierbei stehen:
-- $phi$ für die geographische Breite des Standorts
-- $delta$ für die Deklination der Sonne
-- $omega$ für den Stundenwinkel
-
-Für die praktische Implementierung in der Gebäudeautomation wird in dieser Arbeit der Algorithmus nach Grena (source) verwendet, da dieser eine für die Ansteuerung von Jalousieaktoren hinreichende Genauigkeit bei reduzierter Rechenkomplexität bietet.
-=== Winkel der Sonnenstrahlung
-=== Berechnung der Verschattungswirkung
-für tageslichtnutzung muss nichts berechnet werden, da man einfach über einen Helligkeitssensor geht. Es wäre allerdings theoretisch möglich mithilfe von mathematischen Modellen die Strahlung zu berechnen, um damit das licht zu steuern oder???
-
 = Einleitung
 == Problemstellung
 // Diskrepanz zwischen Planung (Simulation) und Realisierung (Automation).
