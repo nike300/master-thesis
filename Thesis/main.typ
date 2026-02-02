@@ -280,7 +280,7 @@ Für eine differenzierte Betrachtung (z. B. "50% verschattet") wird die Fensterf
 
 $ F_s = frac(n_"schatten", N) $
 
-==== Erweiterung: Raytracing und Reflexionen
+==== Raytracing und Reflexionen
 Während das Raycasting primär die binäre Sichtbarkeit (Schatten/Sonne) prüft, erweitert das *Raytracing* dieses Prinzip um die rekursive Verfolgung von Lichtstrahlen nach deren Interaktion mit Oberflächen.
 
 Dies ist relevant für die Simulation von:
@@ -289,7 +289,7 @@ Dies ist relevant für die Simulation von:
 
 Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung dar:
 1.  *Rechenaufwand:* Die Komplexität steigt mit der Anzahl der "Bounces" (Lichtsprünge) exponentiell an.
-2.  *Datenqualität:* Für eine korrekte Berechnung sind physikalische Materialparameter (Reflexionsgrad, Rauheit) im gesamten 3D-Modell notwendig, die in der Praxis oft fehlen (siehe Kapitel ???).
+2.  *Datenqualität:* Für eine "korrekte Berechnung sind physikalische Materialparameter (Reflexionsgrad, Rauheit) im gesamten 3D-Modell notwendig, die in der Praxis oft fehlen (siehe Kapitel ???).
 
 *Abgrenzung für diese Arbeit:*
 ???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in Standard-IFC-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (Kapitel 5) auf das geometrische *Raycasting*. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (Kapitel 7) diskutiert.
