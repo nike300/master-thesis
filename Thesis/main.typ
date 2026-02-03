@@ -86,224 +86,37 @@ Nutzen für Nutzer:
 === Energetischer Nutzen
 === Lichtnutzen
 
-= Einleitung
-== Problemstellung
-// Diskrepanz zwischen Planung (Simulation) und Realisierung (Automation).
-//Die Gebäudeautomation hat ein Problem bei der Simulation und Integration von Verschattungsberechnungen in Gebäuden: Der Engineering-Aufwand ist sehr hoch... Da in der Zukunft allerdings immer weniger personelle Ressourcen zur Verfügung stehen werden und der Sonnenschutz im Zuge des Klimawandels eine immer bedeutendere Rolle einnehmen wird, ist es notwendig die gesamte Prozesskette neu zu betrachten. Es gilt, integrierte Lösungen zu finden, damit der Datenfluss vom Gebäudemodell des Architekten bis hin zur Systemintegration
-//  der Verschattungsdaten gut funktioniert. 
+== Mathematische Grundlagen und solare Geometrie
+=== Solarkonstante und Globalstrahlung
+=== Sonnenstand
+=== Berechnungsgrundlagen der Sonnenposition
 
-Die Steuerung automatisierter Fassadensysteme erfolgt in der heutigen Gebäudepraxis überwiegend reaktiv auf Basis lokaler Sensorik. Helligkeits- und Strahlungssensoren erfassen den Ist-Zustand der Umgebung, können jedoch komplexe geometrische Situationen wie den Schattenwurf durch Nachbarbebauung oder die Eigenverschattung der Fassade nur unzureichend abbilden. Dies führt im Betrieb häufig zu ineffizienten Fahrbewegungen der Behänge, die weder den visuellen Komfort noch den sommerlichen Wärmeschutz optimal bedienen.
+Für die algorithmische Bestimmung der Verschattungsposition ist die Transformation von der lokalen Zeit $t_("loc")$ in die Wahre Ortszeit ($t_("WOZ")$) notwendig. Die Korrektur erfolgt unter Berücksichtigung der Zeitgleichung $E$ und der geographischen Länge $lambda$:
 
-Um diese Defizite auszugleichen, bieten moderne softwaregestützte Methoden die Möglichkeit, den Schattenwurf präzise vorauszuberechnen. Die praktische Anwendung scheitert jedoch derzeit an massiven Ineffizienzen innerhalb der digitalen Prozesskette, die sich sowohl in der Datenbeschaffung als auch in der Datenverwertung manifestieren.
+$ t_("WOZ") = t_("loc") + E + 4 dot (lambda - lambda_("ref")) $
 
-Ein vorgelagertes Hindernis besteht in der mangelnden Simulationsfähigkeit der architektonischen Ausgangsdaten. Zwar liegen zunehmend digitale Bauwerksmodelle (BIM) vor, diese sind jedoch häufig für visuelle oder konstruktive Zwecke optimiert und entsprechen nicht den Anforderungen einer geometrischen Verschattungssimulation. Inkonsistente Geometrien, fehlende semantische Informationen oder ein unpassender Detaillierungsgrad (Level of Information Need) erzwingen eine zeitintensive manuelle Aufbereitung und Bereinigung der Modelle, bevor eine Berechnung überhaupt möglich ist.
-
-Das nachgelagerte Problem betrifft die fehlende Prozessdefinition für die Datenintegration der Ergebnisse: Selbst wenn validierte Simulationsdaten vorliegen, existiert kein standardisierter Workflow, um diese ohne manuellen Mehraufwand direkt in die Steuerungslogik der Raumautomation zu überführen. Der derzeitige Engineering-Prozess sieht in der Regel nicht vor, dass die Simulationssoftware bereits das finale Datenformat für die Automationsstation bereitstellt.
-
-Angesichts sinkender personeller Ressourcen im Engineering und der steigenden Notwendigkeit, Gebäude klimaresilient zu betreiben, stellen diese Medienbrüche an beiden Enden der Simulationsphase ein kritisches Hemmnis dar. Es ist daher notwendig, die Prozesskette ganzheitlich zu betrachten und Lösungen zu entwickeln, die den Datenfluss vom Gebäudemodell des Architekten bis hin zur Systemintegration der Verschattungsdaten durchgängig und aufwandsarm gestalten.
-== Zielsetzung
-// Entwicklung einer durchgängigen Prozesskette (Data Workflow).
-Das übergeordnete Ziel dieser Arbeit ist die Entwicklung einer durchgängigen Prozesskette zur Integration dynamischer Verschattungssimulationen in die Gebäudeautomation. Es soll ein strukturierter Workflow definiert werden, der den Informationsfluss von der digitalen Planung (BIM) bis zur operativen Steuerungsebene der Raumautomation automatisiert und standardisiert.
-
-Um die technische Machbarkeit und den praktischen Nutzen dieses Ansatzes zu validieren, verfolgt die Arbeit folgende Teilziele:
-
-1.  *Analyse der Schnittstellen:* Identifikation der notwendigen Datenpunkte und Formate auf Basis der VDI 3814 (Gebäudeautomation) und IFC (Industry Foundation Classes).
-2.  *Entwicklung eines Proof of Concept (PoC):* Implementierung eines prototypischen Simulations-Workflows unter Verwendung von Open-Source-Technologien (Blender, Python). Dieser Prototyp soll demonstrieren, wie geometrische Verschattungsdaten automatisiert aus einem IFC-Modell extrahiert, berechnet und in ein maschinenlesbares Format für Automationsstationen überführt werden können.
-3.  *Ableitung von Handlungsempfehlungen:* Erstellung eines Leitfadens für Fachplaner und Systemintegratoren, der die notwendigen Datenanforderungen und Prüfschritte für die Inbetriebnahme beschreibt.
-
-Die Arbeit schließt somit die Lücke zwischen theoretischem Simulationspotenzial und praktischer Anwendung, indem sie nicht nur das "Was", sondern durch den softwaretechnischen Demonstrator auch das "Wie" der Integration beantwortet.
-== Aufbau der Arbeit
-Die vorliegende Arbeit gliedert sich in sieben Kapitel, die den Prozess von der theoretischen Analyse bis zur praktischen Validierung abbilden.
-
-*Kapitel 2* legt die theoretischen Grundlagen. Hier werden die physikalischen Prinzipien der dynamischen Jahresverschattung erläutert sowie die relevanten Standards der digitalen Planung (BIM, IFC) und der Gebäudeautomation (VDI 3814, BACnet) definiert. Ein besonderer Fokus liegt auf der Diskrepanz zwischen geometrischer Simulation und operativer Steuerungstechnik.
-
-*Kapitel 3* analysiert den Informationsbedarf vor der Simulation (Phase 1). Es wird untersucht, welche geometrischen und semantischen Anforderungen an digitale Bauwerksmodelle gestellt werden müssen, um eine automatisierte Weiterverarbeitung zu ermöglichen. Dabei werden Kriterien wie der Detaillierungsgrad (LOD) und die Qualität der Umgebungsdaten betrachtet.
-
-*Kapitel 4* widmet sich den Anforderungen an die Simulationsergebnisse (Phase 2). Ziel ist die Definition einer standardisierten Schnittstelle, die festlegt, welche Steuergrößen (z. B. Lamellenwinkel, Verschattungsgrad) in welcher zeitlichen und räumlichen Auflösung an die Automation übergeben werden müssen.
-
-*Kapitel 5* bildet den Kern der Arbeit und beschreibt die Konzeption und prototypische Umsetzung des Integrationsprozesses (Phase 3). Auf Basis der erarbeiteten Anforderungen wird ein Workflow entwickelt, der unter Verwendung von Open-Source-Technologien (Blender, Python) die Extraktion, Berechnung und den Export der Verschattungsdaten demonstriert.
-
-*Kapitel 6* leitet aus den Erkenntnissen des Prototyps konkrete Handlungsempfehlungen für die Inbetriebnahme ab. Es werden Prüfmechanismen und Checklisten vorgestellt, die Systemintegratoren bei der Validierung externer Simulationsdaten unterstützen.
-
-*Kapitel 7* fasst die Ergebnisse zusammen, diskutiert die Limitationen des entwickelten Ansatzes und gibt einen Ausblick auf weiterführende Forschungsfelder im Bereich der adaptiven Fassadensteuerung.
-
-= Theoretische Grundlagen
-== Physikalische und geometrische Grundlagen
-
-In diesem Kapitel werden die astronomischen und geometrischen Gesetzmäßigkeiten hergeleitet, die für die Berechnung des Schattenwurfs maßgeblich sind. Zudem erfolgt eine Klassifizierung der aktorischen Komponenten und der zu optimierenden Zielgrößen.
-
-=== Sonnenbahnmechanik
-Für eine exakte Verschattungssimulation muss die Position der Sonne bekannt sein. Im Folgenden werden die Berechnungsgrundlagen für die Wahre Ortszeit, den Stundenwinkel sowie für Deklination, Höhenwinkel und Azimut dargelegt (siehe @fig-sonne).
-
-#figure(
-  image("assets/SonnenstandWinkelbezeichnung.png", width: 60%),
-  caption: [
-    Winkelbezeichnungen des Sonnenstandes @Quaschning
-  ],
-)<fig-sonne>
-
-==== Wahre Ortszeit
-Wie Duffie und Beckman @Duffie2013 herleiten, sind für die Berechnung der Wahren Ortszeit ($t_"WOZ"$) folgende Parameter notwendig:
-
-- $t_"std"$: Gesetzliche Ortszeit (Local Standard Time) in Stunden.
-- $n$: Tag des Jahres (1 bis 365).
-- $lambda_"loc"$: Geografischer Längengrad des Standorts (in Grad).
-- $lambda_"std"$: Bezugslängengrad der Zeitzone (z. B. $15 degree$ für MEZ).
-- $E$: Zeitgleichung (Equation of Time) in Minuten.
-
-Die Wahre Ortszeit berechnet sich wie folgt #footnote[Vorzeichenkonvention gemäß ISO 6709 (Ost positiv). Duffie/Beckman verwenden hier invertierte Vorzeichen (West positiv).]:
-
-$ t_"WOZ" = t_"std" + frac(4 dot (lambda_"loc" - lambda_"std") + E, 60) $
-
-Der Divisor 60 ist notwendig, um die Zeitkorrekturen (Minuten) in das Format der Basiszeit (Stunden) zu überführen. Die Zeitgleichung $E$ (in Minuten) wird angenähert durch:
-
-$ E &= 229.18 dot (0.000075 + 0.001868 cos(B) - 0.032077 sin(B) \
-  &- 0.014615 cos(2B) - 0.040849 sin(2B)) $
-
-mit dem Hilfswinkel $B$:
-$ B &= (n - 1) dot frac(360, 365) $
-
-==== Stundenwinkel ($omega$)
-Um die zeitliche Komponente in die geometrische Berechnung einzuführen, wird die Wahre Ortszeit ($t_"WOZ"$) in den Stundenwinkel $omega$ umgerechnet. Da die Erde sich um $15 degree$ pro Stunde dreht, gilt:
-
-$ omega = (t_"WOZ" - 12) dot 15 degree $
-
-Dabei entspricht $omega = 0 degree$ dem solaren Mittag (Sonne exakt im Süden). Vormittagswerte sind negativ, Nachmittagswerte positiv.
-
-==== Sonnendeklination ($delta$)
-$delta$ ist der Winkel zwischen der Verbindungslinie Erde-Sonne und der Äquatorebene. Sie beschreibt die Neigung der Erde in Relation zur Sonne und variiert im Jahresverlauf zwischen $-23,45 degree$ und $+23,45 degree$.
-
-Für die Bestimmung der Sonnenposition wird das Berechnungsverfahren gemäß DIN EN 17037 (Tageslicht in Gebäuden) angewendet @dinen17037.
-Ausgangsbasis für die Sonnendeklination $delta$ ist die Tageszahl $J$ (1 für 1. Januar bis 365 für 31. Dezember) und der daraus abgeleitete Jahreswinkel $J'$:
-
-$ J' = 360 degree dot frac(J, 365) $
-
-Die Deklination $delta(J)$ ergibt sich gemäß Gleichung D.3 der Norm:
-
-$ delta(J) &= 0.3948 \
-  &- 23.2559 dot cos(J' + 9.1 degree) \
-  &- 0.3915 dot cos(2 dot J' + 5.4 degree) \
-  &- 0.1764 dot cos(3 dot J' + 26.0 degree) $ <deklinationsgleichung>
-
-#block(inset: 8pt, fill: luma(240))[
-  *Hinweis zur Implementierung:*
-  Die Koeffizienten liefern das Ergebnis in Grad. Für die geometrische Weiterverarbeitung im Simulationsmodell (siehe @Chapter5[Kapitel]) erfolgt eine Umrechnung in das Bogenmaß (Radiant).
-]
-
-==== Sonnenhöhenwinkel ($gamma_s$)
-Der Sonnenhöhenwinkel beschreibt den vertikalen Winkel zwischen der horizontalen Ebene und dem Mittelpunkt der Sonnenscheibe. Er ist maßgeblich für die effektive Einstrahlung auf Fassadenflächen sowie für die Berechnung der Schattenlängen.
-
-Basierend auf dem geografischen Breitengrad $phi$, der zuvor berechneten Deklination $delta$ und dem Stundenwinkel $omega$ ergibt sich der Höhenwinkel aus der grundlegenden Gleichung der sphärischen Astronomie:
+Wobei $lambda_("ref")$ den Referenzmeridian der Zeitzone beschreibt. Die Berechnung der Sonnenhöhe $gamma_s$ erfolgt anschließend über sphärische Trigonometrie:
 
 $ sin(gamma_s) = sin(phi) dot sin(delta) + cos(phi) dot cos(delta) dot cos(omega) $
 
-Durch Umstellung nach $gamma_s$ erhält man den expliziten Winkel:
+Hierbei stehen:
+- $phi$ für die geographische Breite des Standorts
+- $delta$ für die Deklination der Sonne
+- $omega$ für den Stundenwinkel
 
-$ gamma_s = arcsin(sin(phi) dot sin(delta) + cos(phi) dot cos(delta) dot cos(omega)) $
+Für die praktische Implementierung in der Gebäudeautomation wird in dieser Arbeit der Algorithmus nach Grena (source) verwendet, da dieser eine für die Ansteuerung von Jalousieaktoren hinreichende Genauigkeit bei reduzierter Rechenkomplexität bietet.
+=== Winkel der Sonnenstrahlung
+=== Berechnung der Verschattungswirkung
+für tageslichtnutzung muss nichts berechnet werden, da man einfach über einen Helligkeitssensor geht. Es wäre allerdings theoretisch möglich mithilfe von mathematischen Modellen die Strahlung zu berechnen, um damit das licht zu steuern oder???
 
-Dabei gelten folgende Randbedingungen:
-- $gamma_s > 0 degree$: Die Sonne steht über dem Horizont (Tag).
-- $gamma_s <= 0 degree$: Die Sonne steht unter dem Horizont (Nacht/Dämmerung).
+= Einleitung
+== Problemstellung
+// Diskrepanz zwischen Planung (Simulation) und Realisierung (Automation).
+== Zielsetzung
+// Entwicklung einer durchgängigen Prozesskette (Data Workflow).
+== Forschungsfrage
 
-#block(inset: 8pt, fill: luma(240))[
-  *Relevanz für die Simulation:*
-  In der Prozesskette (Kapitel 5) dient die Prüfung $gamma_s > 0$ als erster Filter ("Early Exit"). Ist der Wert negativ, muss kein aufwendiges Raycasting durchgeführt werden, da keine direkte Verschattung möglich ist.
-]
-
-==== Sonnenazimut ($alpha_s$)
-Der Sonnenazimut beschreibt die horizontale Himmelsrichtung der Sonne. In Übereinstimmung mit der Norm DIN 5034-1 ist der Bezugspunkt die geografische Nordrichtung. Der Winkel wird im Uhrzeigersinn von $0 degree$ (Nord) bis $360 degree$ gemessen.
-
-Die Berechnung erfolgt abhängig von der Wahren Ortszeit @Quaschning:
-
-$ alpha_s = cases(
-  180 degree - arccos(frac(sin(gamma_s) dot sin(phi) - sin(delta), cos(gamma_s) dot cos(phi))) & "für" t_"WOZ" <= 12,
-  180 degree + arccos(frac(sin(gamma_s) dot sin(phi) - sin(delta), cos(gamma_s) dot cos(phi))) & "für" t_"WOZ" > 12
-) $
-
-#block(inset: 8pt, fill: luma(240))[
-  *Vorteil für die Simulation:*
-  Diese Definition (Nord = $0 degree$, im Uhrzeigersinn) entspricht dem Koordinatensystem gängiger 3D-Software und GIS-Daten.
-]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-=== Geometrie der Verschattung
-Nachdem die Position der Sonne bestimmt wurde, muss im nächsten Schritt geprüft werden, ob die direkte Sichtlinie zwischen einem betrachteten Punkt auf der Fassade (z. B. Fenstermittelpunkt) und der Sonne durch Hindernisse unterbrochen wird.
-
-==== Der Sonnenvektor
-Für die geometrische Simulation in 3D-Umgebungen ist die sphärische Darstellung (Winkel) oft unpraktisch. Stattdessen wird die Sonnenposition als normierter Richtungsvektor $vec(S)$ im kartesischen Koordinatensystem definiert. 
-
-Unter der Annahme eines Z-up-Koordinatensystems (z. B. in IFC-Modellen üblich, $Z$ zeigt zum Zenit, $Y$ nach Norden) berechnet sich der Sonnenvektor aus Azimut $alpha_s$ und Elevation $gamma_s$:
-
-$ vec(S) = mat(
-  sin(alpha_s) dot cos(gamma_s);
-  cos(alpha_s) dot cos(gamma_s);
-  sin(gamma_s)
-) $
-
-Dieser Vektor zeigt vom Ursprung zur Sonne. Für die Verschattungsberechnung wird der Vektor invertiert ($-vec(S)$), um die Einstrahlungsrichtung zu simulieren.
-
-==== Klassifizierung der Verschattungstypen
-Man unterscheidet in der Simulation zwei wesentliche Ursachen für den Schattenwurf:
-
-- *Fremdverschattung:* Verursacht durch Objekte außerhalb der eigenen Gebäudehülle, wie Nachbarbebauung, Vegetation oder Topografie. Diese Geometrien sind im Betrieb statisch, müssen aber im digitalen Modell (IFC/CityGML) präzise abgebildet sein.
-- *Eigenverschattung:* Verursacht durch die Gebäudegeometrie selbst, z. B. durch Fassadenvorsprünge, Balkone oder die Laibungstiefe des Fensters. Besonders die Laibungstiefe spielt bei steilen Sonnenständen eine kritische Rolle für das Vorausschauen des effektiven Lichteintrag.
-
-==== Das Raycasting-Verfahren
-Zur Ermittlung des Verschattungsstatus wird in modernen Simulationstools das *Raycasting* (Strahlenverfolgung) eingesetzt. Dabei wird ein theoretischer Sehstrahl $R(t)$ vom Referenzpunkt $P_0$ (z. B. Fenstermitte) in Richtung der Sonne gesendet:
-
-$ R(t) = P_0 + t dot vec(S) quad "mit" t > 0 $
-
-Der Algorithmus prüft, ob dieser Strahl ein beliebiges Polygon der Umgebungsszene (Mesh) schneidet (Intersection Test).
-
-$ S_"status" = cases(
-  1 & "wenn Schnittpunkt existiert (Schatten)",
-  0 & "wenn kein Schnittpunkt existiert (Sonne)"
-) $
-
-Für eine differenzierte Betrachtung (z. B. "50% verschattet") wird die Fensterfläche in ein Raster aus Sub-Punkten unterteilt (Sampling). Der Verschattungsgrad $F_s$ ergibt sich dann aus dem Verhältnis der verschatteten Punkte $n_"schatten"$ zur Gesamtpunktzahl $N$:
-
-$ F_s = frac(n_"schatten", N) $
-
-==== Raytracing und Reflexionen
-Während das Raycasting primär die binäre Sichtbarkeit (Schatten/Sonne) prüft, erweitert das *Raytracing* dieses Prinzip um die rekursive Verfolgung von Lichtstrahlen nach deren Interaktion mit Oberflächen.
-
-Dies ist relevant für die Simulation von:
-- *Spiegelungen:* Zusätzlicher Energieeintrag durch reflektierende Glasfassaden gegenüberliegender Gebäude.
-- *Diffuse Streuung:* Aufhellung von Räumen durch helle Umgebungsflächen.
-
-Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung dar:
-1.  *Rechenaufwand:* Die Komplexität steigt mit der Anzahl der "Bounces" (Lichtsprünge) exponentiell an.
-2.  *Datenqualität:* Für eine "korrekte Berechnung sind physikalische Materialparameter (Reflexionsgrad, Rauheit) im gesamten 3D-Modell notwendig, die in der Praxis oft fehlen (siehe Kapitel ???).
-
-*Abgrenzung für diese Arbeit:*
-???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in Standard-IFC-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (Kapitel 5) auf das geometrische *Raycasting*. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (Kapitel 7) diskutiert.
-
-=== 2.1.3 Klassifizierung steuerbarer Sonnenschutzsysteme
-- Systeme mit einem Freiheitsgrad (z. B. Rollläden, Screens): Variable Position $h$ (0-100%).
-- Systeme mit zwei Freiheitsgraden (z. B. Raffstore/Jalousien): Variablen Position $h$ und Lamellenwinkel $lambda$.
-- Relevanz für die Automation: Je komplexer das System, desto wichtiger ist die präzise Simulation des Winkels.
-
-=== 2.1.4 Bauphysikalische und lichttechnische Zielgrößen
-- Sommerlicher Wärmeschutz (Energieeintrag minimieren).
-- Visueller Komfort (Blendung vermeiden).
-- Tageslichtautonomie (Kunstlicht minimieren).
-- Konfliktpotenzial: Erläuterung der konkurrierenden Ziele (z. B. Blendschutz vs. Tageslicht) und warum eine dynamische Simulation hier besser ist als eine starre Regelung.
+= Theoretische Grundlagen
 == Dynamische Jahresverschattung
 Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel von Energieeffizienz und Nutzerkomfort.
 #let definition(title, body) = {
@@ -416,17 +229,23 @@ Es stellt sich die Frage, wie die Verschattungsdaten sinnvoll in die Programme f
 // Werden Tabellen in die SPS geladen oder Parameter fest parametriert?
 
 = Handlungsempfehlung für die Inbetriebnahme (Reduziert)
-// Statt "Betrieb" fokussieren wir uns auf den "Handover".
+// Statt "Betrieb" fokusieren wir uns auf den "Handover".
 == Checkliste für den Systemintegrator
 // Wie prüft man, ob die importierten Daten plausibel sind? (Sanity Check).
 == Fallback-Strategien
 // Was passiert, wenn die Simulationsdaten fehlen oder fehlerhaft sind?
 
-= Proof of Concept Verschattungssimulation <Chapter5>
+= POC
+== Import Umgebungsdaten
+== Import IFC
+== Positionierung IFC
+Problem der Georeferenzierung. Ungenauigkeit. Eine Verschiebung um 50 cm oder eine Drehung um 1 Grad kann bei einem Hochhaus dazu führen, dass der Schattenwurf in 100 m Entfernung um Meter falsch berechnet wird. Das ist ein wichtiger Punkt für deine "Diskussion der Ergebnisse".
+- Schwierig höhe z richtig zu bekommmen
+- Bereinigung von Redundanzen im Kontextmodell (Bestehendes Gebäude aus OSM löschen)
 
 = Diskussion und Fazit
 == Zusammenfassung der Ergebnisse
-== Grenzen und Limitierungen
+== Grenzen des entwickelten Prozesses
 == Ausblick
 
 = Literaturverzeichnis
