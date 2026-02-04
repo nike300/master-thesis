@@ -242,7 +242,14 @@ Es stellt sich die Frage, wie die Verschattungsdaten sinnvoll in die Programme f
 Problem der Georeferenzierung. Ungenauigkeit. Eine Verschiebung um 50 cm oder eine Drehung um 1 Grad kann bei einem Hochhaus dazu führen, dass der Schattenwurf in 100 m Entfernung um Meter falsch berechnet wird. Das ist ein wichtiger Punkt für deine "Diskussion der Ergebnisse".
 - Schwierig höhe z richtig zu bekommmen
 - Bereinigung von Redundanzen im Kontextmodell (Bestehendes Gebäude aus OSM löschen)
-
+- Mittelpunkt fenster setzen in blender
+- Style blocker benutzen
+- Problem: Simulation dauert sehr lange für Gebäude
+  - Lösungsoptionen: 
+  - vlt. Umgebungsdaten eingrenzen
+  - vlt. 
+- Problem Fenster sind random benannt
+  - Lösung:
 = Diskussion und Fazit
 == Zusammenfassung der Ergebnisse
 == Grenzen des entwickelten Prozesses

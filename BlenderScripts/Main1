@@ -1,0 +1,147 @@
+import bpy
+import os
+import time
+
+# --- KONFIGURATION ------------------------------------------------
+DESKTOP_PATH = os.path.join(os.path.expanduser("~"), "Desktop")
+OUTPUT_FILE = os.path.join(DESKTOP_PATH, "verschattungs_matrix.csv")
+
+OBSTACLE_COLLECTION = "map_6.osm_buildings" 
+SUN_OBJECT_NAME = "Sun"
+WINDOW_KEYWORD = "IfcWindow" 
+
+SIMULATION_DATES = [(21, 6), (21, 12)] # Sommer und Winter
+START_HOUR = 15
+END_HOUR = 15
+YEAR = 2024
+# ------------------------------------------------------------------
+
+def run_matrix_simulation():
+    start_time = time.time()
+    print("=" * 60)
+    print("STARTE MATRIX-SIMULATION (WIDE FORMAT)")
+    print("=" * 60)
+
+    # 1. Ressourcen laden
+    sun = bpy.data.objects.get(SUN_OBJECT_NAME)
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    
+    # Wir filtern: Muss "IfcWindow" heißen, aber darf NICHT "Style" heißen
+    sensors = [obj for obj in bpy.context.scene.objects 
+               if WINDOW_KEYWORD in obj.name 
+               and "Style" not in obj.name 
+               and obj.type == 'MESH']
+    
+    # Sortieren für bessere Lesbarkeit in der CSV (z.B. nach Name)
+    sensors.sort(key=lambda x: x.name)
+    
+    print(f"Anzahl Sensoren: {len(sensors)}")
+
+    # Hindernisse cachen
+    obstacles = set()
+    if OBSTACLE_COLLECTION in bpy.data.collections:
+        for o in bpy.data.collections[OBSTACLE_COLLECTION].objects:
+            obstacles.add(o.name)
+
+    # 2. Datenstruktur vorbereiten
+    # Wir brauchen ein Dictionary: { "FensterName": [Wert_8Uhr, Wert_9Uhr, ...] }
+    # Wir nutzen .get("BMKZ", s.name), d.h. wenn kein BMKZ da ist, nimm den alten Namen als Fallback
+    sensor_data = {s.get("BMKZ", s.name): [] for s in sensors}
+    
+    # Liste für die Spaltenüberschriften (Zeitstempel)
+    time_headers = []
+
+    # 3. Simulations-Loop (Zeitgesteuert)
+    sp = bpy.context.scene.sun_pos_properties
+    sp.year = YEAR
+    
+    total_steps = len(SIMULATION_DATES) * (END_HOUR - START_HOUR + 1)
+    current_step = 0
+
+    print("Berechne Verschattung...")
+
+    for day, month in SIMULATION_DATES:
+        for hour in range(START_HOUR, END_HOUR + 1):
+            current_step += 1
+            if current_step % 5 == 0:
+                print(f"Zeitschritt {current_step}/{total_steps} ({day}.{month}. {hour}:00 Uhr)")
+
+            # Header für diese Spalte speichern (z.B. "21.6._08:00")
+            col_name = f"{day}.{month}._{hour:02d}:00"
+            time_headers.append(col_name)
+
+            # Sonne einstellen
+            sp.day = day
+            sp.month = month
+            sp.time = float(hour)
+            bpy.context.view_layer.update()
+
+            sun_loc = sun.matrix_world.translation
+            is_night = sun_loc.z < 0
+
+            # Optimierung: Wenn Nacht, müssen wir gar nicht raycasten
+            if is_night:
+                for s in sensors:
+                    sensor_data[s.name].append("0") # Nacht = Keine Sonne (aber auch kein Schattenwurf)
+                continue
+
+            # Raycasting Loop
+            for sensor in sensors:
+                # Standardwert: 0 (Sonne)
+                result_val = "0"
+                
+                # Geometrie Daten
+                start_loc = sensor.matrix_world.translation
+                sun_vec = (sun_loc - start_loc)
+                direction = sun_vec.normalized()
+                
+                # Check 1: Backface Culling (Zeigt Fenster weg von Sonne?)
+                sensor_rot = sensor.matrix_world.to_3x3()
+                # Annahme: Y ist Normale (IFC Standard). Ggf. anpassen auf Z!
+                normal = sensor_rot @ bpy.data.objects[sensor.name].data.polygons[0].normal
+                
+                if direction.dot(normal) < -0.1:
+                    result_val = "1" # Selbstverschattung/Rückseite als 'Schatten' werten
+                else:
+                    # Check 2: Raycast
+                    hit, _, _, _, hit_obj, _ = bpy.context.scene.ray_cast(
+                        depsgraph,
+                        start_loc + (direction * 0.1),
+                        direction,
+                        distance=sun_vec.length
+                    )
+                    if hit and (hit_obj.name in obstacles):
+                        result_val = "1"
+
+# ALTE (FEHLERHAFTE) ZEILE:
+            # sensor_data[sensor.name].append(result_val) <--- Das verursacht den Fehler!
+
+            # NEUE (KORREKTE) VARIANTE:
+            # Wir holen uns wieder den BMKZ-Key, genau wie oben bei der Erstellung
+            dict_key = sensor.get("BMKZ", sensor.name)
+            
+            # Sicherheits-Check: Falls der Key warum auch immer nicht im Dict ist
+            if dict_key in sensor_data:
+                sensor_data[dict_key].append(result_val)
+            else:
+                print(f"WARNUNG: Kein Eintrag für {dict_key} gefunden!")
+
+    # 4. Schreiben der Matrix-CSV
+    print("Schreibe CSV-Datei...")
+    with open(OUTPUT_FILE, "w") as f:
+        # 1. Zeile: Header (SensorID ; Zeit1 ; Zeit2 ; ...)
+        header_line = "SensorID;" + ";".join(time_headers) + "\n"
+        f.write(header_line)
+        
+        # Folgende Zeilen: Daten pro Fenster
+        for sensor_name in sensor_data:
+            # Zeile bauen: Name ; Wert1 ; Wert2 ; ...
+            values = sensor_data[sensor_name]
+            line = f"{sensor_name};" + ";".join(values) + "\n"
+            f.write(line)
+
+    duration = time.time() - start_time
+    print(f"FERTIG in {duration:.2f} Sekunden.")
+    print(f"Datei gespeichert: {OUTPUT_FILE}")
+
+run_matrix_simulation()
