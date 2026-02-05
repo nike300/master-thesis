@@ -1,0 +1,166 @@
+import bpy
+import os
+import time
+import datetime  # <--- WICHTIG: Das Modul für die Datumsberechnung
+
+# --- KONFIGURATION ------------------------------------------------
+DESKTOP_PATH = os.path.join(os.path.expanduser("~"), "Desktop")
+OUTPUT_FILE = os.path.join(DESKTOP_PATH, "verschattung_final_dst.csv")
+
+OBSTACLE_COLLECTION = "map_6.osm_buildings" 
+SUN_OBJECT_NAME = "Sun"
+WINDOW_KEYWORD = "IfcWindow" 
+
+# Zeit-Einstellungen
+SIMULATION_DATES = [(21, 6), (21, 12)] 
+START_HOUR = 6
+END_HOUR = 20
+MINUTES_STEP = 60 # Für Test auf 60, später auf 15 stellen
+YEAR = 2024
+# ------------------------------------------------------------------
+
+# Diese Funktion steht auf Ebene 0 (ganz links)
+def get_last_sunday(year, month):
+    """Findet den letzten Sonntag eines Monats im gegebenen Jahr."""
+    if month == 12:
+        next_month = datetime.date(year + 1, 1, 1)
+    else:
+        next_month = datetime.date(year, month + 1, 1)
+    
+    last_day_of_month = next_month - datetime.timedelta(days=1)
+    offset = (last_day_of_month.weekday() + 1) % 7
+    last_sunday = last_day_of_month - datetime.timedelta(days=offset)
+    
+    return last_sunday
+
+def run_final_simulation():
+    start_time = time.time()
+    print("=" * 60)
+    print("STARTE SORTIERTE MATRIX-SIMULATION MIT SOMMERZEIT")
+    print("=" * 60)
+
+    # 1. Ressourcen
+    sun = bpy.data.objects.get(SUN_OBJECT_NAME)
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    
+    # 2. Sensoren finden und sortieren
+    raw_sensors = [obj for obj in bpy.context.scene.objects 
+                   if WINDOW_KEYWORD in obj.name 
+                   and "Style" not in obj.name 
+                   and obj.type == 'MESH']
+    
+    # Sortierung nach BMKZ
+    print(f"Sortiere {len(raw_sensors)} Fenster...")
+    raw_sensors.sort(key=lambda x: x.get("BMKZ", x.name))
+    sensors = raw_sensors 
+    
+    # Datenspeicher vorbereiten
+    results = [ [] for _ in sensors ]
+    time_headers = []
+
+    # 3. Hindernisse cachen
+    obstacles = set()
+    if OBSTACLE_COLLECTION in bpy.data.collections:
+        for o in bpy.data.collections[OBSTACLE_COLLECTION].objects:
+            obstacles.add(o.name)
+
+    # 4. Simulation Loop Vorbereitung
+    sp = bpy.context.scene.sun_pos_properties
+    sp.year = YEAR
+    
+    # Umschalt-Tage berechnen (außerhalb der Schleife)
+    dst_start_date = get_last_sunday(YEAR, 3)  # Letzter Sonntag März
+    dst_end_date = get_last_sunday(YEAR, 10)   # Letzter Sonntag Oktober
+    print(f"INFO: Sommerzeit {YEAR}: {dst_start_date} bis {dst_end_date}")
+
+    steps_per_day = int((END_HOUR - START_HOUR) * (60 / MINUTES_STEP)) + 1
+    total_steps = len(SIMULATION_DATES) * steps_per_day
+    current_step = 0
+
+    # 5. Die Hauptschleife
+    for day, month in SIMULATION_DATES:
+        
+        # --- SOMMERZEIT CHECK ---
+        # Wir prüfen für jeden simulierten Tag, ob er in der Sommerzeit liegt
+        current_date_obj = datetime.date(YEAR, month, day)
+        
+        if dst_start_date <= current_date_obj < dst_end_date:
+            sp.utc_zone = 2.0
+            tz_label = "Sommerzeit (UTC+2)"
+        else:
+            sp.utc_zone = 1.0
+            tz_label = "Winterzeit (UTC+1)"
+        # ------------------------
+
+        # Minuten-Schleife
+        for total_minutes in range(START_HOUR * 60, (END_HOUR * 60) + 1, MINUTES_STEP):
+            
+            hour = total_minutes // 60
+            minute = total_minutes % 60
+            time_val = hour + (minute / 60.0)
+            
+            current_step += 1
+            if current_step % 10 == 0:
+                print(f"Fortschritt: {current_step}/{total_steps} ({day}.{month}. {hour:02d}:{minute:02d} | {tz_label})")
+
+            col_name = f"{day}.{month}._{hour:02d}:{minute:02d}"
+            time_headers.append(col_name)
+
+            # Sonne setzen
+            sp.day = day
+            sp.month = month
+            sp.time = time_val
+            bpy.context.view_layer.update()
+
+            sun_loc = sun.matrix_world.translation
+            is_night = sun_loc.z < 0 
+
+            # Raycast Loop über alle Fenster
+            for i, sensor in enumerate(sensors):
+                val_to_write = "0" 
+                
+                if is_night:
+                    results[i].append("0")
+                    continue
+
+                # Vektoren
+                start_loc = sensor.matrix_world.translation
+                sun_vec = (sun_loc - start_loc)
+                direction = sun_vec.normalized()
+                dist = sun_vec.length
+
+                # Backface Culling
+                sensor_rot = sensor.matrix_world.to_3x3()
+                if len(sensor.data.polygons) > 0:
+                    normal = sensor_rot @ sensor.data.polygons[0].normal
+                    if direction.dot(normal) < -0.1:
+                        results[i].append("1") # Selbstverschattung
+                        continue
+                
+                # Raycast
+                hit, _, _, _, hit_obj, _ = bpy.context.scene.ray_cast(
+                    depsgraph,
+                    start_loc + (direction * 0.1),
+                    direction,
+                    distance=dist
+                )
+                
+                if hit and (hit_obj.name in obstacles):
+                    val_to_write = "1" 
+                
+                results[i].append(val_to_write)
+
+    # 6. Schreiben
+    print("Schreibe CSV...")
+    with open(OUTPUT_FILE, "w") as f:
+        f.write("SensorID;" + ";".join(time_headers) + "\n")
+        for i, sensor in enumerate(sensors):
+            row_name = sensor.get("BMKZ", sensor.name)
+            row_data = results[i]
+            f.write(f"{row_name};" + ";".join(row_data) + "\n")
+
+    duration = time.time() - start_time
+    print(f"FERTIG in {duration:.2f} Sekunden.")
+    print(f"Gespeichert unter: {OUTPUT_FILE}")
+
+run_final_simulation()
