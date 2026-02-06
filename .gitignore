@@ -1,0 +1,15 @@
+# Blender Backups ignorieren
+*.blend1
+*.blend2
+*.blend@
+
+# Python Cache ignorieren
+__pycache__/
+*.py[cod]
+
+# Aber ignoriere NICHT meine Python Skripte
+!*.py
+
+# Betriebssystem Müll
+.DS_Store
+Thumbs.db

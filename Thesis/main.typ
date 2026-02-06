@@ -242,14 +242,37 @@ Es stellt sich die Frage, wie die Verschattungsdaten sinnvoll in die Programme f
 Problem der Georeferenzierung. Ungenauigkeit. Eine Verschiebung um 50 cm oder eine Drehung um 1 Grad kann bei einem Hochhaus dazu führen, dass der Schattenwurf in 100 m Entfernung um Meter falsch berechnet wird. Das ist ein wichtiger Punkt für deine "Diskussion der Ergebnisse".
 - Schwierig höhe z richtig zu bekommmen
 - Bereinigung von Redundanzen im Kontextmodell (Bestehendes Gebäude aus OSM löschen)
-- Mittelpunkt fenster setzen in blender
-- Style blocker benutzen
-- Problem: Simulation dauert sehr lange für Gebäude
-  - Lösungsoptionen: 
-  - vlt. Umgebungsdaten eingrenzen
-  - vlt. 
-- Problem Fenster sind random benannt
-  - Lösung:
+= Zusammenfassung der Implementierungsänderungen und Fehlerbehebungen
+
+Im Rahmen der Entwicklung des Simulations-Setups wurden folgende methodische Anpassungen, Workflow-Optimierungen und Fehlerbehebungen durchgeführt:
+
+== 1. Fundamentaländerung der Simulations-Logik
+- *Abkehr von Geometrie-Checks:* Die Prüfung der _Face Normals_ (Flächenausrichtung) und das _Backface Culling_ wurden entfernt, da die IFC-Daten inkonsistent waren (z. B. invertierte Normalen).
+- *Reine Raycast-Physik:* Die Verschattung wird nun ausschließlich durch physikalische _Raycasts_ (Lichtstrahlen) ermittelt.
+- *Start-Offset:* Der Startpunkt des Strahls wurde um 20 cm (`direction * 0.2`) vom Fenster weg in Richtung Sonne verschoben, um Fehlkalkulationen durch das eigene Fensterglas zu verhindern.
+- *Globaler Kollisions-Check:* Die Beschränkung auf eine spezifische "Obstacle Collection" wurde aufgehoben. Der Strahl prüft nun gegen *jedes* Mesh-Objekt. Dies umfasst:
+  - Nachbargebäude
+  - Eigene Gebäudeteile (Balkone, Vorsprünge)
+  - Das Fenster selbst (Laibung/Rahmen bei steilem Sonnenwinkel)
+
+== 2. Datenstruktur & Output
+- *3-Status-Logik:* Anstelle einer binären Logik werden nun drei Zustände unterschieden:
+  - `0`: Sonne (Beschattung nötig)
+  - `1`: Schatten (Fremdverschattung oder Selbstverschattung)
+  - `2`: Nacht (Sonne unter Horizont)
+- *Detaillierte Analyse-Tools:* Implementierung des Skripts `AnalyzeActiveWindow.py`, welches spezifische Fenster untersucht und den Namen des Verursachers (z. B. "map_6_building_235" oder "SELBSTVERSCHATTUNG") in der CSV protokolliert.
+
+== 3. Workflow & Visualisierung
+- *VS Code Integration:* Umstellung vom internen Blender-Texteditor auf VS Code mit der "Blender Development"-Extension für professionelle Versionierung.
+- *Hybrid-Workflow:* Trennung von Code (Git Repository) und Assets (große `.blend`-Dateien in Cloud/Lokal), um Git-Limits zu umgehen.
+- *Visualisierung:* Erstellung eines Debug-Skripts zur Validierung, welches Raycasts als 3D-Linien (Rot/Grün) und Startpunkte (Blau) direkt im Viewport zeichnet.
+- *Schatten-Präzision:* Anpassung der Eevee-Render-Einstellungen (Sun Angle = $0 degree$, hohe Shadow Map Resolution), um visuelle Übereinstimmung mit den Raycast-Daten herzustellen.
+
+== 4. Bugfixes im Code
+- *Pfad-Management:* Umstellung auf relative Pfade mittels `os.path.dirname(__file__)` für Rechner-Unabhängigkeit. Output-Dateien werden nun automatisch im Ordner `../BlenderOutputs` abgelegt.
+- *Crash-Schutz:* Implementierung einer `try-except`-Logik bei der Pfadfindung, um Abstürze bei noch nicht gespeicherten Skripten zu verhindern (Fallback auf `.blend`-Dateipfad).
+- *Fortschrittsanzeige:* Korrektur der Modulo-Berechnung, sodass auch der letzte Simulationsschritt (100%) korrekt in der Konsole ausgegeben wird.
+
 = Diskussion und Fazit
 == Zusammenfassung der Ergebnisse
 == Grenzen des entwickelten Prozesses
