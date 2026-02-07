@@ -202,7 +202,12 @@ In städtischen Kontexten (Urban Canyons) wird der solare Ertrag maßgeblich dur
 
 // Detaillierungsgrad des 3D-Modells (LOD), Relevanz von Nachbargebäuden/Bäumen.
 - Umgebungsdaten
-- Gebäudedaten
+- Gebäudedaten (ifc) sollte haben:
+  - richtige labels für gebäudeteile (IFC-Window-Klasse)
+  - Nur Fassadenelemente
+  - Die Fensterflächen sollten richtig _Face Normals_ (Flächenausrichtung)? für backwards Culling
+  - Die Fenster sollten guten BMKZ haben
+  - Das Gebäude sollte auf der richtigen Z-Höhe sein
 
 == Meteorologische Daten
 // Wetterdatensätze (TRY - Test Reference Years), Strahlungsdaten.
