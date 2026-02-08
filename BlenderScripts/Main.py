@@ -110,8 +110,8 @@ def run_final_simulation():
             current_step += 1
             
             # --- FIX: Fortschrittsanzeige ---
-            # Zeige Fortschritt alle 10 Schritte ODER wenn es der allerletzte Schritt ist
-            if current_step % 10 == 0 or current_step == total_steps:
+            # Zeige Fortschritt alle 5 Schritte ODER wenn es der allerletzte Schritt ist
+            if current_step % 5 == 0 or current_step == total_steps:
                 print(f"Fortschritt: {current_step}/{total_steps} ({day}.{month}. {hour:02d}:{minute:02d} | {tz_label})")
 
             col_name = f"{day}.{month}._{hour:02d}:{minute:02d}"

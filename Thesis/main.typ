@@ -198,7 +198,7 @@ Die Fremdverschattung umfasst alle Hindernisse, die nicht Teil des betrachteten 
 Natürliche Erhebungen wie Hügel oder Berge verkürzen die effektive Sonnenscheindauer, indem sie den sichtbaren Horizont anheben. Vegetation (Bäume, Hecken) nimmt eine Sonderrolle ein: Während Nadelbäume als statische Hindernisse betrachtet werden können, variiert die Transparenz von Laubbäumen saisonal. Im Sommer bieten sie hohen Strahlungsschutz, im Winter lassen sie nach Laubabwurf mehr Licht und Wärme passieren.
 
 ==== Umliegende Bebauung
-In städtischen Kontexten (Urban Canyons) wird der solare Ertrag maßgeblich durch Nachbargebäude reduziert. Diese werfen Schlagschatten, die je nach Tages- und Jahreszeit über die Fassade wandern. Für die Gebäudeautomation ist dies relevant, da Sensoren am Dach möglicherweise Sonne registrieren, während das Erdgeschoss bereits im Schatten des Nachbarhauses liegt.
+In städtischen Kontexten wird der solare Ertrag maßgeblich durch Nachbargebäude reduziert. Diese werfen Schlagschatten, die je nach Tages- und Jahreszeit über die Fassade wandern. Für die Gebäudeautomation ist dies relevant, da Sensoren am Dach möglicherweise Sonne registrieren, während das Erdgeschoss bereits im Schatten des Nachbarhauses liegt.
 
 // Detaillierungsgrad des 3D-Modells (LOD), Relevanz von Nachbargebäuden/Bäumen.
 - Umgebungsdaten
@@ -208,6 +208,7 @@ In städtischen Kontexten (Urban Canyons) wird der solare Ertrag maßgeblich dur
   - Die Fensterflächen sollten richtig _Face Normals_ (Flächenausrichtung)? für backwards Culling
   - Die Fenster sollten guten BMKZ haben
   - Das Gebäude sollte auf der richtigen Z-Höhe sein
+  - Das Gebäude sollte nach Norden ausgerichtet sein
 
 == Meteorologische Daten
 // Wetterdatensätze (TRY - Test Reference Years), Strahlungsdaten.
@@ -242,11 +243,23 @@ Es stellt sich die Frage, wie die Verschattungsdaten sinnvoll in die Programme f
 
 = POC
 == Import Umgebungsdaten
+- überlegung zur auswahl der szene
+  - Gebäude im norden vom gebäude müssen nicht geladen werden, da sie nicht das gebäuude verschatten können
+  - bei sehr tiefliegender sonne sind auch weit entferne gebäude relevant
+  - niedrige gebäude sind nur für die niedrigen etagen interessant (vielleicht simulationen so aufsplitten?)
+- überlegung zur wahl des datenanbieter:
+  - osm ziemlich gut
+  - 3D-Tiles von google nicht mehr erlaubt in EU (https://developers.google.com/maps/comms/eea/map-tiles)
 == Import IFC
 == Positionierung IFC
 Problem der Georeferenzierung. Ungenauigkeit. Eine Verschiebung um 50 cm oder eine Drehung um 1 Grad kann bei einem Hochhaus dazu führen, dass der Schattenwurf in 100 m Entfernung um Meter falsch berechnet wird. Das ist ein wichtiger Punkt für deine "Diskussion der Ergebnisse".
 - Schwierig höhe z richtig zu bekommmen
 - Bereinigung von Redundanzen im Kontextmodell (Bestehendes Gebäude aus OSM löschen)
+== Validierung
+- Über webcam
+installiert auf dem nexttower (137m hoch) am Thurn-und-Taxis-Platz 
+21.06.25: 9:15
+- Über vororttest
 = Zusammenfassung der Implementierungsänderungen und Fehlerbehebungen
 
 Im Rahmen der Entwicklung des Simulations-Setups wurden folgende methodische Anpassungen, Workflow-Optimierungen und Fehlerbehebungen durchgeführt:
