@@ -210,10 +210,7 @@ In städtischen Kontexten wird der solare Ertrag maßgeblich durch Nachbargebäu
   - Das Gebäude sollte auf der richtigen Z-Höhe sein
   - Das Gebäude sollte nach Norden ausgerichtet sein
 
-== Meteorologische Daten
-// Wetterdatensätze (TRY - Test Reference Years), Strahlungsdaten.
-== Materialtechnische Parameter
-// Transmissionsgrade, Reflexionsgrade der Lamellen/Textilien.
+
 
 = Definition der Schnittstellenanforderungen (Phase 2: Simulationsergebnisse)
 // Was kommt aus der Simulation heraus?
@@ -224,24 +221,23 @@ In städtischen Kontexten wird der solare Ertrag maßgeblich durch Nachbargebäu
 == Anforderungen an das Datenformat für den Export
 // CSV, XML, IFC-Properties - was ist lesbar für die GA?
 
-= Konzeption der Integrationsprozesses (Phase 3: Der Workflow)
-// Das Kernstück deiner Arbeit: Wie kommen die Daten von Phase 2 in die Steuerung?
+= Konzeption des Integrationsprozesses (Phase 3: Nach der Simulation)
+// Wie kommen die Daten von Phase 2 in die Steuerung?
 == Prozessmodell für den Datenaustausch
 // Wer liefert wann was? (Rollen: Architekt -> Simulant -> Systemintegrator).
 == Daten-Mapping und Adressierung
 // Wie ordnet man den Simulationswert dem richtigen Aktor zu? (Naming Conventions, AKS/BKS).
-== Umgang mit dynamischen vs. statischen Daten
-Es stellt sich die Frage, wie die Verschattungsdaten sinnvoll in die Programme für die Behänge integriert werden.
-// Werden Tabellen in die SPS geladen oder Parameter fest parametriert?
-
-= Handlungsempfehlung für die Inbetriebnahme (Reduziert)
-// Statt "Betrieb" fokusieren wir uns auf den "Handover".
-== Checkliste für den Systemintegrator
-// Wie prüft man, ob die importierten Daten plausibel sind? (Sanity Check).
-== Fallback-Strategien
-// Was passiert, wenn die Simulationsdaten fehlen oder fehlerhaft sind?
+== Statische oder dynamische Daten?
+// Werden Tabellen in die SPS geladen oder sollte es eine kontinuierliche Datenverbindung geben?
+Vorteile von geladener Daten auf MBE-Ebene überwiegen.
+- Modell ist mittelfristig statisch (bis umliegende Bebauung sich ändert, bzw. die eigene Fassade angepasst wird)
+- Keine Datenverbindung zu externem System notwendig
+== Datenintegration in Steuerungslogik der Behänge
+Hier vlt. Flowchart oder Diagramm Funktionsblöcke von Steuerung der Behänge
 
 = POC
+// Vorstellung Four (Turm 1)
+Für das 
 == Import Umgebungsdaten
 - überlegung zur auswahl der szene
   - Gebäude im norden vom gebäude müssen nicht geladen werden, da sie nicht das gebäuude verschatten können
@@ -250,46 +246,28 @@ Es stellt sich die Frage, wie die Verschattungsdaten sinnvoll in die Programme f
 - überlegung zur wahl des datenanbieter:
   - osm ziemlich gut
   - 3D-Tiles von google nicht mehr erlaubt in EU (https://developers.google.com/maps/comms/eea/map-tiles)
+  - daten von stadt frankfurt?
 == Import IFC
-== Positionierung IFC
-Problem der Georeferenzierung. Ungenauigkeit. Eine Verschiebung um 50 cm oder eine Drehung um 1 Grad kann bei einem Hochhaus dazu führen, dass der Schattenwurf in 100 m Entfernung um Meter falsch berechnet wird. Das ist ein wichtiger Punkt für deine "Diskussion der Ergebnisse".
+Da die oben genannten Punkte zum Teil nicht erfüllt werden, musste beim Import der FOUR-IFC-Datei noch folgendes gemacht werden:
+-
+
+== Positionierung der IFC im Modell
+Problem der Georeferenzierung. Ungenauigkeit. Vertex Snapping
 - Schwierig höhe z richtig zu bekommmen
 - Bereinigung von Redundanzen im Kontextmodell (Bestehendes Gebäude aus OSM löschen)
-== Validierung
+
+== Die eigentliche Simulation
+=== Möglichkeiten der Simulationsoptimierung
+- Ohne Optimierung (760s)
+- Zusammenfügen von umliegenden Objekten 786s (Optimierungepotenzial bei -3,4%)
+- löschen von 80% der kleinen Häuser 764s
+- Mathe-Skript 793s
+== Validierung der Ergebnisse
 - Über webcam
 installiert auf dem nexttower (137m hoch) am Thurn-und-Taxis-Platz 
 21.06.25: 9:15
 - Über vororttest
-= Zusammenfassung der Implementierungsänderungen und Fehlerbehebungen
 
-Im Rahmen der Entwicklung des Simulations-Setups wurden folgende methodische Anpassungen, Workflow-Optimierungen und Fehlerbehebungen durchgeführt:
-
-== 1. Fundamentaländerung der Simulations-Logik
-- *Abkehr von Geometrie-Checks:* Die Prüfung der _Face Normals_ (Flächenausrichtung) und das _Backface Culling_ wurden entfernt, da die IFC-Daten inkonsistent waren (z. B. invertierte Normalen).
-- *Reine Raycast-Physik:* Die Verschattung wird nun ausschließlich durch physikalische _Raycasts_ (Lichtstrahlen) ermittelt.
-- *Start-Offset:* Der Startpunkt des Strahls wurde um 20 cm (`direction * 0.2`) vom Fenster weg in Richtung Sonne verschoben, um Fehlkalkulationen durch das eigene Fensterglas zu verhindern.
-- *Globaler Kollisions-Check:* Die Beschränkung auf eine spezifische "Obstacle Collection" wurde aufgehoben. Der Strahl prüft nun gegen *jedes* Mesh-Objekt. Dies umfasst:
-  - Nachbargebäude
-  - Eigene Gebäudeteile (Balkone, Vorsprünge)
-  - Das Fenster selbst (Laibung/Rahmen bei steilem Sonnenwinkel)
-
-== 2. Datenstruktur & Output
-- *3-Status-Logik:* Anstelle einer binären Logik werden nun drei Zustände unterschieden:
-  - `0`: Sonne (Beschattung nötig)
-  - `1`: Schatten (Fremdverschattung oder Selbstverschattung)
-  - `2`: Nacht (Sonne unter Horizont)
-- *Detaillierte Analyse-Tools:* Implementierung des Skripts `AnalyzeActiveWindow.py`, welches spezifische Fenster untersucht und den Namen des Verursachers (z. B. "map_6_building_235" oder "SELBSTVERSCHATTUNG") in der CSV protokolliert.
-
-== 3. Workflow & Visualisierung
-- *VS Code Integration:* Umstellung vom internen Blender-Texteditor auf VS Code mit der "Blender Development"-Extension für professionelle Versionierung.
-- *Hybrid-Workflow:* Trennung von Code (Git Repository) und Assets (große `.blend`-Dateien in Cloud/Lokal), um Git-Limits zu umgehen.
-- *Visualisierung:* Erstellung eines Debug-Skripts zur Validierung, welches Raycasts als 3D-Linien (Rot/Grün) und Startpunkte (Blau) direkt im Viewport zeichnet.
-- *Schatten-Präzision:* Anpassung der Eevee-Render-Einstellungen (Sun Angle = $0 degree$, hohe Shadow Map Resolution), um visuelle Übereinstimmung mit den Raycast-Daten herzustellen.
-
-== 4. Bugfixes im Code
-- *Pfad-Management:* Umstellung auf relative Pfade mittels `os.path.dirname(__file__)` für Rechner-Unabhängigkeit. Output-Dateien werden nun automatisch im Ordner `../BlenderOutputs` abgelegt.
-- *Crash-Schutz:* Implementierung einer `try-except`-Logik bei der Pfadfindung, um Abstürze bei noch nicht gespeicherten Skripten zu verhindern (Fallback auf `.blend`-Dateipfad).
-- *Fortschrittsanzeige:* Korrektur der Modulo-Berechnung, sodass auch der letzte Simulationsschritt (100%) korrekt in der Konsole ausgegeben wird.
 
 = Diskussion und Fazit
 == Zusammenfassung der Ergebnisse
