@@ -239,14 +239,16 @@ Hier vlt. Flowchart oder Diagramm Funktionsblöcke von Steuerung der Behänge
 // Vorstellung Four (Turm 1)
 Für das 
 == Import Umgebungsdaten
-- überlegung zur auswahl der szene
-  - Gebäude im norden vom gebäude müssen nicht geladen werden, da sie nicht das gebäuude verschatten können
-  - bei sehr tiefliegender sonne sind auch weit entferne gebäude relevant
-  - niedrige gebäude sind nur für die niedrigen etagen interessant (vielleicht simulationen so aufsplitten?)
-- überlegung zur wahl des datenanbieter:
+  === Überlegung zur wahl des datenanbieter:
   - osm ziemlich gut
   - 3D-Tiles von google nicht mehr erlaubt in EU (https://developers.google.com/maps/comms/eea/map-tiles)
   - daten von stadt frankfurt?
+
+=== überlegung zur auswahl der szene
+  - Gebäude im norden vom gebäude müssen nicht geladen werden, da sie nicht das gebäuude verschatten können
+  - bei sehr tiefliegender sonne sind auch weit entferne gebäude relevant
+  - niedrige gebäude sind nur für die niedrigen etagen interessant (vielleicht simulationen so aufsplitten?)
+
 == Import IFC
 Da die oben genannten Punkte zum Teil nicht erfüllt werden, musste beim Import der FOUR-IFC-Datei noch folgendes gemacht werden:
 -
@@ -263,10 +265,8 @@ Problem der Georeferenzierung. Ungenauigkeit. Vertex Snapping
 - löschen von 80% der kleinen Häuser 764s
 - Mathe-Skript 793s
 == Validierung der Ergebnisse
-- Über webcam
-installiert auf dem nexttower (137m hoch) am Thurn-und-Taxis-Platz 
-21.06.25: 9:15
-- Über vororttest
+- Über webcam (installiert auf dem nexttower (137m hoch) am Thurn-und-Taxis-Platz 21.06.25; 9:15
+- Vorort mit Helligkeitssensoren in Fenstern?
 
 
 = Diskussion und Fazit
