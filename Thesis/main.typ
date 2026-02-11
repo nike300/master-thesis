@@ -259,6 +259,7 @@ Problem der Georeferenzierung. Ungenauigkeit. Vertex Snapping
 - Bereinigung von Redundanzen im Kontextmodell (Bestehendes Gebäude aus OSM löschen)
 
 == Die eigentliche Simulation
+Entweder mit Simulation im Hintergrund (anscheinend kaputt) oder mit Mathe Simulation
 === Möglichkeiten der Simulationsoptimierung
 - Ohne Optimierung (760s)
 - Zusammenfügen von umliegenden Objekten 786s (Optimierungepotenzial bei -3,4%)

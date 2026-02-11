@@ -28,7 +28,7 @@ WINDOW_KEYWORD = "IfcWindow"
 # Zeit-Einstellungen
 SIMULATION_DATES = [(5, 2)] 
 START_HOUR = 6
-END_HOUR = 20
+END_HOUR = 12
 MINUTES_STEP = 60 # Für Test auf 60, später auf 15 stellen
 YEAR = 2026
 # ------------------------------------------------------------------
