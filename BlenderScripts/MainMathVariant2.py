@@ -112,7 +112,7 @@ except:
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "verschattung_final_dst_math_optimized.csv")
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, "verschattung_math_var2.csv")
 print(f"Ziel-Datei: {OUTPUT_FILE}")
 # ------------------------------------------------------------------
 
@@ -218,31 +218,43 @@ def run_final_simulation():
 
             time_headers.append(f"{day}.{month}._{hour:02d}:{minute:02d}")
 
-            # NACHT-SKIP
+# ... (dieser Teil steht IN der Zeitschleife nach der Berechnung von sun_vec_direction) ...
+
+            # 1. NACHT-CHECK (-2)
             if is_night:
                 for res_list in results:
-                    res_list.append("2")
+                    res_list.append("-2") # Nacht
                 continue 
 
-            # RAYCAST LOOP
+            # 2. RAYCAST LOOP
             for i, sensor in enumerate(sensors):
                 
-                # --- BACKFACE CULLING (Jetzt mit korrekten Normalen) ---
-                # Wir holen die vorberechnete Normale aus der Liste
+                # Normale holen (Pre-Calculated Liste nutzen!)
                 normal = sensor_normals[i]
                 
-                # Dot Product:
-                # > 0: Sonne scheint von vorne (Winkel < 90°)
-                # <= 0: Sonne scheint von hinten (Winkel > 90°) -> Schatten
+                # Dot Product berechnen
+                # > 0: Sonne scheint auf die Vorderseite
+                # <= 0: Sonne scheint auf die Rückseite
+                dot = sun_vec_direction.dot(normal)
                 
-                if sun_vec_direction.dot(normal) <= 0:
-                     results[i].append("1")
+                # --- BACKFACE CULLING (Rückseite - "-3") ---
+                if dot <= 0:
+                     # Die Sonne ist "hinter" der Scheibe.
+                     # Du wolltest "0", aber Vorsicht: 0° wäre auch perfekter Frontal-Einschlag!
+                     results[i].append("-3") 
                      continue
-                # -------------------------------------------------------
 
+                # --- WINKEL BERECHNEN (Wenn Sonne auf Vorderseite) ---
+                # Da beide Vektoren (sun_vec & normal) die Länge 1 haben, gilt:
+                # Winkel = arccos(dot_product)
+                # Wir begrenzen dot auf 1.0 (wegen float-Ungenauigkeiten > 1.0000001)
+                dot_clamped = min(dot, 1.0)
+                angle_rad = math.acos(dot_clamped)
+                angle_deg = math.degrees(angle_rad) # Ergebnis z.B. 45.3 Grad
+
+                # --- RAYCAST (Fremdverschattung prüfen) ---
                 start_loc = sensor.matrix_world.translation
                 direction = sun_vec_direction
-                # Offset etwas erhöhen auf 30cm, um sicher zu gehen
                 ray_start = start_loc + (direction * 0.3) 
 
                 hit, _, _, _, hit_obj, _ = bpy.context.scene.ray_cast(
@@ -250,9 +262,12 @@ def run_final_simulation():
                 )
                 
                 if hit and hit_obj.type == 'MESH':
-                    results[i].append("1")
+                    # --- FREMDVERSCHATTET (-1) ---
+                    results[i].append("-1")
                 else:
-                    results[i].append("0")
+                    # --- SONNE PUR (Winkel eintragen) ---
+                    # Wir speichern den Winkel als String mit 1 Nachkommastelle
+                    results[i].append(f"{angle_deg:.1f}")
 
     # Schreiben
     print("Schreibe CSV...")
