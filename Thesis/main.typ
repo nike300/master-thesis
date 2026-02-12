@@ -251,20 +251,6 @@ $ alpha_s = cases(
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 === Geometrie der Verschattung
 Nachdem die Position der Sonne bestimmt wurde, muss im nächsten Schritt geprüft werden, ob die direkte Sichtlinie zwischen einem betrachteten Punkt auf der Fassade (z. B. Fenstermittelpunkt) und der Sonne durch Hindernisse unterbrochen wird.
 
