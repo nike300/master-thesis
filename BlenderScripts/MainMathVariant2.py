@@ -128,7 +128,7 @@ YEAR = 2026
 
 # Koordinaten Frankfurt (Four)
 LATITUDE = 50.11
-LONGITUDE = 8.68
+LONGITUDE = 8.674
 # ------------------------------------------------------------------
 
 def run_final_simulation():

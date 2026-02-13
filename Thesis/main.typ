@@ -67,6 +67,7 @@ Parallel dazu steht die Komfortsteigerung für die Nutzer im Fokus. Ein effektiv
   - Blendschutz
   - Thermischer Komfort
 - Privatsphäre
+- Minderung der Lichtverschmutzung
 
 "Das Ziel ist dabei immer, die Tageslichtausbeute im Raum bei minimaler Blendung zu maximieren und gleichzeitig ein unnötiges Aufheizen des Raumes zu verhindern" https://gebaeudedigital.de/schwerpunkt/licht-und-schatten/sonnenschutz-und-licht-zusammen-gedacht/
 
@@ -458,6 +459,13 @@ Problem der Georeferenzierung. Ungenauigkeit. Vertex Snapping
 
 == Die eigentliche Simulation
 Entweder mit Simulation im Hintergrund (anscheinend kaputt) oder mit Mathe Simulation
+Mathe simulation mit Algorithmus zur Sonnenstandsberechnung nach NOAA (National Oceanic and Atmospheric Administration)
+
+=== Überlegung zur zeitlichen Auflösung
+// Hier Bild von Unterschied des Schattenverlaufs an einem Punkt über 4 Jahre. Auf Schaltjahr eingehen. Ergebnis: 1 Jahr berechnet reicht aus (aber welches Jahr?).
+
+=== Überlegung zur räumlichen Auflösung
+
 === Möglichkeiten der Simulationsoptimierung
 - Ohne Optimierung (760s)
 - Zusammenfügen von umliegenden Objekten 786s (Optimierungepotenzial bei -3,4%)
@@ -467,7 +475,8 @@ Entweder mit Simulation im Hintergrund (anscheinend kaputt) oder mit Mathe Simul
 - ""+Winkel: 434s
 == Validierung der Ergebnisse
 - Über webcam (installiert auf dem nexttower (137m hoch) am Thurn-und-Taxis-Platz 21.06.25; 9:15
-- Vorort mit Helligkeitssensoren in Fenstern?
+  - das validiert vor allem auch den mathematischen code im skript
+- Vorort mit Helligkeitssensoren in Fenstern? - Optional, wenn noch zeit ist
 
 
 = Diskussion und Fazit
