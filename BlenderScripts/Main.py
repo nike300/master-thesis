@@ -16,7 +16,7 @@ OUTPUT_DIR = os.path.join(PARENT_DIR, "BlenderOutputs")
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "verschattung_final_dst.csv")
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, "TagNachtGleiche.csv")
 
 print(f"Ziel-Datei: {OUTPUT_FILE}")
 # ------------------------------------------------------------------
@@ -26,10 +26,10 @@ SUN_OBJECT_NAME = "Sun"
 WINDOW_KEYWORD = "IfcWindow" 
 
 # Zeit-Einstellungen
-SIMULATION_DATES = [(5, 2)] 
+SIMULATION_DATES = [(20, 3)] 
 START_HOUR = 6
-END_HOUR = 12
-MINUTES_STEP = 60 # Für Test auf 60, später auf 15 stellen
+END_HOUR = 20
+MINUTES_STEP = 15 # Für Test auf 60, später auf 15 stellen
 YEAR = 2026
 # ------------------------------------------------------------------
 

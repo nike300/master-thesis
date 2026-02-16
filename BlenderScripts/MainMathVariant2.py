@@ -5,6 +5,33 @@ import datetime
 import math
 from mathutils import Vector
 
+
+# --- KONFIGURATION ------------------------------------------------
+try:
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    PARENT_DIR = os.path.dirname(SCRIPT_DIR)
+    OUTPUT_DIR = os.path.join(PARENT_DIR, "BlenderOutputs")
+except:
+    OUTPUT_DIR = "C:/Temp" # Fallback
+
+if not os.path.exists(OUTPUT_DIR):
+    os.makedirs(OUTPUT_DIR)
+
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, "TagNachtGleiche.csv")
+print(f"Ziel-Datei: {OUTPUT_FILE}")
+# ------------------------------------------------------------------
+
+OBSTACLE_COLLECTION = "map_6.osm_buildings" 
+SUN_OBJECT_NAME = "Sun"
+WINDOW_KEYWORD = "IfcWindow" 
+
+SIMULATION_DATES = [(20, 3)] 
+START_HOUR = 0
+END_HOUR = 23
+MINUTES_STEP = 15
+YEAR = 2026
+
+
 # --- SONNEN-MATHEMATIK (NOAA Algorithmus) ---
 def calculate_sun_vector(dt_utc, latitude, longitude):
     """Gibt Vektor zur Sonne zurück (Y=Norden, Z=Oben)"""
@@ -100,31 +127,6 @@ def get_true_window_normal(obj, tower_center_2d):
         world_normal = -world_normal
         
     return world_normal
-
-# --- KONFIGURATION ------------------------------------------------
-try:
-    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-    PARENT_DIR = os.path.dirname(SCRIPT_DIR)
-    OUTPUT_DIR = os.path.join(PARENT_DIR, "BlenderOutputs")
-except:
-    OUTPUT_DIR = "C:/Temp" # Fallback
-
-if not os.path.exists(OUTPUT_DIR):
-    os.makedirs(OUTPUT_DIR)
-
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "verschattung_math_var2.csv")
-print(f"Ziel-Datei: {OUTPUT_FILE}")
-# ------------------------------------------------------------------
-
-OBSTACLE_COLLECTION = "map_6.osm_buildings" 
-SUN_OBJECT_NAME = "Sun"
-WINDOW_KEYWORD = "IfcWindow" 
-
-SIMULATION_DATES = [(5, 2)] 
-START_HOUR = 6
-END_HOUR = 20
-MINUTES_STEP = 60
-YEAR = 2026
 
 # Koordinaten Frankfurt (Four)
 LATITUDE = 50.11
