@@ -405,6 +405,7 @@ In städtischen Kontexten wird der solare Ertrag maßgeblich durch Nachbargebäu
   - richtige labels für gebäudeteile (IFC-Window-Klasse)
   - Nur Fassadenelemente
   - Die Fensterflächen sollten richtig _Face Normals_ (Flächenausrichtung)? für backwards Culling
+  - Auch schräge Fenster sollten als IFC-Window-Klasse definiert werden
   - Die Fenster sollten guten BMKZ haben
   - Das Gebäude sollte auf der richtigen Z-Höhe sein
   - Das Gebäude sollte nach Norden ausgerichtet sein
