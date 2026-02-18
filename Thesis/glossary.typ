@@ -22,4 +22,9 @@
     short: "g-Wert",
     long: "Energiedurchlassgrad",
   ),
+  (
+    key: "aks",
+    short: "AKS",
+    long: "Anlagenkennzeichnungsschlüssel"
+  )
 )
