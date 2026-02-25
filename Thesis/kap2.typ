@@ -169,6 +169,16 @@ Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung
 - Visueller Komfort (Blendung vermeiden).
 - Tageslichtautonomie (Kunstlicht minimieren).
 - Konfliktpotenzial: Erläuterung der konkurrierenden Ziele (z. B. Blendschutz vs. Tageslicht) und warum eine dynamische Simulation hier besser ist als eine starre Regelung.
+- ...Verhindert Ausbleichen von Möbel und Textilien.
+
+== Verschattungsfunktionen
+=== Cut-Off Anlge
+=== Thermo-energetische Optimierung
+// Kühlfall (Sommer): Das primäre Ziel ist es, Energie für die Klimatisierung zu sparen. Bei Abwesenheit im Raum (niemand da, der Licht braucht) fährt die Jalousie bei direkter Sonne auf 100 % zu und die Lamellen schließen komplett, um den g-Wert (Energiedurchlassgrad ) des Fensters zu minimieren.
+
+// Heizfall (Winter): Solare Gewinne sind erwünscht! Wenn der Raum unbesetzt ist, die Heizung läuft und die Sonne scheint, fährt die Jalousie komplett nach oben, um die kostenlose Sonnenenergie in den Raum zu lassen (treibhausähnlicher Effekt).
+=== Sonnenstandsabhängige Höhennachführung
+=== Umgebungsabhängige Verschattung
 
 
 == Dynamische Jahresverschattung
@@ -187,11 +197,18 @@ Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel
   )
 }
 
+
+
 #definition("Jahresverschattung")[
   Die Jahresverschattung bezeichnet die zeitabhängige Veränderung der solaren Exposition auf der Gebäudehülle im Verlauf eines meteorologischen Jahres. Sie ist das Resultat der Interaktion zwischen dem dynamischen Sonnenstand, der Gebäudeorientierung sowie der umgebenden Bebauung und Vegetation. Im Kontext der Gebäudeautomation definiert sie die zeitlichen und räumlichen Randbedingungen, unter denen ein variabler Sonnenschutz agieren muss.
 ]
 Die Jahresverschattungssimulation bezeichnet ein simulationsgestütztes Verfahren zur Analyse und Steuerung des solaren Energie- und Lichteintrags in ein Gebäude über den Zeitraum eines vollständigen meteorologischen Jahres. Im Gegensatz zu statischen Verschattungselementen oder reinen Echtzeit-Helligkeitsregelungen basiert sie auf der zeitabhängigen Interaktion zwischen dem astronomischen Sonnenstand, der Gebäudegeometrie sowie der umgebenden Bebauung. Ziel ist die Ermittlung optimaler Positionierungsstrategien für variable Sonnenschutzsysteme, um ein Gleichgewicht zwischen der Minimierung thermischer Lasten (sommerlicher Wärmeschutz), der Maximierung solarer Gewinne (winterlicher Heizbedarf) und der Gewährleistung des visuellen Komforts (Blendfreiheit bei maximaler Tageslichtnutzung) sicherzustellen.
 // Physikalische Prinzipien und Ziele (Energie vs. Komfort).
+
+=== Cut-Off WInkel
+=== Sonnenstandsabhängige Höhennachführung
+
+
 == Digitale Planungsmethoden (Datenformate?)
 Wenn früher vor allem Papierpläne zum Datenkommunikationsaustausch im Planungsprozess verwendet wurden, gibt es mittlerweile eine Vielzahl an digitalen Möglichkeiten. Etabliert über die letzten Jahrzehnte, haben sich vor allem 2D-Grundrissdateien, die z.B. im proprietären Austauschformat dwg zwischen Architekten und Ingenieuren geteilt wurden. Während diese Methode heutzutage noch weite Anwendung findet, greifen die auf 3D-Modellen basierenden Austauschformate weiter um sich. Bereits einfache 3D-Modelle bieten große Vorteile bei der Verständlichkeit und Dichte der übermittelnden geometrischen Informationen. Zusätzlich ist es möglich im Rahmen eines BIM-Modells semantische Daten mit zu übermitteln. Das hierfür benutzte Austauschformat IFC bietet wichtige Funktionalitäten, um für die Verschattungssimulation relevante Daten zu  teilen.
 

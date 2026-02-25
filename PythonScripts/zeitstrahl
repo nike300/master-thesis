@@ -1,71 +1,80 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import matplotlib.font_manager as fm # <-- NEU
+import matplotlib.font_manager as fm
 import numpy as np
 import datetime
 import os
 
-# 1. Finde den Ordner heraus, in dem DIESES Skript exakt liegt
 script_dir = os.path.dirname(os.path.abspath(__file__))
-
-# 2. Verbinde diesen Ordner-Pfad mit dem Dateinamen der Schriftart
 font_path = os.path.join(script_dir, 'LibertinusSerif-Regular.otf')
 
-# 3. Lade die Schriftart (jetzt mit dem korrekten, absoluten Pfad)
-fm.fontManager.addfont(font_path)
-prop = fm.FontProperties(fname=font_path)
+try:
+    fm.fontManager.addfont(font_path)
+    prop = fm.FontProperties(fname=font_path)
+    plt.rcParams['font.family'] = prop.get_name()
+except FileNotFoundError:
+    pass 
 
-plt.rcParams['font.family'] = prop.get_name()
 plt.rcParams['font.size'] = 12
-# --------------------------------------------
 
-# 1. Zeitachse generieren (z.B. 08:00 bis 13:00 Uhr)
 start_time = datetime.datetime(2026, 3, 1, 9, 0)
 end_time = datetime.datetime(2026, 3, 1, 13, 0)
 minutes = int((end_time - start_time).total_seconds() / 60)
 
-time_1min = [start_time + datetime.timedelta(minutes=i) for i in range(minutes)]
+time_1min = [start_time + datetime.timedelta(minutes=i) for i in range(minutes + 1)]
+shade_1min = np.zeros(minutes + 1)
 
-# 2. Reale Verschattungsdaten (1-Minuten Auflösung)
-shade_1min = np.zeros(minutes)
+shade_1min[0:(1*60 + 24)] = 1       
+shade_1min[(2*60 + 5):(2*60 + 15)] = 1  
+shade_1min[(2*60 + 51):(3*60 + 28)] = 1 
 
-# Verschattungsintervalle
-shade_1min[0:(1*60 + 23)] = 1           # 08:00 bis 10:23
-shade_1min[(2*60 + 5):(2*60 + 14)] = 1  # 11:05 bis 11:14
-shade_1min[(2*60 + 51):(3*60 + 27)] = 1 # 11:51 bis 12:27
+sun_1min = 1 - shade_1min
 
-# 3. Downsampling auf 15 Minuten (Worst-Case Annahme für Blendschutz)
+# --- NEU: 5-Minuten Auflösung ---
+time_5min = []
+pos_5min = []
+for i in range(0, minutes, 5):
+    time_5min.append(time_1min[i])
+    # Prüft das aktuelle Intervall (i bis i+5)
+    is_sun = 1 if np.any(sun_1min[i:min(i+5, minutes+1)]) else 0
+    pos_5min.append(is_sun)
+time_5min.append(time_1min[-1])
+pos_5min.append(pos_5min[-1])
+# --------------------------------
+
 time_15min = []
-shade_15min = []
+pos_15min = []
 for i in range(0, minutes, 15):
     time_15min.append(time_1min[i])
-    is_shaded = 1 if np.any(shade_1min[i:i+15]) else 0
-    shade_15min.append(is_shaded)
+    # Prüft das aktuelle Intervall (i bis i+15)
+    is_sun = 1 if np.any(sun_1min[i:min(i+15, minutes+1)]) else 0
+    pos_15min.append(is_sun)
 time_15min.append(time_1min[-1])
-shade_15min.append(shade_15min[-1])
+pos_15min.append(pos_15min[-1])
 
-# 4. Downsampling auf 60 Minuten
 time_60min = []
-shade_60min = []
+pos_60min = []
 for i in range(0, minutes, 60):
     time_60min.append(time_1min[i])
-    is_shaded = 1 if np.any(shade_1min[i:i+60]) else 0
-    shade_60min.append(is_shaded)
+    # Prüft das aktuelle Intervall (i bis i+60)
+    is_sun = 1 if np.any(sun_1min[i:min(i+60, minutes+1)]) else 0
+    pos_60min.append(is_sun)
 time_60min.append(time_1min[-1])
-shade_60min.append(shade_60min[-1])
+pos_60min.append(pos_60min[-1])
 
-# 5. Plotten
-fig, ax = plt.subplots(figsize=(8, 2.5))
+fig, ax = plt.subplots(figsize=(10, 2.5))
 
-ax.step(time_60min, shade_60min, where='post', label='60 Min Auflösung', color='#d62728', linestyle=':', linewidth=2.5)
-ax.step(time_15min, shade_15min, where='post', label='15 Min Auflösung', color='#1f77b4', linestyle='--', linewidth=2)
-ax.step(time_1min, shade_1min, where='post', label='Schatten', color='black', linewidth=1.5)
+ax.fill_between(time_1min, sun_1min, 0, color='#ffe119', alpha=0.3, step='post', linewidth=0, label='Sonneneinstrahlung')
 
-# 6. Formatierung der Y-Achse (0 = Oben, 1 = Unten)
+ax.step(time_60min, pos_60min, where='post', label='60 Min Auflösung', color='#d62728', linestyle=':', linewidth=2.5)
+ax.step(time_15min, pos_15min, where='post', label='15 Min Auflösung', color='#1f77b4', linestyle='--', linewidth=2)
+ax.step(time_5min, pos_5min, where='post', label='5 Min Auflösung', color='#2ca02c', linestyle='-.', linewidth=1.5)
+
 ax.set_yticks([0, 1])
-ax.set_yticklabels(['0 (0%)\nBehang oben / Sonne', '1 (100%)\nBehang unten / Schatten'])
-ax.invert_yaxis() # Achse umdrehen
+ax.set_yticklabels(['Behang oben', 'Behang unten'])
+ax.invert_yaxis()
 ax.margins(x=0)
+ax.yaxis.set_label_position('right')
 
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 ax.set_xlabel('Tageszeit')
@@ -73,8 +82,14 @@ ax.set_ylabel('Behangposition')
 
 ax.grid(True, axis='x', linestyle='-', alpha=0.3)
 ax.grid(True, axis='y', linestyle='--', alpha=0.3)
-ax.legend(loc='upper left')
+
+ax.legend(loc='center left')
+
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+ax.spines['left'].set_visible(False)
+ax.spines['bottom'].set_visible(False)
 
 plt.tight_layout()
-plt.savefig('zeitliche_aufloesung_vergleich.pdf', format='pdf')
+plt.savefig('zeitliche_aufloesung_vergleich.svg', format='svg')
 plt.show()

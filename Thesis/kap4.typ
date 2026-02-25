@@ -20,7 +20,7 @@ Mathe simulation mit Algorithmus zur Sonnenstandsberechnung nach NOAA (National 
 === Zeitlicher Umfang und Auflösung
 *Zeitlicher Umfang:* Es stellt sich die Frage, wie viele volle Kalenderjahre berechnet werden müssen, um den realen Sonnenverlauf hinreichend abzubilden. Der Umlauf der Erde um die Sonne unterliegt langperiodischen Schwankungen (Milanković-Zyklen) @dwdMilanZyklen. Diese sind für die Lebensdauer eines Gebäudes als nicht relevant anzusehen, weshalb der berechnete Sonnenverlauf für den Betrachtungszeitraum als statisch betrachtet werden kann. 
 
-Da das kalendarische Jahr vom astronomischen Sonnenjahr (ca. 365,24 Tage @astr04eduSonnenjahr) abweicht, wird diese Differenz alle vier Jahre durch ein Schaltjahr korrigiert. Die hieraus resultierende zeitliche Verschiebung des Sonnenstandes am selben Kalendertag ist für einen simulierten Schattenwurf in @fig-schaltjahr dargestellt. Da es sich bei den räumlichen Abweichungen lediglich um wenige Zentimeter handelt, ist es ausreichend, die Simulation auf ein einzelnes Referenzjahr zu beschränken.
+Da das kalendarische Jahr vom astronomischen Sonnenjahr (ca. 365,24 Tage @astr04eduSonnenjahr) abweicht, wird diese Differenz alle vier Jahre durch ein Schaltjahr korrigiert. Die hieraus resultierende zeitliche Verschiebung des Sonnenstandes am selben Kalendertag ist für einen simulierten Schattenwurf in @fig-schaltjahr beispielhaft dargestellt. Da es sich bei den räumlichen Abweichungen lediglich um wenige Zentimeter handelt, ist es ausreichend, die Simulation auf ein einzelnes Referenzjahr zu beschränken.
 #figure(
   grid(
     columns: (1fr, 1fr), // Zwei gleich breite Spalten
@@ -42,9 +42,15 @@ Da das kalendarische Jahr vom astronomischen Sonnenjahr (ca. 365,24 Tage @astr04
 *Zeitliche Auflösung* Für die Simulation wurde eine 15-Minütige Auflösung gewählt. 
 Eine höhere Auflösung garantiert für den Nutzer einen geringfügig höheren Komfort indem in manchen Fällen erst später Verschattet werden würde
 #figure(
-  image("assets/AuflösungZeitstrahl.svg" )
+  image("assets/AuflösungZeitstrahl.svg" ),
+  caption: [Verschattungsverlauf von Fenster FL31_W061 am 01.03.2026 mit Behangzustand beruhend auf 5, 15 und 60 Minütiger Datenauflösung]
 )
-*Zeitliche Auflösung:* Die Wahl der Diskretisierungsschrittweite für die Datenausgabe hat maßgeblichen Einfluss auf die Tageslichtautonomie des Gebäudes. Da die Verschattung eine binäre Steuerungsfreigabe (Schatten oder Sonne) für den Blendschutz darstellt, muss bei einer Reduktion der Datenauflösung zwingend eine Worst-Case-Annahme getroffen werden: Fällt innerhalb eines Simulationsintervalls auch nur für eine Minute ein Schlagschatten auf das Fenster, muss der Sonnenschutz für das gesamte Intervall geschlossen werden, um temporäre Blendung auszuschließen. 
+
+#figure(
+  image("assets/Untitled-design.svg")
+)
+
+*Zeitliche Auflösung:* Die Wahl der Auflösung für die Datenausgabe hat maßgeblichen Einfluss auf die Tageslichtausbeute des Gebäudes. Da die Verschattung eine binäre Steuerungsfreigabe (Schatten oder Sonne) für den Blendschutz darstellt, muss bei einer Reduktion der Datenauflösung zwingend eine Worst-Case-Annahme getroffen werden: Fällt innerhalb eines Simulationsintervalls auch nur für eine Minute ein Schlagschatten auf das Fenster, muss der Sonnenschutz für das gesamte Intervall geschlossen werden, um temporäre Blendung auszuschließen. 
 
 fig-zeitliche-aufloesung veranschaulicht diesen Effekt am Beispiel echter Simulationsdaten eines Referenzfensters. In der Realität (1-Minuten-Auflösung) verlässt der Schatten das Fenster um 10:23 Uhr. Bei einer groben stündlichen Diskretisierung (60 Minuten) hält die Automationsstation den Behang jedoch unnötigerweise bis 11:00 Uhr geschlossen, was zu 37 Minuten Verlust an natürlichem Tageslicht führt.
 
