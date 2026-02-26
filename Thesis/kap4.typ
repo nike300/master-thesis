@@ -4,11 +4,10 @@ Das FOUR sind vier zusammenhängende Türme in der Innenstadt von Frankfurt am M
 == Import Umgebungsdaten
 Hessische Verwaltung für Bodenmanagement und Geoinformation 
 
-== Import IFC
-Da die oben genannten Punkte zum Teil nicht erfüllt werden, musste beim Import der FOUR-IFC-Datei noch folgendes gemacht werden:
+== Import und Positionierung der IFC
+*Import* Da die oben genannten Punkte zum Teil nicht erfüllt werden, musste beim Import der FOUR-IFC-Datei noch folgendes gemacht werden:
 -
-
-== Positionierung der IFC im Modell
+*Positionierung*
 Problem der Georeferenzierung. Ungenauigkeit. Vertex Snapping
 - Schwierig höhe z richtig zu bekommmen
 - Bereinigung von Redundanzen im Kontextmodell (Bestehendes Gebäude aus OSM löschen)
@@ -44,21 +43,36 @@ Eine höhere Auflösung garantiert für den Nutzer einen geringfügig höheren K
 #figure(
   image("assets/AuflösungZeitstrahl.svg" ),
   caption: [Verschattungsverlauf von Fenster FL31_W061 am 01.03.2026 mit Behangzustand beruhend auf 5, 15 und 60 Minütiger Datenauflösung]
-)
+)<fig-Zeitstrahl>
 
-#figure(
-  image("assets/Untitled-design.svg")
-)
+
 
 *Zeitliche Auflösung:* Die Wahl der Auflösung für die Datenausgabe hat maßgeblichen Einfluss auf die Tageslichtausbeute des Gebäudes. Da die Verschattung eine binäre Steuerungsfreigabe (Schatten oder Sonne) für den Blendschutz darstellt, muss bei einer Reduktion der Datenauflösung zwingend eine Worst-Case-Annahme getroffen werden: Fällt innerhalb eines Simulationsintervalls auch nur für eine Minute ein Schlagschatten auf das Fenster, muss der Sonnenschutz für das gesamte Intervall geschlossen werden, um temporäre Blendung auszuschließen. 
 
-fig-zeitliche-aufloesung veranschaulicht diesen Effekt am Beispiel echter Simulationsdaten eines Referenzfensters. In der Realität (1-Minuten-Auflösung) verlässt der Schatten das Fenster um 10:23 Uhr. Bei einer groben stündlichen Diskretisierung (60 Minuten) hält die Automationsstation den Behang jedoch unnötigerweise bis 11:00 Uhr geschlossen, was zu 37 Minuten Verlust an natürlichem Tageslicht führt.
+@fig-Zeitstrahl veranschaulicht diesen Effekt am Beispiel echter Simulationsdaten eines Referenzfensters. Der Schatten verlässt das Fenster um 10:23 Uhr. Bei einer groben stündlichen Diskretisierung hält die Steuerung den Behang schon ab 10:00 Uhr geschlossen, was zu 23 Minuten Verlust an natürlichem Tageslicht führt.
 
-Besonders gravierend wirkt sich eine zu grobe Abtastung bei kurzen Verschattungsereignissen aus, wie sie durch schmale Bauteile (z. B. Masten oder Schornsteine der Nachbarbebauung) entstehen. Die reale Verschattung von 11:05 bis 11:14 Uhr zwingt das System im 60-Minuten-Raster dazu, den Behang von 11:00 bis 12:00 Uhr zu schließen. 
+Besonders gravierend wirkt sich eine zu grobe Abtastung bei kürzeren Verschattungsereignissen aus, wie sie oft in Großstädten mit vielen Hochhäusern entstehen. Erst Verschattungen länger als 61 Minuten ab der vollen Stunde würde das System im 60-Minuten-Raster dazu führen, den Behang zu öffnen.
 
-Eine Diskretisierung im 15-Minuten-Raster erweist sich hierbei als optimaler Kompromiss. Einerseits nähert sich die Steuerkurve dem realen Schattenverlauf ausreichend exakt an, um den visuellen Komfort bei hoher Tageslichtautonomie zu wahren. Andererseits entspricht dieses Intervall der in der Gebäudeautomation (BACnet) üblichen Taktung für Zeitpläne (Schedules) und begrenzt die zu speichernde Datenmenge in der SPS auf speichereffiziente 35.040 Datenpunkte pro Jahr (bei einem booleschen Wert pro Fenster).
+Die kleine Auflösung von 5 Minuten schafft es, die Behänge sehr eng am eigentlichen Schattenverlauf des Fensters zu fahren. Selbst die kurze Verschattung von 11:05 bis 11:15 kann erfasst werden. Dieser Vorteil wird zum Nachteil, wenn man den Nutzerkomfort berücksichtigt. Eine im schlimmsten Fall alle 5 Minuten sich bewegende Jalousie kann als visuell und akustisch störend und ablenkend empfunden werden. Diese kurzen Jalousiebewegungen könnten in der Steuerlogik verhindert werden, dies erhöht jedoch die Fehleranfälligkeit und Komplexität des Systems.
+
+Somit erweist sich eine Diskretisierung im 15-Minuten-Raster hierbei als optimaler Kompromiss. Einerseits nähert sich die Steuerkurve dem realen Schattenverlauf ausreichend exakt an, um den visuellen Komfort bei hoher Tageslichtausbeute zu wahren, andererseits wird die zu speichernde Datenmenge pro Fenster auf "nur" 35.040 Datenpunkte.
 
 === Überlegung zur räumlichen Auflösung
+Neben der zeitlichen Diskretisierung bestimmt die räumliche Abtastung der Fensterflächen die Zuverlässigkeit der Simulationsergebnisse. Für jedes Fenster im IFC-Modell muss definiert werden, mit wie vielen Testpunkten der Verschattungsstatus ermittelt wird. 
+
+Ein naheliegender Ansatz wäre die Unterteilung der Fensterfläche in ein feines Raster, um den prozentualen Verschattungsgrad für eine dynamische Höhennachführung des Behanges zu ermitteln. Im Kontext der in Kapitel 4.4.1 gewählten zeitlichen Auflösung von 15 Minuten erweist sich diese Lösung in der Praxis jedoch als nicht zielführend: Die Schattenkante wandert innerhalb eines 15-Minuten-Intervalls zu weit, was zu schwer nachvollziehbaren Nachführbewegungen der Aktorik führen würde. Daher fokussiert sich die Betrachtung auf zwei pragmatische Optionen:
+
+*2. Einpunkt-Messung (Fenstermittelpunkt):*
+Es wird ein einzelner Raycast vom geometrischen Zentrum des Fensters zur Sonne berechnet.
+Dieser Ansatz hat den Vorteil, dass er die geringste Rechenzeit aufweist. Allerdings ist die Einpunkt-Messung anfällig für Halbschatten-Situationen. Verdeckt ein Schatten beispielsweise nur die untere Fensterhälfte, meldet der Mittelpunkt unter Umständen noch keine Verschattung. Umgekehrt kann der Mittelpunkt bereits verschattet sein, während die obere Fensterhälfte noch stark blendet.
+
+*2. Vierpunkt-Messung (Eckpunkte):*
+Die Simulation prüft die vier Extrempunkte der Fenstergeometrie. Die Auswertung erfolgt über eine logische ODER-Verknüpfung: Sobald mindestens einer der vier Punkte direkte Sonneneinstrahlung detektiert, gilt das gesamte Fenster als besonnt.
+Diagonale oder wandernde Schattenkanten werden sicher erkannt, wodurch temporäre Blendungen (die bei der Einpunkt-Messung übersehen würden) verhindert werden.
+Der Nachteil ist die Vervierfachung der Rechenzeit gegenüber der Einpunkt-Messung. Zudem können sehr schmale, vertikale Objekte (z. B. Masten), die schmaler als die Fensterbreite sind, theoretisch übersehen werden. Dies stellt im urbanen Kontext jedoch ein vernachlässigbares Restrisiko dar. In einzelnen Fällen, kann auch ein Schattenwurf, der nur die untere Fensterkante streift, zu einer nicht notwendigen Reaktion der Jalousie führen. Dies könnte mit dem Hochsetzen der unteren beiden Eckpunkte verhindert werden.
+
+*Fazit für den Prototyp: (XXX)*
+Um den visuellen Komfort (Blendschutz) der Nutzer zu garantieren, wird für den entwickelten Workflow die Vierpunkt-Messung gewählt. Die Erhöhung der Rechenzeit wird durch die drastisch verbesserte Steuerungssicherheit gerechtfertigt. Die vier booleschen Einzelwerte werden bereits im Python-Skript durch eine ODER-Logik zu einem einzelnen Status pro Fenster aggregiert, sodass die zu exportierende Datenmenge für die Automationsstation identisch mit der Einpunkt-Messung bleibt.
 
 === Möglichkeiten der Simulationsoptimierung
 - Ohne Optimierung (760s)
@@ -68,6 +82,8 @@ Eine Diskretisierung im 15-Minuten-Raster erweist sich hierbei als optimaler Kom
 - Mathe Skript mit Normalenoptimierung: 408s
 - ""+Winkel: 434s
 == Validierung der Ergebnisse
-- Über webcam (installiert auf dem nexttower (137m hoch) am Thurn-und-Taxis-Platz 21.06.25; 9:15
+Eine Validierung erfolgt über einen Abgleich zwischen einem gerendertem Bild aus der Simulation und einer Fotoaufnahme des FOUR zu einem festgelegten Zeitpunkt. Für die Fotoaufnahme wird auf die für die Bauüberwachung und Marketing benutzte Webcam zurückgegriffen. Sie befindet sich auf dem 137m hohen Nextower am Thurn-und-Taxis-Platz, der sich ca. 500m Luftlinie vom FOUR entfernt befindet. Auf der Website @zeitrafferFOURFrankfurt können die Bilder der letzten 5 Jahren abgerufen werden. Für die Validierung wurde ein zufälliger Tag mit wenig Wolken am Himmel gewählt, um bei möglichst wenig diffusem Licht, eine klare Schattenbildung zu vergleichen. In .... ist eine klare .. zu sehen
+
+vom  21.06.25; 9:15
   - das validiert vor allem auch den mathematischen code im skript
 - Vorort mit Helligkeitssensoren in Fenstern? - Optional, wenn noch zeit ist

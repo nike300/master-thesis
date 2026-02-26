@@ -205,6 +205,11 @@ Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel
 Die Jahresverschattungssimulation bezeichnet ein simulationsgestütztes Verfahren zur Analyse und Steuerung des solaren Energie- und Lichteintrags in ein Gebäude über den Zeitraum eines vollständigen meteorologischen Jahres. Im Gegensatz zu statischen Verschattungselementen oder reinen Echtzeit-Helligkeitsregelungen basiert sie auf der zeitabhängigen Interaktion zwischen dem astronomischen Sonnenstand, der Gebäudegeometrie sowie der umgebenden Bebauung. Ziel ist die Ermittlung optimaler Positionierungsstrategien für variable Sonnenschutzsysteme, um ein Gleichgewicht zwischen der Minimierung thermischer Lasten (sommerlicher Wärmeschutz), der Maximierung solarer Gewinne (winterlicher Heizbedarf) und der Gewährleistung des visuellen Komforts (Blendfreiheit bei maximaler Tageslichtnutzung) sicherzustellen.
 // Physikalische Prinzipien und Ziele (Energie vs. Komfort).
 
+Besser die Simulation zu haben, als in der Praxis oft vorkommende: Schattenkanten-Auflösung (Zonierung)
+Da du mit Blender/Raycasting  jedes einzelne Fenster (IfcWindow) simulierst, anstatt nur eine pauschale "Südfassade" zu betrachten, kannst du eine hochauflösende "Schattenkante" steuern.
+
+Der Effekt: Wenn der Schatten des Nachbargebäudes diagonal über die Fassade des "FOUR" wandert, fahren die Jalousien nicht alle gleichzeitig hoch, sondern fensterweise – genau in dem Moment, in dem der Schatten das jeweilige Fenster erreicht. Das ist der ultimative Beweis für den Mehrwert deiner Simulationskette gegenüber herkömmlichen Dachsensoren!
+
 === Cut-Off WInkel
 === Sonnenstandsabhängige Höhennachführung
 
