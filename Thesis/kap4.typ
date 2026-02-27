@@ -38,16 +38,12 @@ Da das kalendarische Jahr vom astronomischen Sonnenjahr (ca. 365,24 Tage @astr04
   caption: [Links: Schattenwurf am 01.03.2027 um 9:00;\ Rechts: Schattenwurf am 01.03.2028 (Schaltjahr) um 9:00]
 )<fig-schaltjahr>
 
-*Zeitliche Auflösung* Für die Simulation wurde eine 15-Minütige Auflösung gewählt. 
-Eine höhere Auflösung garantiert für den Nutzer einen geringfügig höheren Komfort indem in manchen Fällen erst später Verschattet werden würde
-#figure(
-  image("assets/AuflösungZeitstrahl.svg" ),
-  caption: [Verschattungsverlauf von Fenster FL31_W061 am 01.03.2026 mit Behangzustand beruhend auf 5, 15 und 60 Minütiger Datenauflösung]
-)<fig-Zeitstrahl>
-
-
 
 *Zeitliche Auflösung:* Die Wahl der Auflösung für die Datenausgabe hat maßgeblichen Einfluss auf die Tageslichtausbeute des Gebäudes. Da die Verschattung eine binäre Steuerungsfreigabe (Schatten oder Sonne) für den Blendschutz darstellt, muss bei einer Reduktion der Datenauflösung zwingend eine Worst-Case-Annahme getroffen werden: Fällt innerhalb eines Simulationsintervalls auch nur für eine Minute ein Schlagschatten auf das Fenster, muss der Sonnenschutz für das gesamte Intervall geschlossen werden, um temporäre Blendung auszuschließen. 
+#figure(
+  image("assets/AuflösungZeitstrahl.svg" ),
+  caption: [Verschattungsverlauf von Fenster FL31_W061 am 01.03.2026 mit Behangzustand beruhend auf 5, 15 und 60-minütiger Datenauflösung]
+)<fig-Zeitstrahl>
 
 @fig-Zeitstrahl veranschaulicht diesen Effekt am Beispiel echter Simulationsdaten eines Referenzfensters. Der Schatten verlässt das Fenster um 10:23 Uhr. Bei einer groben stündlichen Diskretisierung hält die Steuerung den Behang schon ab 10:00 Uhr geschlossen, was zu 23 Minuten Verlust an natürlichem Tageslicht führt.
 
@@ -82,7 +78,8 @@ Um den visuellen Komfort (Blendschutz) der Nutzer zu garantieren, wird für den 
 - Mathe Skript mit Normalenoptimierung: 408s
 - ""+Winkel: 434s
 == Validierung der Ergebnisse
-Eine Validierung erfolgt über einen Abgleich zwischen einem gerendertem Bild aus der Simulation und einer Fotoaufnahme des FOUR zu einem festgelegten Zeitpunkt. Für die Fotoaufnahme wird auf die für die Bauüberwachung und Marketing benutzte Webcam zurückgegriffen. Sie befindet sich auf dem 137m hohen Nextower am Thurn-und-Taxis-Platz, der sich ca. 500m Luftlinie vom FOUR entfernt befindet. Auf der Website @zeitrafferFOURFrankfurt können die Bilder der letzten 5 Jahren abgerufen werden. Für die Validierung wurde ein zufälliger Tag mit wenig Wolken am Himmel gewählt, um bei möglichst wenig diffusem Licht, eine klare Schattenbildung zu vergleichen. In .... ist eine klare .. zu sehen
+Eine Validierung erfolgt über einen Abgleich zwischen einem gerendertem Bild aus der Simulation und einer Fotoaufnahme des FOUR zu einem festgelegten Zeitpunkt. Für die Fotoaufnahme wird auf die für die Bauüberwachung und Marketing benutzte Webcam zurückgegriffen. Sie befindet sich auf dem 137m hohen Nextower am Thurn-und-Taxis-Platz, der sich ca. 500m vom FOUR entfernt befindet. Auf der Website des Webcamanbieters@zeitrafferFOURFrankfurt können die Bilder der letzten 5 Jahren abgerufen werden. Für die Validierung wurde ein zufälliger Tag mit wenig Wolken am Himmel gewählt, um bei möglichst wenig diffusem Licht, eine klare Schattenbildung zu erkennen. In der Simulation wurde der Nextower eingefügt um die Kameraposition möglichst genau nachzubilden.
+In Bild.. .... ist eine klare .. zu sehen
 
 vom  21.06.25; 9:15
   - das validiert vor allem auch den mathematischen code im skript
