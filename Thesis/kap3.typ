@@ -11,7 +11,8 @@
   - richtige labels für gebäudeteile (IFC-Window-Klasse)
   - Nur Fassadenelemente
   - Die Fensterflächen sollten richtig _Face Normals_ (Flächenausrichtung)? für backwards Culling
-  - Auch schräge Fenster sollten als IFC-Window-Klasse definiert werden
+  - Die Fassadenelemente sollten dem richtigen Geschoss zugeordnet sein.
+  - Auch schräge Fenster sollten als IFC-Window-Klasse definiert werden - Werden sie oft nicht, da sie schräg sind, in revit
   - Das Gebäude sollte in der ifc-Datei bereits auf der richtigen Z-Höhe und nach Norden ausgerichtet sein
   - Die Fenster sollten @aks  besitzen, der nach dem Schalenmodell @vdi3814-1 aufgebaut ist.
 === Analyse externer Geodaten
