@@ -1,8 +1,22 @@
 = Implementierung und Validierung des Proof of Concept<Kap4>
 // Vorstellung Four (Turm 1)
-Das FOUR sind vier zusammenhängende Türme in der Innenstadt von Frankfurt am Main.  
-== Import Umgebungsdaten
-Hessische Verwaltung für Bodenmanagement und Geoinformation 
+Das FOUR sind vier zusammenhängende Türme in der Innenstadt von Frankfurt am Main. Das Bauprojekt befindet sich momentan in der Inbetriebnahmephase der Gebäudeautomation und soll im Jahr 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am Turm 1 angewendet. 
+== Import Umgebungsdaten (H)
+Für den Turm 1 des FOUR sind die drei anderen Türme 1-3 durch die unmittelbare Nähe die wichtigsten verschattenden Geometrien in der Simulation. Diese drei Gebäude liegen als IFC-Modelle der Fassaden vor und können direkt in die 3D-Umgebung importiert werden. Die Positionierung der drei Gebäude erfolgt über......???
+
+Für die Modellierung der umgebenden, verschattenden Bebauung wird auf die offenen Geodaten der Hessischen Verwaltung für Bodenmanagement und Geoinformation (HVBG) zurückgegriffen. Die 3D-Gebäudemodelle für das Stadtgebiet Frankfurt am Main werden von offizieller Seite standardmäßig im Format CityGML bereitgestellt.
+
+Da für die verwendete 3D-Software (Blender) keine native Import-Schnittstelle für CityGML-Dateien existiert, war eine vorherige Datenkonvertierung erforderlich. Die Datensätze wurden hierfür in das JSON-basierte Format CityJSON (XXX ref) überführt. Um beim anschließenden Import eine korrekte räumliche Verortung zu gewährleisten, wurde den generierten Dateien das amtliche Koordinatenreferenzsystem für Hessen (EPSG:25832) manuell in den Metadaten zugewiesen.
+
+Der finale Import der Gebäudekörper in die 3D-Umgebung erfolgte über das Open-Source-Plugin CityJSONEditor für Blender. Da die hierarchische Struktur der amtlichen Frankfurter Daten teilweise von den Standardannahmen des Plugins abwich, wurden im Rahmen dieser Arbeit gezielte Anpassungen am Python-Quellcode der Import-Erweiterung vorgenommen. Diese Fehlerbehebungen (Bugfixes) umfassen im Wesentlichen drei Aspekte:
+
++ *Toleranz bei fehlenden Texturen:* Es wird eine Abfrage implementiert, die den Importprozess bei Objekten ohne definierte Fassadentexturen (Appearances) nicht abbricht, sondern die reine Geometrie weiterverarbeitet.
++ *Datentyp-Konvertierung (LoD):* Die Einleseroutine wird dahingehend modifiziert, dass der im Datensatz als Zeichenkette (String) vorliegende Wert für den Detailgrad (Level of Detail, LoD) programmatisch in einen Gleitkommawert (Float) umgewandelt wird.
++ *Filterung geometrieloser Objekte:* Es wird eine Filterroutine integriert, die Datensätze ohne physische 3D-Geometrie (wie bspw. reine Grundstücksgrenzen oder Landnutzungsflächen) beim Import ignoriert, um Programmabbrüche zu verhindern.
+
+Durch diesen optimierten Workflow können die Gebäudemassen der Umgebung schließlich erfolgreich, geometrisch korrekt und maßstabsgetreu in das Simulationsmodell überführt werden.
+
+
 
 == Import und Positionierung der IFC
 *Import* Da die oben genannten Punkte zum Teil nicht erfüllt werden, musste beim Import der FOUR-IFC-Datei noch folgendes gemacht werden:
