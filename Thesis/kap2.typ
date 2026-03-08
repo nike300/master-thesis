@@ -164,7 +164,10 @@ Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung
 - Tageslichtautonomie (Kunstlicht minimieren).
 - Konfliktpotenzial: Erläuterung der konkurrierenden Ziele (z. B. Blendschutz vs. Tageslicht) und warum eine dynamische Simulation hier besser ist als eine starre Regelung.
 
-
+== Verschattungsgrundlagen
+- automatische Lamellennachführung
+- cut off Winkel
+- behanghöhe
 == Dynamische Jahresverschattung
 Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel von Energieeffizienz und Nutzerkomfort.
 #let definition(title, body) = {
@@ -188,37 +191,15 @@ Die Jahresverschattungssimulation bezeichnet ein simulationsgestütztes Verfahre
 // Physikalische Prinzipien und Ziele (Energie vs. Komfort).
 == Digitale Planungsmethoden (Datenformate?)
 Wenn früher vor allem Papierpläne zum Datenkommunikationsaustausch im Planungsprozess verwendet wurden, gibt es mittlerweile eine Vielzahl an digitalen Möglichkeiten. Etabliert über die letzten Jahrzehnte, haben sich vor allem 2D-Grundrissdateien, die z.B. im proprietären Austauschformat dwg zwischen Architekten und Ingenieuren geteilt wurden. Während diese Methode heutzutage noch weite Anwendung findet, greifen die auf 3D-Modellen basierenden Austauschformate weiter um sich. Bereits einfache 3D-Modelle bieten große Vorteile bei der Verständlichkeit und Dichte der übermittelnden geometrischen Informationen. Zusätzlich ist es möglich im Rahmen eines BIM-Modells semantische Daten mit zu übermitteln. Das hierfür benutzte Austauschformat IFC bietet wichtige Funktionalitäten, um für die Verschattungssimulation relevante Daten zu  teilen.
-
 // BIM, IFC, Simulationswerkzeuge (Überblick).
-== Standards der Gebäudeautomation
-// VDI 3814 (Schwerpunkt: Datenpunkte & Raumautomation), BACnet (Objekte).
-=== GEG
-Gesetz zur Einsparung von Energie und zur Nutzung erneuerbarer Energien zur Wärme- und Kälteerzeugung in Gebäuden (Gebäudeenergiegesetz - GEG)
-§ 14 Sommerlicher Wärmeschutz
-(1) Ein Gebäude ist so zu errichten, dass der Sonneneintrag durch einen ausreichenden baulichen sommerlichen Wärmeschutz nach den anerkannten Regeln der Technik begrenzt wird. Bei der Ermittlung eines ausreichenden sommerlichen Wärmeschutzes nach den Absätzen 2 und 3 bleiben die öffentlich-rechtlichen Vorschriften über die erforderliche Tageslichtversorgung unberührt.
-(2) Ein ausreichender sommerlicher Wärmeschutz nach Absatz 1 liegt vor, wenn die Anforderungen nach DIN 4108-2: 2013-02 Abschnitt 8 eingehalten werden und die rechnerisch ermittelten Werte des Sonnenenergieeintrags über transparente Bauteile in Gebäude (Sonneneintragskennwert) die in DIN 4108-2: 2013-02 Abschnitt 8.3.3 festgelegten Anforderungswerte nicht überschreiten. Der Sonneneintragskennwert des zu errichtenden Gebäudes ist nach dem in DIN 4108-2: 2013-02 Abschnitt 8.3.2 genannten Verfahren zu bestimmen.
-(3) Ein ausreichender sommerlicher Wärmeschutz nach Absatz 1 liegt auch vor, wenn mit einem Berechnungsverfahren nach DIN 4108-2: 2013-02 Abschnitt 8.4 (Simulationsrechnung) gezeigt werden kann, dass unter den dort genannten Randbedingungen die für den Standort des Gebäudes in DIN 4108-2: 2013-02 Abschnitt 8.4 Tabelle 9 angegebenen Übertemperatur-Gradstunden nicht überschritten werden.
-(4) Wird bei Gebäuden mit Anlagen zur Kühlung die Berechnung nach Absatz 3 durchgeführt, sind bauliche Maßnahmen zum sommerlichen Wärmeschutz gemäß DIN 4108-2: 2013-02 Abschnitt 4.3 insoweit vorzusehen, wie sich die Investitionen für diese baulichen Maßnahmen innerhalb deren üblicher Nutzungsdauer durch die Einsparung von Energie zur Kühlung unter Zugrundelegung der im Gebäude installierten Anlagen zur Kühlung erwirtschaften lassen.
-(5) Auf Berechnungen nach den Absätzen 2 bis 4 kann unter den Voraussetzungen des Abschnitts 8.2.2 der DIN 4108-2: 2013-02 verzichtet werden.
-=== DIN V 18599
-hier bezug auf die automatisierungsgrade nehmen
-=== VDI 6011-1
-=== DIN EN 17037
-=== Weitere Normen
-DIN EN ISO 7730: Ergonomie der thermischen Umgebung
 
-Relevanz: Diese Norm ist der Standard für die Bewertung des thermischen Komforts.
+== Normative Grundlagen
+=== Grundlagen der Licht- und Wärmesteuerung
+Ein Grundziel der Verschattung ist der Blendschutz, der in der DIN EN 17037 @dinen17037 behandelt wird.
+Nutzen:
+- Aussicht
+- Blendschutz 
+Für den visuellen Komfort gibt es vor allem zwei Faktoren auf die Verschattungseinrichtungen Einfluss nehmen können: Der Blendschutz soll das auftreten von einer zu hohen Leuchtdichte verhindern, da diese sonst
 
-Kernpunkte: Sie definiert Indizes wie den PMV (Predicted Mean Vote) und den PPD (Predicted Percentage of Dissatisfied), um die thermische Behaglichkeit zu quantifizieren. Die Jahresverschattung hat einen direkten Einfluss darauf, indem sie den Strahlungseintrag durch die Sonne und damit die operative Temperatur im Raum steuert.
-
-
-DIN EN 14501: Abschlüsse und Jalousien - Thermischer und visueller Komfort - Leistungs- und Klassifizierungseigenschaften
-
-Relevanz: Dies ist die wichtigste Produktnorm für Sonnenschutz. Sie definiert, wie die Leistung von Jalousien, Rollläden etc. gemessen und in Leistungsklassen eingeteilt wird.
-
-Kernpunkte: Sie klassifiziert Produkte anhand von Kennwerten wie:
-
-Thermischer Komfort: @g-wert, der angibt, wie viel Sonnenenergie durch das Fenster-Sonnenschutz-System ins Rauminnere gelangt.
-
-Visueller Komfort: Lichttransmissionsgrad (τ v), Blendschutz (Klassen 0-4), Sichtverbindung nach draußen.
-Die Datenblätter von Herstellern wie Warema, Somfy etc. basieren auf den Messverfahren dieser Norm.
+"Kritische Blendungssituationen, die einen Schwellenwert DGPt überschreiten, sollten auf einen bestimmten Anteil der Bezugsnutzungsdauer fDGP,exceed beschränkt sein" S.52 17037
+=== Standards der Gebäude- und Raumautomation (VDI 3814, DIN V 18599-11)
