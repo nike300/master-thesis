@@ -13,10 +13,10 @@
   month        = {jul},
 }
 
-@standard{vdi3814-1,
-  title        = {{Gebäudeautomation (GA) - Grundlagen}},
-  organization = {{Verein Deutscher Ingenieure}},
-  number       = {VDI 3814 Blatt 1},
+@book{vdi3814-1,
+  title        = {{Gebäudeautomation (GA) - Blatt 1: Grundlagen}},
+  author       = {{VDI 3814-1:2019-01}},
+  publisher    = {{Verein Deutscher Ingenieure}},
   year         = {2019},
   month        = {jan},
 }
@@ -37,12 +37,22 @@
   month        = {sep},
 }
 
-@standard{dinen17037,
-  title        = {{Tageslicht in Gebäuden}},
-  organization = {{Deutsches Institut für Normung e. V.}},
-  number       = {DIN EN 17037},
+@book{dinen17037,
+  type         = {Norm},
+  title        = {Tageslicht in Gebäuden},
+  author       = {{DIN EN 17037:2022-05}},
+  publisher    = {DIN Media GmbH},
   year         = {2022},
   month        = {may},
+}
+
+@manual{dinen17037s,
+    author        = {{DIN EN 12845:2016-04}},
+    title         = {Ortsfeste Brandbekämpfungsanlagen - Automatische Sprinkleranlagen Planung, Installation und Instandhaltung},
+    institution   = {Beuth Verlag GmbH},
+    doi           = {10.31030/2420567},
+    year          = {2016},
+    month         = {04}
 }
 
 @standard{dineniso7730,
@@ -153,30 +163,30 @@
 	year = {2025},
 	note = {[Accessed 17-02-2026]},
 },
-@misc{Hessen3D,
-	author = {Hessische Verwaltung für Bodenmanagement und Geoinformation},
+@online{Hessen3D,
+	author = {{Hessische Verwaltung für Bodenmanagement und Geoinformation}},
 	title = {Dreidimensionale Gebäudeinformationen},
-	howpublished = {\url{https://hvbg.hessen.de/landesvermessung/geotopographie/3d-daten/3d-gebaeudemodelle}},
-	note = {[Accessed 18-02-2026]},
+	url = {https://hvbg.hessen.de/landesvermessung/geotopographie/3d-daten/3d-gebaeudemodelle},
+  urldate = {2026-02-18},
 }
 @misc{ogcCityGeography,
 	author = {Open Geospatial Consortium},
 	title = {{O}{G}{C} {C}ity {G}eography {M}arkup {L}anguage ({C}ity{G}{M}{L}) {P}art 1: {C}onceptual {M}odel {S}tandard --- docs.ogc.org},
 	howpublished = {\url{https://docs.ogc.org/is/20-010/20-010.html\#toc24}},
 	year = {2022},
-	note = {[Accessed 18-02-2026]},
+	note = {Accessed 18-02-2026},
 }
 
-@misc{dwdMilanZyklen,
-	author = {{D}eutscher {W}etterdienst},
-	title = {{W}etter und {K}lima - {D}eutscher {W}etterdienst - {T}hema des {T}ages - {D}ie {M}ilankovi\&\#x107;-{Z}yklen --- dwd.de},
-	howpublished = {\url{https://www.dwd.de/{D}{E}/wetter/thema\_des\_tages/2024/8/29.html}},
+@online{dwdMilanZyklen,
+	author = {{Deutscher {W}etterdienst}},
+	title = {{T}hema des {T}ages - {D}ie {M}ilankovic-{Z}yklen --- dwd.de},
+	url = {https://www.dwd.de/{D}{E}/wetter/thema\_des\_tages/2024/8/29.html},
 	year = {2024},
-	note = {[Accessed 24-02-2026]},
+	urldate = {2026-02-14},
 }
 
 @misc{astr04eduSonnenjahr,
-	author = {{O}ffice of {A}stronomy for {E}ducation},
+	author = {{Office of {A}stronomy for Education}},
 	title = {{I}{A}{U} {O}ffice of {A}stronomy for {E}ducation --- astro4edu.org},
 	howpublished = {\url{https://www.astro4edu.org/de/resources/glossary/term/389/}},
 	note = {[Accessed 24-02-2026]},
@@ -187,4 +197,19 @@
 	title = {{F}{O}{U}{R} {F}rankfurt {W}ebcam \& {Z}eitraffer --- zeitraffer.org},
 	howpublished = {\url{https://www.zeitraffer.org/four-frankfurt-webcam}},
 	note = {[Accessed 26-02-2026]},
+}
+
+@techreport{lichtverschmutzung,
+    author       = {Schröter-Schlaack, Christoph and Revermann, Christoph and Schulte-Römer, Nona},
+    year         = {2020},
+    title        = {Lichtverschmutzung – Ausmaß, gesellschaftliche und ökologische Auswirkungen sowie Handlungsansätze. Endbericht zum TA-Projekt},
+    doi          = {10.5445/IR/1000121964},
+    institution  = {{Büro für Technikfolgen-Abschätzung beim Deutschen Bundestag (TAB)}},
+    issn         = {2364-2599},
+    series       = {TAB-Arbeitsbericht},
+    note         = {48.01.02; LK 01},
+    keywords     = {Lichtverschmutzung; Technikfolgenabschätzung; Beleuchtung; Gesundheitsrisiko; Lichttechnik; Straßenbeleuchtung; Umweltbelastung},
+    pagetotal    = {200},
+    language     = {german},
+    volume       = {186}
 }

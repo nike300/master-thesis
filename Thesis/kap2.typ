@@ -1,5 +1,5 @@
 = Theoretische Grundlagen<Kap2>
-== Physikalische und geometrische Grundlagen
+== Geometrische Grundlagen
 
 In diesem Kapitel werden die astronomischen und geometrischen Gesetzmäßigkeiten hergeleitet, die für die Berechnung des Schattenwurfs maßgeblich sind. Zudem erfolgt eine Klassifizierung der aktorischen Komponenten und der zu optimierenden Zielgrößen.
 
@@ -153,22 +153,28 @@ Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung
 *Abgrenzung für diese Arbeit:*
 ???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in Standard-IFC-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (@Kap4[Kapitel]) auf das geometrische *Raycasting*. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (@Kap6[Kapitel]) diskutiert.
 
+== Verschattungssysteme
 === Klassifizierung steuerbarer Sonnenschutzsysteme
 - Systeme mit einem Freiheitsgrad (z. B. Rollläden, Screens): Variable Position $h$ (0-100%).
 - Systeme mit zwei Freiheitsgraden (z. B. Raffstore/Jalousien): Variablen Position $h$ und Lamellenwinkel $lambda$.
 - Relevanz für die Automation: Je komplexer das System, desto wichtiger ist die präzise Simulation des Winkels.
 
-=== Bauphysikalische und lichttechnische Zielgrößen
+=== Bauphysikalische und lichttechnische Zielgrößen (Nutzen)
 - Sommerlicher Wärmeschutz (Energieeintrag minimieren).
+- Winterlicher Wärmeeintrag (Energieeintrag maximieren)
 - Visueller Komfort (Blendung vermeiden).
 - Tageslichtautonomie (Kunstlicht minimieren).
+- Lichtverschmutzung minimieren
+  - Mensch und Natur reagieren negativ auf Lichtverschmutzung @lichtverschmutzung: 
 - Konfliktpotenzial: Erläuterung der konkurrierenden Ziele (z. B. Blendschutz vs. Tageslicht) und warum eine dynamische Simulation hier besser ist als eine starre Regelung.
 
-== Verschattungsgrundlagen
+=== Steuerungsmöglichkeiten von Verschattungssystemen
+- behanghöhe
 - automatische Lamellennachführung
 - cut off Winkel
-- behanghöhe
-== Dynamische Jahresverschattung
+
+
+=== Dynamische Jahresverschattung
 Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel von Energieeffizienz und Nutzerkomfort.
 #let definition(title, body) = {
   block(
