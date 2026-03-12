@@ -154,21 +154,28 @@ Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung
 ???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in Standard-IFC-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (@Kap4[Kapitel]) auf das geometrische *Raycasting*. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (@Kap6[Kapitel]) diskutiert.
 
 == Verschattungssysteme
+=== Bauphysikalische und lichttechnische Zielgrößen
+
+Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamellenwinkel) erfüllen in der modernen Gebäudeautomation wesentliche energetische und ergonomische Funktionen. Die primären Zielgrößen einer optimalen Steuerung definieren sich wie folgt:
+
+- *Sommerlicher Wärmeschutz:* Ziel ist die Minimierung des solaren Energieeintrags in das Gebäude, um die anfallende Kühllast und den damit verbundenen Energieverbrauch der Klimatisierung effektiv zu senken. 
+
+- *Winterliche Wärmegewinne:* Im Heizfall ist die durch transparente Hüllflächen in das Gebäude gelangende Solarstrahlung zu maximieren, um die Heizlast und den primärenergetischen Aufwand zu reduzieren.
+
+- *Visueller Komfort:* Hierbei steht die Vermeidung von ungewollter Direkt- und Reflexblendung an Arbeitsplätzen im Vordergrund. Gleichzeitig soll durch eine präzise Lamellennachführung die Sichtverbindung nach außen gemäß DIN EN 14501 weitestgehend erhalten bleiben, was den visuellen Komfort maßgeblich erhöht.
+
+- *Thermischer Komfort:(AIXXX)* Der thermische Komfort wird maßgeblich durch die operative Raumtemperatur $theta_"op"$ bestimmt, welche durch eine gezielte Regulierung des solaren Wärmeeintrags begrenzt werden muss. Sonnenschutzeinrichtungen steuern diese Dynamik gemäß DIN EN 14501, indem sie die direkte Bestrahlung von Personen verhindern und den Gesamtenergiedurchlassgrad ($g_"tot"$) sowie sekundäre Wärmeabgaben des Behanges optimieren.
+
+- *Tageslichtversorgung:* Diese Zielgröße maximiert die relative Nutzungszeit des natürlichen Lichts, um den Einsatz von Kunstlicht zu minimieren @din5034-1. Eine hohe Tageslichtautonomie wirkt sich zudem nachweislich positiv auf den circadianen Rhythmus sowie die psychische und physische Gesundheit der Gebäudenutzer aus @dgnb1.4.
+
+- *Reduktion von Lichtverschmutzung:* Durch das automatisierte Schließen der Behänge in den Nacht- oder frühen Morgenstunden wird verhindert, dass künstliches Licht störend in die Umgebung abstrahlt. Dies schützt umliegende Ökosysteme und natürliche Biorhythmen von Mensch und Natur @lichtverschmutzung.
+
+Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häufig in einem direkten Zielkonflikt zueinander (beispielsweise konkurriert ein maximaler Blendschutz direkt mit einer hohen Tageslichtautonomie). Die logische Steuerung (siehe Kapitel 4.6.3) muss daher definieren, in welcher Kaskade diese Funktionen nutzer- und witterungsabhängig priorisiert werden.
+
 === Klassifizierung steuerbarer Sonnenschutzsysteme
 - Systeme mit einem Freiheitsgrad (z. B. Rollläden, Screens): Variable Position $h$ (0-100%).
 - Systeme mit zwei Freiheitsgraden (z. B. Raffstore/Jalousien): Variablen Position $h$ und Lamellenwinkel $lambda$.
 - Relevanz für die Automation: Je komplexer das System, desto wichtiger ist die präzise Simulation des Winkels.
-
-=== Bauphysikalische und lichttechnische Zielgrößen (Nutzen)
-- Sommerlicher Wärmeschutz (Energieeintrag minimieren).
-- Winterlicher Wärmeeintrag (Energieeintrag maximieren)
-- Visueller Komfort (Blendung vermeiden).
-- Tageslichtautonomie (Kunstlicht minimieren).
-- Lichtverschmutzung minimieren
-  - Mensch und Natur reagieren negativ auf Lichtverschmutzung @lichtverschmutzung: 
-- Konfliktpotenzial: Erläuterung der konkurrierenden Ziele (z. B. Blendschutz vs. Tageslicht) und warum eine dynamische Simulation hier besser ist als eine starre Regelung.
-
-=== Steuerungsmöglichkeiten von Verschattungssystemen
 - behanghöhe
 - automatische Lamellennachführung
 - cut off Winkel
