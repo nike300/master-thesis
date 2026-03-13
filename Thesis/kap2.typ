@@ -170,6 +170,8 @@ Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamelle
 
 - *Reduktion von Lichtverschmutzung:* Durch das automatisierte Schließen der Behänge in den Nacht- oder frühen Morgenstunden wird verhindert, dass künstliches Licht störend in die Umgebung abstrahlt. Dies schützt umliegende Ökosysteme und natürliche Biorhythmen von Mensch und Natur @lichtverschmutzung.
 
+- *Privatsphäre:* Zuletzt bieten steuerbare Behänge durch die Unterbrechung der Sicht nach Innen einen Beitrag zur Privatsphäre der anwesenden Personen.
+
 Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häufig in einem direkten Zielkonflikt zueinander (beispielsweise konkurriert ein maximaler Blendschutz direkt mit einer hohen Tageslichtautonomie). Die logische Steuerung (siehe Kapitel 4.6.3) muss daher definieren, in welcher Kaskade diese Funktionen nutzer- und witterungsabhängig priorisiert werden.
 
 === Klassifizierung steuerbarer Sonnenschutzsysteme
@@ -182,7 +184,18 @@ Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häu
 
 
 === Dynamische Jahresverschattung
+/*Nutzen für Eigentümer/Mieter:
+- Reduzierte Energiekosten durch geringeren Kühl- und Heizbedarf
+- Attraktiveres Gebäude durch verbesserten Komfort
+- Erfüllung von Nachhaltigkeitszielen und Zertifizierungen
+Nutzen für Betreiber:
+- Einfachere Wartung und Steuerung durch Automatisierung
+- Längere Lebensdauer der Gebäudekomponenten durch Schutz vor UV-Strahlung
+Nutzen für Nutzer:
+- Verbesserter visueller Komfort durch reduzierte Blendung
+- Angenehmes Raumklima durch reduzierte Überhitzung
 Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel von Energieeffizienz und Nutzerkomfort.
+*/
 #let definition(title, body) = {
   block(
     fill: luma(240),

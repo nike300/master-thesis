@@ -48,7 +48,6 @@ Im Gegensatz zu den geometrischen Hindernissen stellen Wolken keine feste Barrie
 
 / Außenliegende Jalousien (Raffstores): müssen den Witterungen außerhalb der Gebäudehülle standhalten und sind in der Gebäudeautomation  besonders wichtig, da sich ihre Lamellen dem Sonnenstand anpassen lassen. Dies ermöglicht es, Funktionalitäten im Bezug auf Nutzerkomfort und Energieeffizienz zu gewährleisten.
 
-
 / Weitere Systeme: z.B. Außenrollos, Screens, elektrochromes Glas, Gardinen, Großlamellen etc.
 
 == Nutzen von Verschattungssystemen
