@@ -26,5 +26,10 @@
     key: "aks",
     short: "AKS",
     long: "Anlagenkennzeichnungsschlüssel"
+  ),
+  (
+    key: "gis",
+    short: "GIS",
+    long: "Geographisches Informationssystem"
   )
 )
