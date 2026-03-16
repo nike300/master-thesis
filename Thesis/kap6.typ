@@ -1,5 +1,6 @@
 = Diskussion und Fazit<Kap6>
 == Zusammenfassung der Ergebnisse
+== Marktanalyse und wirtschaftliches Potenzial
 == Grenzen des entwickelten Prozesses
 == Ausblick
 == KI-Disclaimer

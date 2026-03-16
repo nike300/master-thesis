@@ -183,7 +183,7 @@ Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häu
 - cut off Winkel
 
 
-=== Dynamische Jahresverschattung
+=== Jahresverschattung
 /*Nutzen für Eigentümer/Mieter:
 - Reduzierte Energiekosten durch geringeren Kühl- und Heizbedarf
 - Attraktiveres Gebäude durch verbesserten Komfort
