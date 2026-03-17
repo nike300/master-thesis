@@ -158,7 +158,7 @@ Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung
 
 Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamellenwinkel) erfüllen in der modernen Gebäudeautomation wesentliche energetische und ergonomische Funktionen. Die primären Zielgrößen einer optimalen Steuerung definieren sich wie folgt:
 
-- *Sommerlicher Wärmeschutz:* Ziel ist die Minimierung des solaren Energieeintrags in das Gebäude, um die anfallende Kühllast und den damit verbundenen Energieverbrauch der Klimatisierung effektiv zu senken. 
+- *Sommerlicher Wärmeschutz:* Ziel ist die Minimierung des solaren Energieeintrags in das Gebäude, um die anfallende Kühllast und den damit verbundenen Energieverbrauch der Klimatisierung effektiv zu senken. Intelligente Sonnenschutzsysteme können die benötigte Kühlenergie um 30% reduzieren@hutchins2015shading[S. 12] seite 21#cite(<hutchins2015shading>)).
 
 - *Winterliche Wärmegewinne:* Im Heizfall ist die durch transparente Hüllflächen in das Gebäude gelangende Solarstrahlung zu maximieren, um die Heizlast und den primärenergetischen Aufwand zu reduzieren.
 
@@ -166,7 +166,7 @@ Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamelle
 
 - *Thermischer Komfort:(AIXXX)* Der thermische Komfort wird maßgeblich durch die operative Raumtemperatur $theta_"op"$ bestimmt, welche durch eine gezielte Regulierung des solaren Wärmeeintrags begrenzt werden muss. Sonnenschutzeinrichtungen steuern diese Dynamik gemäß DIN EN 14501, indem sie die direkte Bestrahlung von Personen verhindern und den Gesamtenergiedurchlassgrad ($g_"tot"$) sowie sekundäre Wärmeabgaben des Behanges optimieren.
 
-- *Tageslichtversorgung:* Diese Zielgröße maximiert die relative Nutzungszeit des natürlichen Lichts, um den Einsatz von Kunstlicht zu minimieren @din5034-1. Eine hohe Tageslichtautonomie wirkt sich zudem nachweislich positiv auf den circadianen Rhythmus sowie die psychische und physische Gesundheit der Gebäudenutzer aus @dgnb1.4.
+- *Tageslichtversorgung:* Diese Zielgröße maximiert die relative Nutzungszeit des natürlichen Lichts, um den Einsatz von Kunstlicht zu minimieren @din5034-1. Dynamische Verschattung kann den jährlichen Energieverbrauch der Beleuchtung in den Räumen um 14-42% reduzieren@fernandes2021potential. Eine hohe Tageslichtautonomie wirkt sich zudem nachweislich positiv auf den circadianen Rhythmus sowie die psychische und physische Gesundheit der Gebäudenutzer aus @dgnb1.4.
 
 - *Reduktion von Lichtverschmutzung:* Durch das automatisierte Schließen der Behänge in den Nacht- oder frühen Morgenstunden wird verhindert, dass künstliches Licht störend in die Umgebung abstrahlt. Dies schützt umliegende Ökosysteme und natürliche Biorhythmen von Mensch und Natur @lichtverschmutzung.
 
