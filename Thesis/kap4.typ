@@ -1,6 +1,14 @@
 = Implementierung und Validierung des Proof of Concept<Kap4>
 // Vorstellung Four (Turm 1)
-Das FOUR sind vier zusammenhängende Türme in der Innenstadt von Frankfurt am Main. Das Bauprojekt befindet sich momentan in der Inbetriebnahmephase der Gebäudeautomation und soll im Jahr 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am Turm 1 angewendet. 
+Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Das Bauprojekt befindet sich momentan in der Inbetriebnahmephase der Gebäudeautomation und soll im Jahr 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am Büroturm T1 angewendet. 
+
+Eine Besonderheit ist die abgeschrägte Fassade siehe @fig-FourTageslicht
+HIER NOCH AUF DIE ABGESCHRÄGTEN FASSADEN EINGEHEN UND WIESO DAS SO GEBAUT WURDE
+#figure(
+  image("assets/FourTageslichtSchnitte.png"),
+  caption: [Seitenansicht des FOUR @four_frankfurt_about]
+)<fig-FourTageslicht>
+
 == Import Umgebungsdaten (H)
 Für den Turm 1 des FOUR sind die drei anderen Türme 1-3 durch die unmittelbare Nähe die wichtigsten verschattenden Geometrien in der Simulation. Diese drei Gebäude liegen als IFC-Modelle der Fassaden vor und können direkt in die 3D-Umgebung importiert werden. Die Positionierung der drei Gebäude erfolgt über......???
 
@@ -27,6 +35,12 @@ Problem der Georeferenzierung. Ungenauigkeit. Vertex Snapping
 - Bereinigung von Redundanzen im Kontextmodell (Bestehendes Gebäude aus OSM löschen)
 
 == Die eigentliche Simulation
+Für die Verschattungssimulation wird ein Python-Skript ausgeführt, welches über die @ide @vs-code#[]@vscode gestartet wird. Der Code unterteilt sich in mehrere Teile:
+
+
+
+
+
 Entweder mit Simulation im Hintergrund (anscheinend kaputt) oder mit Mathe Simulation
 Mathe simulation mit Algorithmus zur Sonnenstandsberechnung nach NOAA (National Oceanic and Atmospheric Administration)
 

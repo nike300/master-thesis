@@ -26,5 +26,20 @@
     key: "aks",
     short: "AKS",
     long: "Anlagenkennzeichnungsschlüssel"
+  ),
+  (
+    key: "gis",
+    short: "GIS",
+    long: "Geographisches Informationssystem"
+  ),
+  (
+    key: "ide",
+    short: "IDE",
+    long: "Integrated Development Environment"
+  ),
+  (
+    key: "vs-code",
+    short: "VS-Code",
+    long: "Visual Studio Code"
   )
 )
