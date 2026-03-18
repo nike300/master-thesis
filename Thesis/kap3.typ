@@ -15,6 +15,8 @@
   - Auch schräge Fenster sollten als IFC-Window-Klasse definiert werden - Werden sie oft nicht, da sie schräg sind, in revit
   - Das Gebäude sollte in der ifc-Datei bereits auf der richtigen Z-Höhe und nach Norden ausgerichtet sein
   - Die Fenster sollten @aks  besitzen, der nach dem Schalenmodell @vdi3814-1 aufgebaut ist.
+
+  HIER AUF CHECKLISTE IM ANHANG VERWEISEN FÜR ARCHITEKTEN
 === Analyse externer Geodaten
 // Notwendigkeit und Anforderungen an Umgebungsmodelle, beispielsweise der Detaillierungsgrad (LOD) der Nachbarbebauung aus GIS- oder OpenStreetMap-Daten.
 
@@ -51,6 +53,13 @@ Die Auswahl des geeigneten Datenanbieters für das Referenzprojekt erfolgt anhan
 
 === Georeferenzierung und Zeitbasis
  Definition der Anforderungen an die räumliche und zeitliche Einordnung, inklusive Koordinatensystemen und dem Handling von Zeitzonen.
+
+
+== AUSWAHL DER SIMULATIONSUMGEBUNG?
+Es wird sich für Blender entschieden, da
+- kostenlos
+- viele schnittstellen z.B. ifc, dxf etc.
+- viele Add-ons
 
 == Konzeption der Simulationslogik (Processing)
 - *Methodenauswahl:* Begründung des gewählten geometrischen Raycasting-Verfahrens gegenüber alternativen Ansätzen wie Radiosity oder rein thermischen Simulationen.
