@@ -229,3 +229,12 @@ Für den visuellen Komfort gibt es vor allem zwei Faktoren auf die Verschattungs
 
 "Kritische Blendungssituationen, die einen Schwellenwert DGPt überschreiten, sollten auf einen bestimmten Anteil der Bezugsnutzungsdauer fDGP,exceed beschränkt sein" S.52 17037
 === Standards der Gebäude- und Raumautomation (VDI 3814, DIN V 18599-11)
+
+Die VDI 3813@vdi3813-2 definiert einen Funktionsblock welcher prüft, "ob 
+ein Fenster oder eine Gruppe von Fenstern, die z. B. einem Raum zugeordnet sind, temporär durch umliegende Bebauung oder eigene Gebäudeteile verschattet werden". #emph("S_AUTO") als Eingang definiert dabei den Positionierbefehl der Jalousie aus den Funktionsblocks der Lamellennachführung oder Sonnenautomatik, während #emph("S_AUTO") auf der Ausgangsseite den korrigierten Positionierbefehl vorgibt. Es wird beschrieben, dass der Azimut- und Höhenwinkel, sowie eine vordefinierte Parkposition übergeben werden müssen. 
+
+Siehe @fig-Funktionsblock  
+#figure(
+  image("assets/FunktionsblockVerschattung3813.png"),
+  caption: [Funktionsblock für die Verschattungskorrektur@vdi3813-2]
+)<fig-Funktionsblock>
