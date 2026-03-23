@@ -3,7 +3,10 @@
 In diesem Kapitel wird das Konzept zur technischen Überführung der Simulationsergebnisse in die operative Steuerungsebene dargelegt. Ziel ist es, die in Kapitel 4 generierten Datenströme so aufzubereiten und zu übertragen, dass sie von Standard-Automationsstationen verarbeitet werden können.
 
 == Datenstruktur und Schnittstellendefinition
-- *Generierung maschinenlesbarer Formate:* Festlegung der Exportparameter zur Erzeugung von CSV- oder JSON-Dateien, die eine effiziente Parsbarkeit auf ressourcenbeschränkten Automationsstationen (SPS) ermöglichen.
+- *Datenformat Output:*
+  - Erstmal csv-Dateien, da einfach les- und schreibbar
+  - wie csv aufgebaut ist (Zeilen- und Spaltenüberschriften)
+  - nur 0,1 oder doch mehr information mitgeben?
 // 
 - *Mapping von Simulations-IDs auf BACnet-Objekte:* Entwicklung einer Zuordnungsmatrix, um die im Modell verwendeten Fenster-IDs eindeutig mit den entsprechenden BACnet-Objektinstanzen (z. B. *Analog Output* für den Verschattungsgrad) zu verknüpfen.
 //Vielleicht eher in Kapitel 3? Oder ist das hier seperat zu betrachten?

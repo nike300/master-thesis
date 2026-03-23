@@ -4,6 +4,10 @@
 - *Defizite konventioneller Verschattungsstrategien:* Analyse der Einschränkungen heutiger Systeme, insbesondere die fehlende Berücksichtigung von Fremdverschattung durch Nachbargebäude.
 - *Anforderungsprofil an das Gesamtsystem:* Definition funktionaler Anforderungen (wie Präzision und Grad der Automatisierbarkeit) sowie nicht-funktionaler Anforderungen (Recheneffizienz und Systemkompatibilität).
 
+== Auswahl der Simulationsumgebung
+In der Simulationsumgebung findet die Zusammenstellung der Szene statt. Es muss eine Software gewählt werden, die den Import verschiedener 3D-Dateiformate zulässt. Zusätzlich sollte diese Software den Sonnenstand simulieren können und eine Möglichkeit bieten Raycasts zu generieren. 
+Die Wahl fiel auf die kostenlose Open-Source-Software Blender@blender_org, die für die Erstellung von Animationsfilmen entwickelt wurde. Sie bietet in der jetzigen Version eine Vielzahl von Funktionalitäten, darunter auch die, zur Erfüllung der oben genannten Anforderungen. Außerdem bietet sie den Vorteil einer großen, aktiven Community, die eine Vielzahl an kostenlosen und kostenpflichtigen Plug-Ins entwickelt. Für diese Anwendung passende Alternativen standen nicht zur Auswahl.
+
 == Spezifikation der Datengrundlage (Input)
 === Analyse der BIM-Datengüte (IFC):
  Untersuchung der vorhandenen geometrischen Informationen und Identifikation fehlender Attribute, die für eine valide Simulation zwingend erforderlich sind.
@@ -43,23 +47,14 @@ Die Auswahl des geeigneten Datenanbieters für das Referenzprojekt erfolgt anhan
 
 - *Kostenstruktur:* Es ist zwischen kostenpflichtigen kommerziellen Daten und Open-Data-Initiativen zu unterscheiden. Viele Bundesländer (darunter Hessen und NRW) stellen ihre 3D-Gebäudemodelle mittlerweile kostenfrei über Open-Data-Portale zur Verfügung, was die wirtschaftliche Hürde für die Integration in die Gebäudeautomation eliminiert.
 
-
-
 ==== überlegung zur auswahl der szene
-  - Gebäude im norden vom gebäude müssen nicht geladen werden, da sie nicht das gebäuude verschatten können
+  - Gebäude im norden vom gebäude müssen nicht geladen werden, da sie nicht das Gebäude verschatten können
   - bei sehr tiefliegender sonne sind auch weit entferne gebäude relevant
   - niedrige gebäude sind nur für die niedrigen etagen interessant (vielleicht simulationen so aufsplitten?)
-
 
 === Georeferenzierung und Zeitbasis
  Definition der Anforderungen an die räumliche und zeitliche Einordnung, inklusive Koordinatensystemen und dem Handling von Zeitzonen.
 
-
-== AUSWAHL DER SIMULATIONSUMGEBUNG?
-Es wird sich für Blender entschieden, da
-- kostenlos
-- viele schnittstellen z.B. ifc, dxf etc.
-- viele Add-ons
 
 == Konzeption der Simulationslogik (Processing)
 - *Methodenauswahl:* Begründung des gewählten geometrischen Raycasting-Verfahrens gegenüber alternativen Ansätzen wie Radiosity oder rein thermischen Simulationen.
