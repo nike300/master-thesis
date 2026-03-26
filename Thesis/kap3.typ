@@ -18,6 +18,7 @@ Die Wahl fiel auf die kostenlose Open-Source-Software Blender@blender_org, die f
   - Die Fassadenelemente sollten dem richtigen Geschoss zugeordnet sein.
   - Auch schräge Fenster sollten als IFC-Window-Klasse definiert werden - Werden sie oft nicht, da sie schräg sind, in revit
   - Das Gebäude sollte in der ifc-Datei bereits auf der richtigen Z-Höhe und nach Norden ausgerichtet sein
+  - Die genauen Koordinaten und das angewandte Koordinatenreferenzsystem 
   - Die Fenster sollten @aks  besitzen, der nach dem Schalenmodell @vdi3814-1 aufgebaut ist.
 
   HIER AUF CHECKLISTE IM ANHANG VERWEISEN FÜR ARCHITEKTEN
