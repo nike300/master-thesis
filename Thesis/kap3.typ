@@ -20,6 +20,7 @@ Die Wahl fiel auf die kostenlose Open-Source-Software Blender@blender_org, die f
   - Das Gebäude sollte in der ifc-Datei bereits auf der richtigen Z-Höhe und nach Norden ausgerichtet sein
   - Die genauen Koordinaten und das angewandte Koordinatenreferenzsystem 
   - Die Fenster sollten @aks  besitzen, der nach dem Schalenmodell @vdi3814-1 aufgebaut ist.
+  - Weil oft von Architekten bei Hochhäusern auch Sonnenstudien durchgeführt werden, sind wahrscheinlich schon komplette Stadtmodelle vorhanden, die man weiterverwenden könnte
 
   HIER AUF CHECKLISTE IM ANHANG VERWEISEN FÜR ARCHITEKTEN
 === Analyse externer Geodaten
