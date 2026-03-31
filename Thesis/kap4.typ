@@ -28,6 +28,9 @@ Durch diesen optimierten Workflow können die Gebäudemassen der Umgebung schlie
 
 == Import und Positionierung der IFC
 *Import* Da die oben genannten Punkte zum Teil nicht erfüllt werden, musste beim Import der FOUR-IFC-Datei noch folgendes gemacht werden:
+
+T1 als hauptdatei
+T2-4 und P1-4 werden als seperate Dateien gespeichert und schlussendlich nur verlinkt in die Hauptdatei
 -
 *Positionierung*
 Problem der Georeferenzierung. Ungenauigkeit. Vertex Snapping
