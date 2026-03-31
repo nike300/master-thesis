@@ -9,6 +9,15 @@ HIER NOCH AUF DIE ABGESCHRÄGTEN FASSADEN EINGEHEN UND WIESO DAS SO GEBAUT WURDE
   caption: [Seitenansicht des FOUR @four_frankfurt_about]
 )<fig-FourTageslicht>
 
+
+== Import und Positionierung der IFC
+*Import* Da die oben genannten Punkte zum Teil nicht erfüllt werden, musste beim Import der FOUR-IFC-Datei noch folgendes gemacht werden:
+-
+*Positionierung*
+Problem der Georeferenzierung. Ungenauigkeit. Vertex Snapping
+- Schwierig höhe z richtig zu bekommmen
+- Bereinigung von Redundanzen im Kontextmodell (Bestehendes Gebäude aus OSM löschen)
+
 == Import Umgebungsdaten (H)
 Für den Turm 1 des FOUR sind die drei anderen Türme 1-3 durch die unmittelbare Nähe die wichtigsten verschattenden Geometrien in der Simulation. Diese drei Gebäude liegen als IFC-Modelle der Fassaden vor und können direkt in die 3D-Umgebung importiert werden. Die Positionierung der drei Gebäude erfolgt über......???
 
