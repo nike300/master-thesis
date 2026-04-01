@@ -23,7 +23,7 @@ print(f"Ziel-Datei: {OUTPUT_FILE}")
 
 OBSTACLE_COLLECTION = "map_6.osm_buildings" 
 SUN_OBJECT_NAME = "Sun"
-WINDOW_KEYWORD = "IfcWindow" 
+WINDOW_KEYWORD = "_PAN_" 
 
 SIMULATION_DATES = [(20, 3)] 
 START_HOUR = 0
