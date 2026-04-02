@@ -22,6 +22,7 @@ Zusammenfassend transformiert der entwickelte Workflow die Jahresverschattung vo
 
 == Grenzen des entwickelten Prozesses
 == Ausblick
+Man könnte eine Exceltabelle entwickeln, die die vorliegenden IFC-Daten bewertet und daraus einen zusätzlichen Arbeitsaufwand berechnet. Dies könnte für die Angebotserstellung als Entscheidungsgrundlage herangezogen werden.
 == KI-Disclaimer
 
 - Gemini 2.5 Pro Deep Research: Recherche für Marktanalyse; Vorschläge für Technologiestack der Anwendung

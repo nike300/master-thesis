@@ -1,9 +1,9 @@
-= Theoretische Grundlagen<Kap2>
-== Geometrische Grundlagen
+= Theoretische Grundlagen<Kap2> <TheoretischeGrundlagen>
+== Geometrische Grundlagen <GeometrischeGrundlagen>
 
 In diesem Kapitel werden die astronomischen und geometrischen Gesetzmäßigkeiten hergeleitet, die für die Berechnung des Schattenwurfs maßgeblich sind. Zudem erfolgt eine Klassifizierung der aktorischen Komponenten und der zu optimierenden Zielgrößen.
 
-=== Sonnenbahnmechanik
+=== Sonnenbahnmechanik <Sonnenbahnmechanik>
 Für eine exakte Verschattungssimulation muss die Position der Sonne bekannt sein. Im Folgenden werden die Berechnungsgrundlagen für die Wahre Ortszeit, den Stundenwinkel sowie für Deklination, Höhenwinkel und Azimut dargelegt (siehe @fig-sonnenmodell).
 
 #figure(
@@ -13,7 +13,7 @@ Für eine exakte Verschattungssimulation muss die Position der Sonne bekannt sei
   ],
 )<fig-sonnenmodell>
 
-==== Wahre Ortszeit
+==== Wahre Ortszeit <WahreOrtszeit>
 Wie Duffie und Beckman @Duffie2013 herleiten, sind für die Berechnung der Wahren Ortszeit ($t_"WOZ"$) folgende Parameter notwendig:
 
 - $t_"std"$: Gesetzliche Ortszeit (Local Standard Time) in Stunden.
@@ -34,14 +34,14 @@ $ E &= 229.18 dot (0.000075 + 0.001868 cos(B) - 0.032077 sin(B) \
 mit dem Hilfswinkel $B$:
 $ B &= (n - 1) dot frac(360, 365) $
 
-==== Stundenwinkel ($omega$)
+==== Stundenwinkel ($omega$) <Stundenwinkel>
 Um die zeitliche Komponente in die geometrische Berechnung einzuführen, wird die Wahre Ortszeit ($t_"WOZ"$) in den Stundenwinkel $omega$ umgerechnet. Da die Erde sich um $15 degree$ pro Stunde dreht, gilt:
 
 $ omega = (t_"WOZ" - 12) dot 15 degree $
 
 Dabei entspricht $omega = 0 degree$ dem solaren Mittag (Sonne exakt im Süden). Vormittagswerte sind negativ, Nachmittagswerte positiv.
 
-==== Sonnendeklination ($delta$)
+==== Sonnendeklination ($delta$) <Sonnendeklination>
 $delta$ ist der Winkel zwischen der Verbindungslinie Erde-Sonne und der Äquatorebene. Sie beschreibt die Neigung der Erde in Relation zur Sonne und variiert im Jahresverlauf zwischen $-23,45 degree$ und $+23,45 degree$.
 
 Für die Bestimmung der Sonnenposition wird das Berechnungsverfahren gemäß DIN EN 17037 (Tageslicht in Gebäuden) angewendet @dinen17037.
@@ -61,7 +61,7 @@ $ delta(J) &= 0.3948 \
   Die Koeffizienten liefern das Ergebnis in Grad. Für die geometrische Weiterverarbeitung im Simulationsmodell (siehe kapitel 5???) erfolgt eine Umrechnung in das Bogenmaß (Radiant).
 ]
 
-==== Sonnenhöhenwinkel ($gamma_s$)
+==== Sonnenhöhenwinkel ($gamma_s$) <Sonnenhoehenwinkel>
 Der Sonnenhöhenwinkel beschreibt den vertikalen Winkel zwischen der horizontalen Ebene und dem Mittelpunkt der Sonnenscheibe. Er ist maßgeblich für die effektive Einstrahlung auf Fassadenflächen sowie für die Berechnung der Schattenlängen.
 
 Basierend auf dem geografischen Breitengrad $phi$, der zuvor berechneten Deklination $delta$ und dem Stundenwinkel $omega$ ergibt sich der Höhenwinkel aus der grundlegenden Gleichung der sphärischen Astronomie:
@@ -78,7 +78,7 @@ Dabei gelten folgende Randbedingungen:
 
 #block(inset: 8pt, fill: luma(240))[*Relevanz für die Simulation:*In der Prozesskette (Kapitel 5) dient die Prüfung $gamma_s > 0$ als erster Filter ("Early Exit"). Ist der Wert negativ, muss kein aufwendiges Raycasting durchgeführt werden, da keine direkte Verschattung möglich ist.]
 
-==== Sonnenazimut ($alpha_s$)
+==== Sonnenazimut ($alpha_s$) <Sonnenazimut>
 Der Sonnenazimut beschreibt die horizontale Himmelsrichtung der Sonne. In Übereinstimmung mit der Norm DIN 5034-1 ist der Bezugspunkt die geografische Nordrichtung. Der Winkel wird im Uhrzeigersinn von $0 degree$ (Nord) bis $360 degree$ gemessen.
 
 Die Berechnung erfolgt abhängig von der Wahren Ortszeit @Quaschning:
@@ -90,7 +90,7 @@ $ alpha_s = cases(
 
 //#block(inset: 8pt, fill: luma(240))[ *Vorteil für die Simulation:* Diese Definition (Nord = $0 degree$, im Uhrzeigersinn) entspricht dem Koordinatensystem gängiger 3D-Software und GIS-Daten.]
 
-=== Vergleich und Auswahl der Berechnungsverfahren
+=== Vergleich und Auswahl der Berechnungsverfahren <VergleichAuswahlBerechnungsverfahren>
 Die in den vorangegangenen Abschnitten dargestellten Formeln der DIN EN 17037 stellen die normative Grundlage für die Tageslichtplanung in Europa dar. Sie bieten eine für architektonische Entwürfe hinreichende Genauigkeit.
 
 Für die Implementierung des Simulations-Prototyps (siehe Kapitel 4) wird jedoch auf den Algorithmus der *National Oceanic and Atmospheric Administration* (NOAA) zurückgegriffen. Dieser zeichnet sich durch folgende Merkmale aus:
@@ -101,10 +101,10 @@ Für die Implementierung des Simulations-Prototyps (siehe Kapitel 4) wird jedoch
 Auf eine detaillierte mathematische Herleitung der über 30 Korrekturterme des NOAA-Verfahrens wird an dieser Stelle verzichtet; die Berechnung folgt der dokumentierten Implementierung gemäß @NOAASolar2021.
 
 
-=== Geometrie der Verschattung
+=== Geometrie der Verschattung <GeometrieVerschattung>
 Nachdem die Position der Sonne bestimmt wurde, muss im nächsten Schritt geprüft werden, ob die direkte Sichtlinie zwischen einem betrachteten Punkt auf der Fassade (z. B. Fenstermittelpunkt) und der Sonne durch Hindernisse unterbrochen wird.
 
-==== Der Sonnenvektor
+==== Der Sonnenvektor <Sonnenvektor>
 Für die geometrische Simulation in 3D-Umgebungen ist die sphärische Darstellung (Winkel) oft unpraktisch. Stattdessen wird die Sonnenposition als normierter Richtungsvektor $vec(S)$ im kartesischen Koordinatensystem definiert. 
 
 Unter der Annahme eines Z-up-Koordinatensystems (z. B. in IFC-Modellen üblich, $Z$ zeigt zum Zenit, $Y$ nach Norden) berechnet sich der Sonnenvektor aus Azimut $alpha_s$ und Elevation $gamma_s$:
@@ -117,13 +117,13 @@ $ vec(S) = mat(
 
 Dieser Vektor zeigt vom Ursprung zur Sonne. Für die Verschattungsberechnung wird der Vektor invertiert ($-vec(S)$), um die Einstrahlungsrichtung zu simulieren.
 
-==== Klassifizierung der Verschattungstypen
+==== Klassifizierung der Verschattungstypen <KlassifizierungVerschattungstypen>
 Man unterscheidet in der Simulation zwei wesentliche Ursachen für den Schattenwurf:
 
 - *Fremdverschattung:* Verursacht durch Objekte außerhalb der eigenen Gebäudehülle, wie Nachbarbebauung, Vegetation oder Topografie. Diese Geometrien sind im Betrieb statisch, müssen aber im digitalen Modell (IFC/CityGML) präzise abgebildet sein.
 - *Eigenverschattung:* Verursacht durch die Gebäudegeometrie selbst, z. B. durch Fassadenvorsprünge, Balkone oder die Laibungstiefe des Fensters. Besonders die Laibungstiefe spielt bei steilen Sonnenständen eine kritische Rolle für das Vorausschauen des effektiven Lichteintrag.
 
-==== Das Raycasting-Verfahren
+==== Das Raycasting-Verfahren <RaycastingVerfahren>
 Zur Ermittlung des Verschattungsstatus wird in modernen Simulationstools das *Raycasting* (Strahlenverfolgung) eingesetzt. Dabei wird ein theoretischer Sehstrahl $R(t)$ vom Referenzpunkt $P_0$ (z. B. Fenstermitte) in Richtung der Sonne gesendet:
 
 $ R(t) = P_0 + t dot vec(S) quad "mit" t > 0 $
@@ -139,7 +139,7 @@ Für eine differenzierte Betrachtung (z. B. 50% verschattet) wird die Fensterfl�
 
 $ F_s = frac(n_"schatten", N) $
 
-==== Raytracing und Reflexionen
+==== Raytracing und Reflexionen <RaytracingReflexionen>
 Während das Raycasting primär die binäre Sichtbarkeit (Schatten/Sonne) prüft, erweitert das *Raytracing* dieses Prinzip um die rekursive Verfolgung von Lichtstrahlen nach deren Interaktion mit Oberflächen.
 
 Dies ist relevant für die Simulation von:
@@ -153,8 +153,8 @@ Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung
 *Abgrenzung für diese Arbeit:*
 ???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in Standard-IFC-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (@Kap4[Kapitel]) auf das geometrische *Raycasting*. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (@Kap6[Kapitel]) diskutiert.
 
-== Verschattungssysteme
-=== Bauphysikalische und lichttechnische Zielgrößen
+== Verschattungssysteme <Verschattungssysteme>
+=== Bauphysikalische und lichttechnische Zielgrößen <BauphysikalischeLichttechnischeZielgroessen>
 
 Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamellenwinkel) erfüllen in der modernen Gebäudeautomation wesentliche energetische und ergonomische Funktionen. Die primären Zielgrößen einer optimalen Steuerung definieren sich wie folgt:
 
@@ -174,7 +174,7 @@ Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamelle
 
 Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häufig in einem direkten Zielkonflikt zueinander (beispielsweise konkurriert ein maximaler Blendschutz direkt mit einer hohen Tageslichtautonomie). Die logische Steuerung (siehe Kapitel 4.6.3) muss daher definieren, in welcher Kaskade diese Funktionen nutzer- und witterungsabhängig priorisiert werden.
 
-=== Klassifizierung steuerbarer Sonnenschutzsysteme
+=== Klassifizierung steuerbarer Sonnenschutzsysteme <KlassifizierungSteuerbarerSonnenschutzsysteme>
 - Systeme mit einem Freiheitsgrad (z. B. Rollläden, Screens): Variable Position $h$ (0-100%).
 - Systeme mit zwei Freiheitsgraden (z. B. Raffstore/Jalousien): Variablen Position $h$ und Lamellenwinkel $lambda$.
 - Relevanz für die Automation: Je komplexer das System, desto wichtiger ist die präzise Simulation des Winkels.
@@ -183,7 +183,7 @@ Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häu
 - cut off Winkel
 
 
-=== Jahresverschattung
+=== Jahresverschattung <Jahresverschattung>
 /*Nutzen für Eigentümer/Mieter:
 - Reduzierte Energiekosten durch geringeren Kühl- und Heizbedarf
 - Attraktiveres Gebäude durch verbesserten Komfort
@@ -217,14 +217,14 @@ Begriff wird von WAREMA übernommen, ist allerdings nirgends richtig definiert.
 
 Die Jahresverschattungssimulation bezeichnet ein simulationsgestütztes Verfahren zur Analyse und Steuerung des solaren Energie- und Lichteintrags in ein Gebäude über den Zeitraum eines vollständigen meteorologischen Jahres. Im Gegensatz zu statischen Verschattungselementen oder reinen Echtzeit-Helligkeitsregelungen basiert sie auf der zeitabhängigen Interaktion zwischen dem astronomischen Sonnenstand, der Gebäudegeometrie sowie der umgebenden Bebauung. Ziel ist die Ermittlung optimaler Positionierungsstrategien für variable Sonnenschutzsysteme, um ein Gleichgewicht zwischen der Minimierung thermischer Lasten (sommerlicher Wärmeschutz), der Maximierung solarer Gewinne (winterlicher Heizbedarf) und der Gewährleistung des visuellen Komforts (Blendfreiheit bei maximaler Tageslichtnutzung) sicherzustellen.
 // Physikalische Prinzipien und Ziele (Energie vs. Komfort).
-== Digitale Planungsmethoden (Datenformate?)???
+== Digitale Planungsmethoden (Datenformate?)??? <DigitalePlanungsmethoden>
 Wenn früher vor allem Papierpläne zum Datenkommunikationsaustausch im Planungsprozess verwendet wurden, gibt es mittlerweile eine Vielzahl an digitalen Möglichkeiten. Etabliert über die letzten Jahrzehnte, haben sich vor allem 2D-Grundrissdateien, die z.B. im proprietären Austauschformat dwg zwischen Architekten und Ingenieuren geteilt wurden. Während diese Methode heutzutage noch weite Anwendung findet, greifen die auf 3D-Modellen basierenden Austauschformate weiter um sich. Bereits einfache 3D-Modelle bieten große Vorteile bei der Verständlichkeit und Dichte der übermittelnden geometrischen Informationen. Zusätzlich ist es möglich im Rahmen eines BIM-Modells semantische Daten mit zu übermitteln. Das hierfür benutzte Austauschformat IFC bietet wichtige Funktionalitäten, um für die Verschattungssimulation relevante Daten zu  teilen.
 // BIM, IFC, Simulationswerkzeuge (Überblick).
-=== Koordinatenreferenzsysteme
+=== Koordinatenreferenzsysteme <Koordinatenreferenzsysteme>
+- WGS84
 
-
-== Normative Grundlagen
-=== Grundlagen der Licht- und Wärmesteuerung
+== Normative Grundlagen <NormativeGrundlagen>
+=== Grundlagen der Licht- und Wärmesteuerung <GrundlagenLichtWaermesteuerung>
 Ein Grundziel der Verschattung ist der Blendschutz, der in der DIN EN 17037 @dinen17037 behandelt wird.
 Nutzen:
 - Aussicht
@@ -232,7 +232,7 @@ Nutzen:
 Für den visuellen Komfort gibt es vor allem zwei Faktoren auf die Verschattungseinrichtungen Einfluss nehmen können: Der Blendschutz soll das auftreten von einer zu hohen Leuchtdichte verhindern, da diese sonst
 
 "Kritische Blendungssituationen, die einen Schwellenwert DGPt überschreiten, sollten auf einen bestimmten Anteil der Bezugsnutzungsdauer fDGP,exceed beschränkt sein" S.52 17037
-=== Standards der Gebäude- und Raumautomation (VDI 3814, DIN V 18599-11)
+=== Standards der Gebäude- und Raumautomation (VDI 3814, DIN V 18599-11) <StandardsGebaeudeRaumautomation>
 
 Die VDI 3813@vdi3813-2 definiert einen Funktionsblock welcher prüft, "ob 
 ein Fenster oder eine Gruppe von Fenstern, die z. B. einem Raum zugeordnet sind, temporär durch umliegende Bebauung oder eigene Gebäudeteile verschattet werden". #emph("S_AUTO") als Eingang definiert dabei den Positionierbefehl der Jalousie aus den Funktionsblocks der Lamellennachführung oder Sonnenautomatik, während #emph("S_AUTO") auf der Ausgangsseite den korrigierten Positionierbefehl vorgibt. Es wird beschrieben, dass der Azimut- und Höhenwinkel, sowie eine vordefinierte Parkposition übergeben werden müssen. 

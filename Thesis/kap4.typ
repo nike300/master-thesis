@@ -1,6 +1,6 @@
-= Implementierung und Validierung des Proof of Concept<Kap4>
+= Implementierung und Validierung des Proof of Concept<Kap4> <Kap4>
 // Vorstellung Four (Turm 1)
-Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Das Bauprojekt befindet sich momentan in der Inbetriebnahmephase der Gebäudeautomation und soll im Jahr 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am Büroturm T1 angewendet. 
+Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Podesten, die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Inbetriebnahmephase der Gebäudeautomation und soll im Jahr 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am Büroturm T1 angewendet. 
 
 Eine Besonderheit ist die abgeschrägte Fassade siehe @fig-FourTageslicht
 HIER NOCH AUF DIE ABGESCHRÄGTEN FASSADEN EINGEHEN UND WIESO DAS SO GEBAUT WURDE
@@ -10,16 +10,17 @@ HIER NOCH AUF DIE ABGESCHRÄGTEN FASSADEN EINGEHEN UND WIESO DAS SO GEBAUT WURDE
 )<fig-FourTageslicht>
 
 
-== Import und Positionierung der IFC
+== Import und Positionierung der IFC <ImportPositionierungIFC>
 *Import* Da die oben genannten Punkte zum Teil nicht erfüllt werden, musste beim Import der FOUR-IFC-Datei noch folgendes gemacht werden:
 -
-*Positionierung*
-Problem der Georeferenzierung. Ungenauigkeit. Vertex Snapping
+*Positionierung - Problem der Georeferenzierung*
+
+Die für das FOUR vorhandene IFC-Modelle enthalten zwar Koordinaten im IfcSite-Tag,allerdings verweisen diese auf einen ungefähren Mittelpunkt auf dem Baufeld und nicht auf die genauen Koordinaten des Ursprungs der IFC-Modelle. Dieser befindet sich an 
 - Schwierig höhe z richtig zu bekommmen
 - Bereinigung von Redundanzen im Kontextmodell (Bestehendes Gebäude aus OSM löschen)
 
-== Import Umgebungsdaten (H)
-Für den Turm 1 des FOUR sind die drei anderen Türme 1-3 durch die unmittelbare Nähe die wichtigsten verschattenden Geometrien in der Simulation. Diese drei Gebäude liegen als IFC-Modelle der Fassaden vor und können direkt in die 3D-Umgebung importiert werden. Die Positionierung der drei Gebäude erfolgt über......???
+== Import Umgebungsdaten (H) <ImportUmgebungsdaten>
+??? Für den Turm 1 des FOUR sind die drei anderen Türme 1-3 durch die unmittelbare Nähe die wichtigsten verschattenden Geometrien in der Simulation. Diese drei Gebäude liegen als IFC-Modelle der Fassaden vor und können direkt in die 3D-Umgebung importiert werden. Die Positionierung der drei Gebäude erfolgt über......???
 
 Für die Modellierung der umgebenden, verschattenden Bebauung wird auf die offenen Geodaten der Hessischen Verwaltung für Bodenmanagement und Geoinformation (HVBG) zurückgegriffen. Die 3D-Gebäudemodelle für das Stadtgebiet Frankfurt am Main werden von offizieller Seite standardmäßig im Format CityGML bereitgestellt.
 
@@ -39,14 +40,14 @@ Durch diesen optimierten Workflow können die Gebäudemassen der Umgebung schlie
 *Import* Da die oben genannten Punkte zum Teil nicht erfüllt werden, musste beim Import der FOUR-IFC-Datei noch folgendes gemacht werden:
 
 T1 als hauptdatei
-T2-4 und P1-4 werden als seperate Dateien gespeichert und schlussendlich nur verlinkt in die Hauptdatei
+T2-4 und P1-4 werden als separate Dateien gespeichert und schlussendlich nur verlinkt in die Hauptdatei
 -
 *Positionierung*
 Problem der Georeferenzierung. Ungenauigkeit. Vertex Snapping
 - Schwierig höhe z richtig zu bekommmen
 - Bereinigung von Redundanzen im Kontextmodell (Bestehendes Gebäude aus OSM löschen)
 
-== Die eigentliche Simulation
+== Die eigentliche Simulation der Jahresverschattung <SimulationJahresverschattung>
 Für die Verschattungssimulation wird ein Python-Skript ausgeführt, welches über die @ide @vs-code#[]@vscode gestartet wird. Der Code unterteilt sich in mehrere Teile:
 
 
@@ -56,7 +57,7 @@ Für die Verschattungssimulation wird ein Python-Skript ausgeführt, welches üb
 Entweder mit Simulation im Hintergrund (anscheinend kaputt) oder mit Mathe Simulation
 Mathe simulation mit Algorithmus zur Sonnenstandsberechnung nach NOAA (National Oceanic and Atmospheric Administration)
 
-=== Zeitliche Auflösung und Umfang
+=== Zeitliche Auflösung und Umfang <ZeitlicheAufloesungUmfang>
 *Zeitliche Auflösung:* Die Wahl der zeitlichen Auflösung für die Verschattungsdaten hat maßgeblichen Einfluss auf die Tageslichtausbeute des Gebäudes. Da die Verschattung eine binäre Freigabe (Schatten oder Sonne) für den Blendschutz darstellt, muss bei einer Reduktion der Datenauflösung zwingend eine Worst-Case-Annahme getroffen werden: Fällt innerhalb eines Simulationsintervalls auch nur für eine Minute ein Schlagschatten auf das Fenster, muss der Sonnenschutz für das gesamte Intervall geschlossen werden, um temporäre Blendung auszuschließen. 
 #figure(
   image("assets/AuflösungZeitstrahl.svg" ),
@@ -98,7 +99,7 @@ Da das kalendarische Jahr vom astronomischen Sonnenjahr (ca. 365,24 Tage @astr04
   caption: [Links: Schattenwurf am 01.03.2027 um 9:00;\ Rechts: Schattenwurf am 01.03.2028 (Schaltjahr) um 9:00]
 )<fig-schaltjahr>
 
-=== Überlegung zur räumlichen Auflösung
+=== Überlegung zur räumlichen Auflösung <RaeumlicheAufloesung>
 Neben der zeitlichen Diskretisierung bestimmt die räumliche Abtastung der Fensterflächen die Zuverlässigkeit der Simulationsergebnisse. Für jedes Fenster im IFC-Modell muss definiert werden, mit wie vielen Testpunkten der Verschattungsstatus ermittelt wird. 
 
 Ein naheliegender Ansatz wäre die Unterteilung der Fensterfläche in ein feines Raster, um den prozentualen Verschattungsgrad für eine dynamische Höhennachführung des Behanges zu ermitteln. Im Kontext der in Kapitel 4.4.1 gewählten zeitlichen Auflösung von 15 Minuten erweist sich diese Lösung in der Praxis jedoch als nicht zielführend: Die Schattenkante wandert innerhalb eines 15-Minuten-Intervalls zu weit, was zu schwer nachvollziehbaren Nachführbewegungen der Aktorik führen würde. Daher fokussiert sich die Betrachtung auf zwei pragmatische Optionen:
@@ -115,14 +116,14 @@ Der Nachteil ist die Vervierfachung der Rechenzeit gegenüber der Einpunkt-Messu
 *Fazit für den Prototyp: (XXX)*
 Um den visuellen Komfort (Blendschutz) der Nutzer zu garantieren, wird für den entwickelten Workflow die Vierpunkt-Messung gewählt. Die Erhöhung der Rechenzeit wird durch die drastisch verbesserte Steuerungssicherheit gerechtfertigt. Die vier booleschen Einzelwerte werden bereits im Python-Skript durch eine ODER-Logik zu einem einzelnen Status pro Fenster aggregiert, sodass die zu exportierende Datenmenge für die Automationsstation identisch mit der Einpunkt-Messung bleibt.
 
-=== Möglichkeiten der Simulationsoptimierung
+=== Möglichkeiten der Simulationsoptimierung <Simulationsoptimierung>
 - Ohne Optimierung (760s)
 - Zusammenfügen von umliegenden Objekten 786s (Optimierungepotenzial bei -3,4%)
 - löschen von 80% der kleinen Häuser 764s
 - Mathe-Skript 793s
 - Mathe Skript mit Normalenoptimierung: 408s
 - ""+Winkel: 434s
-== Validierung der Ergebnisse
+== Validierung der Ergebnisse <ValidierungErgebnisse>
 Eine Validierung erfolgt über einen Abgleich zwischen einem gerendertem Bild aus der Simulation und einer Fotoaufnahme des FOUR zu einem festgelegten Zeitpunkt. Für die Fotoaufnahme wird auf die für die Bauüberwachung und Marketing benutzte Webcam zurückgegriffen. Sie befindet sich auf dem 137m hohen Nextower am Thurn-und-Taxis-Platz, der sich ca. 500m vom FOUR entfernt befindet. Auf der Website des Webcamanbieters@zeitrafferFOURFrankfurt können die Bilder der letzten 5 Jahren abgerufen werden. Für die Validierung wurde ein zufälliger Tag mit wenig Wolken am Himmel gewählt, um bei möglichst wenig diffusem Licht, eine klare Schattenbildung zu erkennen. In der Simulation wurde der Nextower eingefügt um die Kameraposition möglichst genau nachzubilden.
 In Bild.. .... ist eine klare .. zu sehen
 
