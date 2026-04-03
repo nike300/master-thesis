@@ -222,6 +222,8 @@ Wenn früher vor allem Papierpläne zum Datenkommunikationsaustausch im Planungs
 // BIM, IFC, Simulationswerkzeuge (Überblick).
 === Koordinatenreferenzsysteme <Koordinatenreferenzsysteme>
 - WGS84
+- UTM 32
+- Gauß Krüger
 
 == Normative Grundlagen <NormativeGrundlagen>
 === Grundlagen der Licht- und Wärmesteuerung <GrundlagenLichtWaermesteuerung>
