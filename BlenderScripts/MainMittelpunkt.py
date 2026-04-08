@@ -17,7 +17,7 @@ except:
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "TagNachtGleiche.csv")
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, "08.04.26.csv")
 print(f"Ziel-Datei: {OUTPUT_FILE}")
 # ------------------------------------------------------------------
 
@@ -25,10 +25,10 @@ OBSTACLE_COLLECTION = "map_6.osm_buildings"
 SUN_OBJECT_NAME = "Sun"
 WINDOW_KEYWORD = "_PAN_" 
 
-SIMULATION_DATES = [(20, 3)] 
+SIMULATION_DATES = [(8, 4)] 
 START_HOUR = 0
 END_HOUR = 23
-MINUTES_STEP = 15
+MINUTES_STEP = 60
 YEAR = 2026
 
 
@@ -242,7 +242,6 @@ def run_final_simulation():
                 # --- BACKFACE CULLING (Rückseite - "-3") ---
                 if dot <= 0:
                      # Die Sonne ist "hinter" der Scheibe.
-                     # Du wolltest "0", aber Vorsicht: 0° wäre auch perfekter Frontal-Einschlag!
                      results[i].append("-3") 
                      continue
 

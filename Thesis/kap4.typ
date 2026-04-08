@@ -1,4 +1,4 @@
-= Implementierung und Validierung des Proof of Concept<Kap4> <Kap4>
+= Implementierung und Validierung des Proof of Concept<Kap4>
 // Vorstellung Four (Turm 1)
 Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Podesten, die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Inbetriebnahmephase der Gebäudeautomation und soll im Jahr 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am Büroturm T1 angewendet. 
 
@@ -39,6 +39,8 @@ Durch diesen optimierten Workflow können die Gebäudemassen der Umgebung schlie
 == Import und Positionierung der IFC
 *Import* Da die oben genannten Punkte zum Teil nicht erfüllt werden, musste beim Import der FOUR-IFC-Datei noch folgendes gemacht werden:
 
+- Die Geschosse sind nicht richtig zugeordnet
+- Die Fassadenteile benutzen einen
 T1 als hauptdatei
 T2-4 und P1-4 werden als separate Dateien gespeichert und schlussendlich nur verlinkt in die Hauptdatei
 -
@@ -104,7 +106,7 @@ Neben der zeitlichen Diskretisierung bestimmt die räumliche Abtastung der Fenst
 
 Ein naheliegender Ansatz wäre die Unterteilung der Fensterfläche in ein feines Raster, um den prozentualen Verschattungsgrad für eine dynamische Höhennachführung des Behanges zu ermitteln. Im Kontext der in Kapitel 4.4.1 gewählten zeitlichen Auflösung von 15 Minuten erweist sich diese Lösung in der Praxis jedoch als nicht zielführend: Die Schattenkante wandert innerhalb eines 15-Minuten-Intervalls zu weit, was zu schwer nachvollziehbaren Nachführbewegungen der Aktorik führen würde. Daher fokussiert sich die Betrachtung auf zwei pragmatische Optionen:
 
-*2. Einpunkt-Messung (Fenstermittelpunkt):*
+*1. Einpunkt-Messung (Fenstermittelpunkt):*
 Es wird ein einzelner Raycast vom geometrischen Zentrum des Fensters zur Sonne berechnet.
 Dieser Ansatz hat den Vorteil, dass er die geringste Rechenzeit aufweist. Allerdings ist die Einpunkt-Messung anfällig für Halbschatten-Situationen. Verdeckt ein Schatten beispielsweise nur die untere Fensterhälfte, meldet der Mittelpunkt unter Umständen noch keine Verschattung. Umgekehrt kann der Mittelpunkt bereits verschattet sein, während die obere Fensterhälfte noch stark blendet.
 

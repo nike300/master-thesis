@@ -1,4 +1,4 @@
-= Theoretische Grundlagen<Kap2> <TheoretischeGrundlagen>
+= Theoretische Grundlagen<TheoretischeGrundlagen>
 == Geometrische Grundlagen <GeometrischeGrundlagen>
 
 In diesem Kapitel werden die astronomischen und geometrischen Gesetzmäßigkeiten hergeleitet, die für die Berechnung des Schattenwurfs maßgeblich sind. Zudem erfolgt eine Klassifizierung der aktorischen Komponenten und der zu optimierenden Zielgrößen.
