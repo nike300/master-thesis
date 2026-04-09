@@ -41,5 +41,10 @@
     key: "vs-code",
     short: "VS-Code",
     long: "Visual Studio Code"
+  ),
+  (
+    key: "nn",
+    short: "NN",
+    long: "Normalnull"
   )
 )
