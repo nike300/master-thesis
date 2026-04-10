@@ -18,7 +18,7 @@
   language: "de", // en, de
   supervisor: (ref: "Prof. Dr.-Ing. Martin Höttecke", co-ref: "Matthias Meier"),
   university: "FH Münster - University of Applied Sciences",
-  university-short: "h_da",
+  university-short: "fh_m",
 )
 
 // Chapter Includes

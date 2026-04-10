@@ -17,7 +17,7 @@ except:
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "08.04.26.csv")
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, "19.04.26_Mittelpunkt.csv")
 print(f"Ziel-Datei: {OUTPUT_FILE}")
 # ------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ OBSTACLE_COLLECTION = "map_6.osm_buildings"
 SUN_OBJECT_NAME = "Sun"
 WINDOW_KEYWORD = "_PAN_" 
 
-SIMULATION_DATES = [(8, 4)] 
+SIMULATION_DATES = [(10, 4)] 
 START_HOUR = 0
 END_HOUR = 23
 MINUTES_STEP = 60
