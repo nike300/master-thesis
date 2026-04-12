@@ -27,4 +27,3 @@
 #include "kap3.typ"
 #include "kap4.typ"
 #include "kap5.typ"
-#include "kap6.typ"

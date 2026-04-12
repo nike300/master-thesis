@@ -42,16 +42,27 @@ Der finale Import der Gebäudekörper in die 3D-Umgebung erfolgte über das Open
 
 ...Durch diesen optimierten Workflow können die Gebäudemassen der Umgebung schließlich erfolgreich, geometrisch korrekt und maßstabsgetreu in das Simulationsmodell überführt werden.
 
+.. es wurde darauf verzichtet, die gebäude nördlich rauszufiltern wie in kap 3 besprochen
+
 == Import und Positionierung Türme 2-4
 Da in den CityGML-Daten die FOUR-Türme zum Zeitpunkt dieser Arbeit noch nicht enthalten sind, muss auf die Fassadenmodelle der restlichen Türme zurückgegriffen werden. Sie liegen in LOD 500 vor, was für den genauen Schattenwurf von Vorteil ist. Allerdings sind viele Daten enthalten, die nicht benötigt werden. Somit werden folgende Maßnahmen getroffen, um die Dateigröße zu reduzieren und den Arbeitsspeicher zu entlasten:
-- Decimate
-- Joinen
-- Semantische IFC-Daten löschen
-Nach dem Import muss die Position nicht verändert werden, da die Türme 2-4 den gleichen Ursprung hinterlegt haben, wie der Turm 1.
+
++ Die ifc-Dateien werden in seperate Blenderdateien importiert
++ Alle Objekte (Meshes) werden zu einem großen Objekt vereint
++ Alles restlichen Informationen werden aus der Datei gelöscht
++ Es wird der Decimate Modifier (Collapse + Planar) auf das Objekt angewandt, um die Komplexität zu reduzieren
++ Die seperaten Blenderdateien werden mit der Link-Funktion in der Hauptdatei hinterlegt
+
+Nach dem Hinterlegen muss die Position nicht verändert werden, da die Türme 2-4 den gleichen Ursprung hinterlegt haben wie der Turm 1.
 
 == Aufbereitung IFC-Modell Turm 1?
-- Fenster geometrische Mitte festlegen
+- Fenster geometrische Mitte festlegen (immer noch notwendig? oder nicht wegen der vier Ecken Variante? Oder doch benötigt für Backwards culling?)
+- Balkonfensterflächen isolieren und ausblenden
 
+== Zuordnung AKS Fenster
+Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden.
+
+Für diese Lösung wird ....
 == Die eigentliche Simulation der Jahresverschattung <SimulationJahresverschattung>
 Für die Verschattungssimulation wird ein Python-Skript ausgeführt, welches über die @ide @vs-code#[]@vscode gestartet wird. Der Code unterteilt sich in mehrere Teile:
 
@@ -83,10 +94,11 @@ Die kleine Auflösung von 5 Minuten schafft es, die Behänge sehr eng am eigentl
 
 Somit erweist sich eine Diskretisierung im 15-Minuten-Raster hierbei als optimaler Kompromiss. Einerseits nähert sich die Steuerkurve dem realen Schattenverlauf ausreichend exakt an, um den visuellen Komfort bei hoher Tageslichtausbeute zu wahren, andererseits wird die zu speichernde Datenmenge pro Fenster auf "nur" 35.040 Datenpunkte.
 
-*Zeitlicher Umfang:* Es stellt sich die Frage, wie viele volle Kalenderjahre berechnet werden müssen, um den realen Sonnenverlauf hinreichend abzubilden. Der Umlauf der Erde um die Sonne unterliegt langperiodischen Schwankungen (Milanković-Zyklen) @dwdMilanZyklen. Diese sind für die Lebensdauer eines Gebäudes als nicht relevant anzusehen, weshalb der berechnete Sonnenverlauf für den Betrachtungszeitraum als statisch betrachtet werden kann. 
+*Zeitlicher Umfang:* Es stellt sich die Frage, wie viele volle Kalenderjahre berechnet werden müssen, um den realen Sonnenverlauf hinreichend abzubilden. Der Umlauf der Erde um die Sonne unterliegt langperiodischen Schwankungen (Milanković-Zyklen@dwdMilanZyklen). Diese sind für die Lebensdauer eines Gebäudes als nicht relevant anzusehen, weshalb der berechnete Sonnenverlauf für den Betrachtungszeitraum als statisch betrachtet werden kann. 
 
-Da das kalendarische Jahr vom astronomischen Sonnenjahr (ca. 365,24 Tage @astr04eduSonnenjahr) abweicht, wird diese Differenz alle vier Jahre durch ein Schaltjahr korrigiert. Die hieraus resultierende zeitliche Verschiebung des Sonnenstandes am selben Kalendertag ist für einen simulierten Schattenwurf in @fig-schaltjahr beispielhaft dargestellt. Da es sich bei den räumlichen Abweichungen lediglich um wenige Zentimeter handelt, ist es ausreichend, die Simulation auf ein einzelnes Referenzjahr zu beschränken.
-#figure(
+Da das kalendarische Jahr vom astronomischen Sonnenjahr (365,24 Tage) abweicht@astr04eduSonnenjahr, wird diese Differenz alle vier Jahre durch ein Schaltjahr korrigiert. Die hieraus resultierende zeitliche Verschiebung des Sonnenstandes am selben Kalendertag ist für einen simulierten Schattenwurf in @fig-schaltjahr beispielhaft dargestellt. Da es sich bei den räumlichen Abweichungen lediglich um wenige Zentimeter (roter Bereich) handelt, ist es ausreichend, die Simulation auf ein einzelnes Referenzjahr zu beschränken.
+
+/*#figure(
   grid(
     columns: (1fr, 1fr), // Zwei gleich breite Spalten
     gutter: 20pt,        // Abstand zwischen den Bildern
@@ -103,6 +115,12 @@ Da das kalendarische Jahr vom astronomischen Sonnenjahr (ca. 365,24 Tage @astr04
   ),
   caption: [Links: Schattenwurf am 01.03.2027 um 9:00;\ Rechts: Schattenwurf am 01.03.2028 (Schaltjahr) um 9:00]
 )<fig-schaltjahr>
+*/
+#figure(
+  image("assets/SchaltjahrUnterschied.png"), caption:[Differenz Schattenwurf am 01.03.2027 und 01.03.2028 (Schaltjahr) um 9:00]
+)<fig-schaltjahr>
+
+Da die Sonne in Frankfurt immer nach 5 Uhr aufgeht und immer vor 22 Uhr untergeht, wird der tägliche zu berechnende Bereich auf 5 bis 22 Uhr festgelegt.
 
 === Überlegung zur räumlichen Auflösung <RaeumlicheAufloesung>
 Neben der zeitlichen Diskretisierung bestimmt die räumliche Abtastung der Fensterflächen die Zuverlässigkeit der Simulationsergebnisse. Für jedes Fenster im IFC-Modell muss definiert werden, mit wie vielen Testpunkten der Verschattungsstatus ermittelt wird. 
@@ -121,17 +139,35 @@ Der Nachteil ist die Vervierfachung der Rechenzeit gegenüber der Einpunkt-Messu
 *Fazit für den Prototyp: (XXX)*
 Um den visuellen Komfort (Blendschutz) der Nutzer zu garantieren, wird für den entwickelten Workflow die Vierpunkt-Messung gewählt. Die Erhöhung der Rechenzeit wird durch die drastisch verbesserte Steuerungssicherheit gerechtfertigt. Die vier booleschen Einzelwerte werden bereits im Python-Skript durch eine ODER-Logik zu einem einzelnen Status pro Fenster aggregiert, sodass die zu exportierende Datenmenge für die Automationsstation identisch mit der Einpunkt-Messung bleibt.
 
-=== Möglichkeiten der Simulationsoptimierung <Simulationsoptimierung>
+=== Berechnungsaufwand und Optimierung <Simulationsoptimierung>
+Für diese Arbeit wurde der 20.03.26 im 15-Minuten Takt simuliert. Dieser Tag beschreibt die frühjährliche Tag-Nacht-Gleiche (Äquinoktium) an dem die Sonne genau gleich lang über und unter dem Horizont verbleibt. Da die Hälfte des Jahres mehr und die andere Hälfte weniger Sonnenstunden aufweist, eignet sich dieser Tag für eine Hochrechnung der Simulationsdauer auf das gesamte Jahr.
+Die Simulation dauerte 21 Minuten#footnote[Die Berechnung der Jahressimulation erfolgte auf einer Workstation mit folgender Spezifikation: AMD Ryzen 5 7600X (6-Core, 4,7 GHz), 32 GB RAM, AMD Radeon RX 7800 XT, Windows 11 (64-bit), Blender Version 4.5.3], was für eine gesamte Jahresberechnung 5 Tagen und 8 Stunden entspricht. Da diese Simulation nur einmal berechnet werden muss für ein gesamtes Gebäude, liegt die Simulationsdauer im annehmbaren Bereich. Da Blender für Python-Skripte nur einen CPU-Kern benutzen kann, könnten weiter Blender-Instanzen geöffnet werden, um parallel Datumsbereiche des Jahres zu berechnen. Diese müssten dann final in eine Datei bzw. Datenbank zusammengeführt werden.
+
+Auf Backwards Culling eingehen und wieviel es spart
+/*
+68 x 365 = 24.820 Spalten
+ 4,7Ghz
+
 - Ohne Optimierung (760s)
 - Zusammenfügen von umliegenden Objekten 786s (Optimierungepotenzial bei -3,4%)
 - löschen von 80% der kleinen Häuser 764s
 - Mathe-Skript 793s
 - Mathe Skript mit Normalenoptimierung: 408s
 - ""+Winkel: 434s
-== Validierung der Ergebnisse <ValidierungErgebnisse>
-Eine Validierung erfolgt über einen Abgleich zwischen einem gerendertem Bild aus der Simulation und einer Fotoaufnahme des FOUR zu einem festgelegten Zeitpunkt. Für die Fotoaufnahme wird auf die für die Bauüberwachung und Marketing benutzte Webcam zurückgegriffen. Sie befindet sich auf dem 137m hohen Nextower am Thurn-und-Taxis-Platz, der sich ca. 500m vom FOUR entfernt befindet. Auf der Website des Webcamanbieters@zeitrafferFOURFrankfurt können die Bilder der letzten 5 Jahren abgerufen werden. Für die Validierung wurde ein zufälliger Tag mit wenig Wolken am Himmel gewählt, um bei möglichst wenig diffusem Licht, eine klare Schattenbildung zu erkennen. In der Simulation wurde der Nextower eingefügt um die Kameraposition möglichst genau nachzubilden.
-In Bild.. .... ist eine klare .. zu sehen
+*/
+== Validierung <ValidierungErgebnisse>
+vlt. auch validierung des NOAA-Algorithmus noch mit aufnehmen? mit den eingefärbten fenstern
 
-vom  21.06.25; 9:15
-  - das validiert vor allem auch den mathematischen code im skript
-- Vorort mit Helligkeitssensoren in Fenstern? - Optional, wenn noch zeit ist
+Eine Validierung erfolgt über einen Abgleich zwischen einem gerendertem Bild aus der Simulation und einer Fotoaufnahme des FOUR zu einem festgelegten Zeitpunkt. Für die Fotoaufnahme wird auf die für die Bauüberwachung und Marketing benutzte Webcam zurückgegriffen. Sie befindet sich auf dem 137m hohen Nextower am Thurn-und-Taxis-Platz, der sich ca. 500m vom FOUR entfernt befindet. Auf der Website des Webcamanbieters@zeitrafferFOURFrankfurt können die Bilder der letzten 5 Jahren abgerufen werden. Für die Validierung wurde ein Tag mit wenig Wolken am Himmel gewählt, um bei möglichst wenig diffusem Licht, eine klare Schattenbildung zu erkennen. In der Simulation ist der Nextower enthalten um die Kameraposition möglichst genau nachzustellen. Das Ergebnis ist in @fig:validierung_t1 erkenntlich: Es besteht eine visuell sehr hohe Übereinstimmung der Schattenkanten der beiden Bilder.
+
+#figure(
+  grid(
+    columns: (1fr, 1fr),
+    gutter: 1em,
+    image("assets/webcam_foto.png", width: 100%),
+    image("assets/blender_render.png", width: 100%)
+  ),
+  caption: [Validierung der Verschattungssimulation am Turm 1. Links: Webcam-Aufnahme vom 21.06.2025 (9:15 Uhr). Rechts: Simulationsergebnis zum identischen Zeitpunkt.],
+) <fig:validierung_t1>
+
+Eine weitere Möglichkeit der Validierung wäre die Verortung von einem oder mehreren Helligkeitssensoren an Fensterflächen im FOUR. Diese Sensoren könnten die Helligkeit messen und somit einen Vergleich mit der Simulation an Tagen ohne Bewölkung ermöglichen. Diese Möglichkeit konnte im Rahmen dieser Arbeit aus zeitlichen Aspekten nicht durchgeführt werden.

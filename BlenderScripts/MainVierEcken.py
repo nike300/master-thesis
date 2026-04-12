@@ -17,19 +17,21 @@ except:
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "08.04.26_EckenPruefungBig.csv")
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, "20.03.26_E_TagNachtGleiche.csv")
 print(f"Ziel-Datei: {OUTPUT_FILE}")
 # ------------------------------------------------------------------
-
-OBSTACLE_COLLECTION = "map_6.osm_buildings" 
+# --- NEUER SCHALTER ---
+OUTPUT_ANGLE = False  # True: Gibt den Einfallswinkel aus | False: Gibt nur '0' aus
+# ----------------------
 SUN_OBJECT_NAME = "Sun"
 WINDOW_KEYWORD = "_PAN_"
 
-SIMULATION_DATES = [(10, 4)] 
-START_HOUR = 0
-END_HOUR = 23
-MINUTES_STEP = 15
+SIMULATION_DATES = [(20, 3)]
 YEAR = 2026
+START_HOUR = 5
+END_HOUR = 22
+MINUTES_STEP = 15
+
 
 
 # --- SONNEN-MATHEMATIK (NOAA Algorithmus) ---
@@ -252,14 +254,27 @@ def run_final_simulation():
                 if is_completely_shaded:
                     results[i].append("-1") # Alle Ecken sind blockiert
                 else:
-                    results[i].append(f"{angle_deg:.1f}") # Mindestens eine Ecke hat Sonne
+                    # Mindestens eine Ecke hat Sonne -> Schalter prüfen!
+                    if OUTPUT_ANGLE:
+                        results[i].append(f"{angle_deg:.1f}") # Winkel eintragen
+                    else:
+                        results[i].append("0") # Nur eine 0 für "Sonne" eintragen
 
-    print("Schreibe CSV...")
+
+
+    # Schreibe CSV (INVERTIERT / TRANSPOONIERT)
+    print("Schreibe invertierte CSV...")
     with open(OUTPUT_FILE, "w") as f:
-        f.write("SensorID;" + ";".join(time_headers) + "\n")
-        for i, sensor in enumerate(sensors):
-            row_name = sensor.get("BMKZ", sensor.name)
-            f.write(f"{row_name};" + ";".join(results[i]) + "\n")
+        # 1. Kopfzeile: Spalte A heißt "Zeitpunkt", danach folgen als Spalten-Header alle Fensternamen
+        sensor_names = [sensor.get("BMKZ", sensor.name) for sensor in sensors]
+        f.write("Zeitpunkt;" + ";".join(sensor_names) + "\n")
+        
+        # 2. Daten-Zeilen: Wir iterieren über die Zeitpunkte statt über die Fenster
+        for t, time_label in enumerate(time_headers):
+            # Wir holen für den aktuellen Zeitpunkt 't' den Eintrag aus jedem Fenster 'i'
+            row_data = [results[i][t] for i in range(len(sensors))]
+            # Zeile schreiben: Datum_Uhrzeit;WertFenster1;WertFenster2;...
+            f.write(f"{time_label};" + ";".join(row_data) + "\n")
 
     duration = time.time() - start_time
     print(f"FERTIG in {duration:.2f} Sekunden.")

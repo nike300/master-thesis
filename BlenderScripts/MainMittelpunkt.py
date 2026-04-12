@@ -21,13 +21,15 @@ OUTPUT_FILE = os.path.join(OUTPUT_DIR, "19.04.26_Mittelpunkt.csv")
 print(f"Ziel-Datei: {OUTPUT_FILE}")
 # ------------------------------------------------------------------
 
-OBSTACLE_COLLECTION = "map_6.osm_buildings" 
+# --- NEUER SCHALTER ---
+OUTPUT_ANGLE = True  # True: Gibt den Einfallswinkel aus | False: Gibt nur '0' aus
+# ----------------------
 SUN_OBJECT_NAME = "Sun"
 WINDOW_KEYWORD = "_PAN_" 
 
 SIMULATION_DATES = [(10, 4)] 
-START_HOUR = 0
-END_HOUR = 23
+START_HOUR = 5
+END_HOUR = 22
 MINUTES_STEP = 60
 YEAR = 2026
 
@@ -263,12 +265,13 @@ def run_final_simulation():
                 )
                 
                 if hit and hit_obj.type == 'MESH':
-                    # --- FREMDVERSCHATTET (-1) ---
-                    results[i].append("-1")
+                    results[i].append("-1") # Alle Ecken sind blockiert
                 else:
-                    # --- SONNE PUR (Winkel eintragen) ---
-                    # Wir speichern den Winkel als String mit 1 Nachkommastelle
-                    results[i].append(f"{angle_deg:.1f}")
+                    # Mindestens eine Ecke hat Sonne -> Schalter prüfen!
+                    if OUTPUT_ANGLE:
+                        results[i].append(f"{angle_deg:.1f}") # Winkel eintragen
+                    else:
+                        results[i].append("0") # Nur eine 0 für "Sonne" eintragen
 
     # Schreiben
     print("Schreibe CSV...")
