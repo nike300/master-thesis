@@ -5,7 +5,7 @@ Die Entwicklung und Validierung dieses Prototyps erfolgt anhand eines komplexen 
 
 
 // Vorstellung Four (Turm 1)
-Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Gebäuden (Podesten), die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Endphase und soll im Laufe des Jahres 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am Büroturm T1 angewendet. Die Türme stehen eng beieinander im Zentrum von Frankfurt zwischen verschiedenen Hochhäusern (z.B. dem Commerzbank-Tower und dem MAIN-Tower). Durch dieses eng bebautes Areal treten sehr dynamische Verschattungssituationen auf, die nur durch eine präzise Simulation der Umgebung korrekt dargestellt werden können.
+Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Gebäuden (Podesten), die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Endphase und soll im Laufe des Jahres 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am 233m hohen Büroturm T1 angewendet. Der Turm besteht pro Geschoss aus vier Mietbereichen und hat pro Segment einen außenliegenden Sonnenschutz und einen innenliegenden Blendschutz. Die Türme stehen eng beieinander im Zentrum von Frankfurt zwischen verschiedenen Hochhäusern (z.B. dem Commerzbank-Tower und dem MAIN-Tower). Durch dieses eng bebautes Areal treten sehr dynamische Verschattungssituationen auf, die nur durch eine präzise Simulation der Umgebung korrekt dargestellt werden können.
 Eine architektonische Besonderheit des FOUR sind die diagonal abgeschrägten Fassadenabschnitte (@fig-FourTageslicht), die den visuellen Freiraum und die Tageslichtzufuhr verbessern sollen.
 
 #figure(
@@ -59,10 +59,30 @@ Nach dem Hinterlegen muss die Position nicht verändert werden, da die Türme 2-
 - Fenster geometrische Mitte festlegen (immer noch notwendig? oder nicht wegen der vier Ecken Variante? Oder doch benötigt für Backwards culling?)
 - Balkonfensterflächen isolieren und ausblenden
 
-== Zuordnung AKS Fenster
-Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden.
+== Zuordnung AKS Jalousieaktor zu Fenster in BIM-Modell
+Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden. 
+Um die Gebäudeautomation zu planen wurde die Engineering-Software eConfigure von Schneider Electric eingesetzt. Die Planung war zum Zeitpunkt der Arbeit schon komplett abgeschlossen. Bei der Planung wurden Grundrisse der Etagen hinterlegt und alle Komponenten der Raumautomation verortet (siehe @fig-eConfigure). Hierbei gibt es mehrere Symbole für Jalousien, die zum einen den außenliegenden Sonnenschutz und zum anderen den innenliegenden Blendschutz beschreiben. Der Text neben den Symbolen beinhaltet den erforderlichen @aks.
+#figure(
+  image("assets/AusschnittEConfigure.png"),
+  caption: [Ausschnitt der Raumautomation aus eConfigure vom FOUR in Frankfurt],
+  placement: auto
+)<fig-eConfigure>
 
-Für diese Lösung wird ....
+Für die Zuordnung muss 
+Im nachfolgenden wird ein vorläufiger Prozess stichpunktartig beschrieben, um den @aks des Jalousieaktors in den Fenstern des BIM-Modells zu hinterlegen:
++ In Blender wird die entsprechende Etage als 2D-Grundriss exportiert
++ Behilfsstriche werden in eConfigure entlang der Fensterfront gezogen, um eine spätere Positionierung und Skalierung der Pläne zu ermöglichen
++ Die Grundrisse der vier Mietbereiche werden als DWG (vlt. Fußnote hier zum Dateiformat?) exportiert
++ In AutoCAD werden die vier verschiedenen Grundrisse zusammengeführt, bereinigt, skaliert und positioniert
++ Die Grundrisse aus Blender und aus eConfigure werden übereinander gelegt
++ Alle Daten außer der @aks#[]-Texte werden herausgelöscht
++ Die Datei wird in Blender importiert (Die Texte sind nun um die Fensterfront herum positioniert)
++ Es wird ein Skript ausgeführt, dass für jedes Fenster den Text sucht, der am nächsten liegt und ihn in ein Attribut des Fensters schreibt. Dieses Attribut kann bei der Simulation der Jahresverschattung für die Benennung des Fensters verwendet werden.
+
+Dieser Weg ist zeitaufwendig und wird im Rahmen der Arbeit nur für ein Geschoss angewendet.
+
+
+
 == Die eigentliche Simulation der Jahresverschattung <SimulationJahresverschattung>
 Für die Verschattungssimulation wird ein Python-Skript ausgeführt, welches über die @ide @vs-code#[]@vscode gestartet wird. Der Code unterteilt sich in mehrere Teile:
 
@@ -70,10 +90,7 @@ Für die Verschattungssimulation wird ein Python-Skript ausgeführt, welches üb
 
 
 
-Entweder mit Simulation im Hintergrund (anscheinend kaputt) oder mit Mathe Simulation
-Mathe simulation mit Algorithmus zur Sonnenstandsberechnung nach NOAA (National Oceanic and Atmospheric Administration)
-
-=== Zeitliche Auflösung und Umfang <ZeitlicheAufloesungUmfang>
+=== Zeitliche Auflösung und Umfang (vlt. lieber in Kap 3?) <ZeitlicheAufloesungUmfang>
 *Zeitliche Auflösung:* Die Wahl der zeitlichen Auflösung für die Verschattungsdaten hat maßgeblichen Einfluss auf die Tageslichtausbeute des Gebäudes. Da die Verschattung eine binäre Freigabe (Schatten oder Sonne) für den Blendschutz darstellt, muss bei einer Reduktion der Datenauflösung zwingend eine Worst-Case-Annahme getroffen werden: Fällt innerhalb eines Simulationsintervalls auch nur für eine Minute ein Schlagschatten auf das Fenster, muss der Sonnenschutz für das gesamte Intervall geschlossen werden, um temporäre Blendung auszuschließen. 
 #figure(
   image("assets/AuflösungZeitstrahl.svg" ),
@@ -117,7 +134,8 @@ Da das kalendarische Jahr vom astronomischen Sonnenjahr (365,24 Tage) abweicht@a
 )<fig-schaltjahr>
 */
 #figure(
-  image("assets/SchaltjahrUnterschied.png"), caption:[Differenz Schattenwurf am 01.03.2027 und 01.03.2028 (Schaltjahr) um 9:00]
+  image("assets/SchaltjahrUnterschied.png"), caption:[Differenz Schattenwurf am 01.03.2027 und 01.03.2028 (Schaltjahr) um 9:00],
+  placement: auto
 )<fig-schaltjahr>
 
 Da die Sonne in Frankfurt immer nach 5 Uhr aufgeht und immer vor 22 Uhr untergeht, wird der tägliche zu berechnende Bereich auf 5 bis 22 Uhr festgelegt.
@@ -168,6 +186,7 @@ Eine Validierung erfolgt über einen Abgleich zwischen einem gerendertem Bild au
     image("assets/blender_render.png", width: 100%)
   ),
   caption: [Validierung der Verschattungssimulation am Turm 1. Links: Webcam-Aufnahme vom 21.06.2025 (9:15 Uhr). Rechts: Simulationsergebnis zum identischen Zeitpunkt.],
+  placement: auto
 ) <fig:validierung_t1>
 
-Eine weitere Möglichkeit der Validierung wäre die Verortung von einem oder mehreren Helligkeitssensoren an Fensterflächen im FOUR. Diese Sensoren könnten die Helligkeit messen und somit einen Vergleich mit der Simulation an Tagen ohne Bewölkung ermöglichen. Diese Möglichkeit konnte im Rahmen dieser Arbeit aus zeitlichen Aspekten nicht durchgeführt werden.
+Eine weitere Möglichkeit der Validierung wäre die Verortung von einem oder mehreren Helligkeitssensoren an Fensterflächen im FOUR. Diese Sensoren könnten die Helligkeit messen und somit einen Vergleich mit der Simulation an Tagen ohne Bewölkung ermöglichen. Diese Möglichkeit konnte im Rahmen dieser Arbeit aus zeitlichen Aspekten nicht untersucht werden.

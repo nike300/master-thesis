@@ -1,4 +1,5 @@
 = Diskussion und Fazit<Kap5>
+== Integration der Daten in die Gebäudeautomation
 == Zusammenfassung der Ergebnisse
 == Marktanalyse und wirtschaftliches Potenzial
 === Marktbeschreibung und Marktgröße

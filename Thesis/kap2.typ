@@ -151,7 +151,19 @@ Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung
 2.  *Datenqualität:* Für eine "korrekte Berechnung sind physikalische Materialparameter (Reflexionsgrad, Rauheit) im gesamten 3D-Modell notwendig, die in der Praxis oft fehlen (siehe Kapitel ???).
 
 *Abgrenzung für diese Arbeit:*
-???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in Standard-IFC-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (@Kap4[Kapitel]) auf das geometrische *Raycasting*. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (@Kap5[Kapitel]) diskutiert.
+???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in Standard-IFC-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (@Kap4[Kapitel]) auf das geometrische Raycasting. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (@Kap5[Kapitel]) diskutiert.
+
+=== Back-Face Culling
+Dieses aus der 3D-Computergrafik stammende Verfahren wird eingesetzt, um die Effizienz komplexer Raycasting-Algorithmen signifikant zu steigern. Das als „Rückseiten-Ausblendung“ bekannte Prinzip sorgt dafür, dass Geometrien, die der Strahlenquelle abgewandt sind, nicht prozessiert bzw. bei der Kollisionsberechnung ignoriert werden.Die technische Umsetzung basiert auf einem mathematischen Vergleich zwischen dem Normalenvektor der Fensterfläche $vec{n}$ und dem Richtungsvektor der Solarstrahlung $vec{r}$. Wie in @fig-culling vereinfacht dargestellt, treffen Sonnenstrahlen (Rays) von links auf eine Gebäudekante. Die Entscheidung, ob eine Fläche aktiv verschattet wird, hängt vom Winkel $alpha$ zwischen diesen Vektoren ab:
+- Fenster A (zugewandt): Beträgt der Winkel $alpha_A$ mehr als 90°, weisen die Vektoren in entgegengesetzte Richtungen (das Skalarprodukt ist negativ). Das System erkennt, dass die Fensterfläche der Sonne zugewandt ist und eine Verschattungsprüfung stattfinden muss.
+- Fenster B (abgewandt): Beträgt der Winkel $alpha_B$ weniger als 90°, zeigen die Vektoren in dieselbe allgemeine Richtung – der Strahl nähert sich der Fläche also von der Rückseite. Das Skalarprodukt ist in diesem Fall positiv, und die Geometrie wird durch das Culling-Verfahren ignoriert.
+Um Fehlkalkulationen auszuschließen, muss im Vorfeld garantiert werden, dass alle Flächennormalen im BIM-Modell konsistent nach außen gerichtet sind.
+
+#figure(
+  image("assets/Back_Face_Culling.png", width: 70%),
+  caption: [test],
+  placement: auto
+)<fig-culling>
 
 == Verschattungssysteme <Verschattungssysteme>
 === Bauphysikalische und lichttechnische Zielgrößen <BauphysikalischeLichttechnischeZielgroessen>
@@ -172,7 +184,7 @@ Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamelle
 
 - *Privatsphäre:* Zuletzt bieten steuerbare Behänge durch die Unterbrechung der Sicht nach Innen einen Beitrag zur Privatsphäre der anwesenden Personen.
 
-Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häufig in einem direkten Zielkonflikt zueinander (beispielsweise konkurriert ein maximaler Blendschutz direkt mit einer hohen Tageslichtautonomie). Die logische Steuerung (siehe Kapitel 4.6.3) muss daher definieren, in welcher Kaskade diese Funktionen nutzer- und witterungsabhängig priorisiert werden.
+Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häufig in einem direkten Zielkonflikt zueinander (beispielsweise konkurriert ein maximaler Blendschutz direkt mit einer hohen Tageslichtautonomie). Die Steuerung der Raumautomation muss daher definieren, in welcher Kaskade diese Funktionen priorisiert werden.
 
 === Klassifizierung steuerbarer Sonnenschutzsysteme <KlassifizierungSteuerbarerSonnenschutzsysteme>
 - Systeme mit einem Freiheitsgrad (z. B. Rollläden, Screens): Variable Position $h$ (0-100%).
@@ -218,9 +230,20 @@ Begriff wird von WAREMA übernommen, ist allerdings nirgends richtig definiert.
 Die Jahresverschattungssimulation bezeichnet ein simulationsgestütztes Verfahren zur Analyse und Steuerung des solaren Energie- und Lichteintrags in ein Gebäude über den Zeitraum eines vollständigen meteorologischen Jahres. Im Gegensatz zu statischen Verschattungselementen oder reinen Echtzeit-Helligkeitsregelungen basiert sie auf der zeitabhängigen Interaktion zwischen dem astronomischen Sonnenstand, der Gebäudegeometrie sowie der umgebenden Bebauung. Ziel ist die Ermittlung optimaler Positionierungsstrategien für variable Sonnenschutzsysteme, um ein Gleichgewicht zwischen der Minimierung thermischer Lasten (sommerlicher Wärmeschutz), der Maximierung solarer Gewinne (winterlicher Heizbedarf) und der Gewährleistung des visuellen Komforts (Blendfreiheit bei maximaler Tageslichtnutzung) sicherzustellen.
 // Physikalische Prinzipien und Ziele (Energie vs. Komfort).
 
-== Grundlagen der Georeferenzierung
 
-Die Georeferenzierung beschreibt die Zuweisung räumlicher Bezugsinformationen zu einem Datensatz. Für die dynamische Verschattungssimulation ist sie von zentraler Bedeutung, da das lokale Gebäudemodell (BIM) millimetergenau mit den topografischen Umgebungsdaten (GIS) überlagert werden muss. Nur durch einen einheitlichen räumlichen Bezug lässt sich der korrekte solare Einfallswinkel auf die Fassade berechnen. In der Bauplanung und Geoinformatik wird dabei zwischen globalen geografischen und lokalen projizierten Koordinatensystemen unterschieden:
+== Digitale Planungsmethoden (Datenformate?)??? <DigitalePlanungsmethoden>
+Wenn früher vor allem Papierpläne zum Datenkommunikationsaustausch im Planungsprozess verwendet wurden, gibt es mittlerweile eine Vielzahl an digitalen Möglichkeiten. Etabliert über die letzten Jahrzehnte, haben sich vor allem 2D-Grundrissdateien, die z.B. im proprietären Austauschformat dwg zwischen Architekten und Ingenieuren geteilt wurden. Während diese Methode heutzutage noch weite Anwendung findet, greifen die auf 3D-Modellen basierenden Austauschformate weiter um sich. Bereits einfache 3D-Modelle bieten große Vorteile bei der Verständlichkeit und Dichte der übermittelnden geometrischen Informationen. Zusätzlich ist es möglich im Rahmen eines BIM-Modells semantische Daten mit zu übermitteln. Das hierfür benutzte Austauschformat IFC bietet wichtige Funktionalitäten, um für die Verschattungssimulation relevante Daten zu  teilen.
+// BIM, IFC, Simulationswerkzeuge (Überblick).
+Folgende Dateiformate werden verwendet:
+.ifc
+.dwg
+.JSON
+.dxf
+.blend
+.gml
+.csv
+=== Koordinatenreferenzsysteme <Koordinatenreferenzsysteme>
+Die Georeferenzierung beschreibt die Zuweisung räumlicher Bezugsinformationen zu einem Datensatz. Für die dynamische Verschattungssimulation ist sie von zentraler Bedeutung, da das lokale Gebäudemodell (BIM) millimetergenau mit den Umgebungsdaten überlagert werden muss. Nur durch einen einheitlichen räumlichen Bezug lässt sich der korrekte solare Einfallswinkel auf die Fassade berechnen. In der Bauplanung und Geoinformatik wird dabei zwischen globalen geografischen und lokalen projizierten Koordinatensystemen unterschieden:
 
 - *WGS 84 (World Geodetic System 1984):* WGS 84 ist ein globales, dreidimensionales Referenzsystem, das die Erde als Ellipsoid abbildet. Es ist die Grundlage satellitengestützter Positionsbestimmung (GPS) und nutzt geografische Koordinaten (Längen- und Breitengrade). In der BIM-Methodik wird WGS 84 standardmäßig genutzt, um den globalen Referenzpunkt des Projekts innerhalb der Entität `IfcSite` zu definieren. Für die geometrische Verschattungsberechnung (Raycasting) in 3D-Engines ist es jedoch ungeeignet, da es auf Winkelmaßen basiert und die 3D-Software ein lineares Meterraster erfordert.
 
@@ -228,13 +251,6 @@ Die Georeferenzierung beschreibt die Zuweisung räumlicher Bezugsinformationen z
 
 - *UTM (Universal Transverse Mercator):* Das UTM-System ist der heutige internationale Standard für projizierte Koordinatensysteme. Ähnlich wie das GK-System liefert es ein ebenes, rechtwinkliges Raster mit metrischen X- und Y-Koordinaten (Rechts- und Hochwert), unterteilt die Erde jedoch in 6-Grad breite Zonen. Für die in dieser Arbeit entwickelte Simulationsumgebung ist UTM das präferierte System. Da 3D-Engines (wie Blender) zwingend ein metrisches, kartesisches Koordinatensystem erfordern, lassen sich UTM-koordinierte Umgebungsmodelle ohne Verzerrung direkt in die Raycasting-Logik überführen.
 
-== Digitale Planungsmethoden (Datenformate?)??? <DigitalePlanungsmethoden>
-Wenn früher vor allem Papierpläne zum Datenkommunikationsaustausch im Planungsprozess verwendet wurden, gibt es mittlerweile eine Vielzahl an digitalen Möglichkeiten. Etabliert über die letzten Jahrzehnte, haben sich vor allem 2D-Grundrissdateien, die z.B. im proprietären Austauschformat dwg zwischen Architekten und Ingenieuren geteilt wurden. Während diese Methode heutzutage noch weite Anwendung findet, greifen die auf 3D-Modellen basierenden Austauschformate weiter um sich. Bereits einfache 3D-Modelle bieten große Vorteile bei der Verständlichkeit und Dichte der übermittelnden geometrischen Informationen. Zusätzlich ist es möglich im Rahmen eines BIM-Modells semantische Daten mit zu übermitteln. Das hierfür benutzte Austauschformat IFC bietet wichtige Funktionalitäten, um für die Verschattungssimulation relevante Daten zu  teilen.
-// BIM, IFC, Simulationswerkzeuge (Überblick).
-=== Koordinatenreferenzsysteme <Koordinatenreferenzsysteme>
-- WGS84
-- UTM 32
-- Gauß Krüger
 
 == Normative Grundlagen <NormativeGrundlagen>
 === Grundlagen der Licht- und Wärmesteuerung <GrundlagenLichtWaermesteuerung>
