@@ -17,10 +17,10 @@ def center_origins():
     
     # 3. Der Massen-Befehl (Origin to Geometry)
     # Center 'MEDIAN' setzt den Punkt genau in die mathematische Mitte der Bounding Box
-    if count > 0:
-        bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-        print("Origins zentriert!")
-    else:
-        print("Keine Fenster gefunden.")
+    # if count > 0:
+    #     bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+    #     print("Origins zentriert!")
+    # else:
+    #     print("Keine Fenster gefunden.")
 
 center_origins()

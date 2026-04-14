@@ -3,6 +3,7 @@ Um den in Kapitel 3 theoretisch konzipierten Systemansatz auf seine praktische T
 
 Die Entwicklung und Validierung dieses Prototyps erfolgt anhand eines komplexen Referenzprojekts:
 
+Hier noch ein Bild vom FOUR wäre gut
 
 // Vorstellung Four (Turm 1)
 Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Gebäuden (Podesten), die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Endphase und soll im Laufe des Jahres 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am 233m hohen Büroturm T1 angewendet. Der Turm besteht pro Geschoss aus vier Mietbereichen und hat pro Segment einen außenliegenden Sonnenschutz und einen innenliegenden Blendschutz. Die Türme stehen eng beieinander im Zentrum von Frankfurt zwischen verschiedenen Hochhäusern (z.B. dem Commerzbank-Tower und dem MAIN-Tower). Durch dieses eng bebautes Areal treten sehr dynamische Verschattungssituationen auf, die nur durch eine präzise Simulation der Umgebung korrekt dargestellt werden können.
@@ -58,6 +59,21 @@ Nach dem Hinterlegen muss die Position nicht verändert werden, da die Türme 2-
 == Aufbereitung IFC-Modell Turm 1?
 - Fenster geometrische Mitte festlegen (immer noch notwendig? oder nicht wegen der vier Ecken Variante? Oder doch benötigt für Backwards culling?)
 - Balkonfensterflächen isolieren und ausblenden
+
+== Einrichten der Umgebung (Sonne und Kamera)
+#grid(
+  columns: (1.5fr, 2fr),
+  gutter: 1cm,
+  figure(
+    image("assets/BlenderSunSettings.png", width: 100%),
+    caption: [Hochkant-Abbildung im FOUR Frankfurt],
+  ),
+  [
+    In diesem Bereich steht der begleitende Text. Diese Methode 
+    eignet sich hervorragend, wenn Bild und Text eine logische 
+    Einheit bilden und genau nebeneinander stehen bleiben sollen.
+  ]
+)
 
 == Zuordnung AKS Jalousieaktor zu Fenster in BIM-Modell
 Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden. 

@@ -3,7 +3,7 @@
 == Zusammenfassung der Ergebnisse
 == Marktanalyse und wirtschaftliches Potenzial
 === Marktbeschreibung und Marktgröße
-Ein großes Interesse an intelligenten Verschattungslösungen existiert vor allem für große, prestigeträchtige Immobilien, wie Hochhhäuser in zentraler Lage. Alleine in der Stadt Frankfurt sollen bis 2040 14 Hochhäuser (Gebäude über 60m) errichtet werden@frankfurt_hep_2024_anhang2. Der Markt für umgebungsabhängige Verschattungssimulationen beschränkt sich nicht nur auf Hochhäuser. Generell profitieren Zweckgebäude mit zentraler GA und großen Fensterflächen hiervon. Vermehrt wird in Ausschreibungen eine intelligente Verschattung gefordert.
+Ein großes Interesse an intelligenten Verschattungslösungen existiert vor allem für große, prestigeträchtige Immobilien, wie Hochhäuser in zentraler Lage. Alleine in der Stadt Frankfurt sollen bis 2040 14 Hochhäuser (Gebäude über 60m) errichtet werden@frankfurt_hep_2024_anhang2. Der Markt für umgebungsabhängige Verschattungssimulationen beschränkt sich nicht nur auf Hochhäuser. Generell profitieren Zweckgebäude mit zentraler GA und großen Fensterflächen hiervon. Vermehrt wird in Ausschreibungen eine intelligente Verschattung gefordert.
 Gebäudeeigentümer profitieren von einem erhöhten Gebäudewert durch höhere Nutzerzufriedenheit und Energieeffizienz. Aber auch Systemintegratoren profitieren von einem kostengünstigen, effizienten Prozess die Verschattungssimulation umzusetzen.
 
 === Marktanalyse: Abgrenzung zu Wettbewerbslösungen
