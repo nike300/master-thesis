@@ -20,16 +20,15 @@ if not os.path.exists(OUTPUT_DIR):
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, "20.03.26_E_TagNachtGleiche.csv")
 print(f"Ziel-Datei: {OUTPUT_FILE}")
 # ------------------------------------------------------------------
-# --- NEUER SCHALTER ---
+# AUFPASSEN, DASS ALLE GEBÄUDE EINGEBLENDET SIND IN BLENDER!!!
 OUTPUT_ANGLE = False  # True: Gibt den Einfallswinkel aus | False: Gibt nur '0' aus
-# ----------------------
 SUN_OBJECT_NAME = "Sun"
-WINDOW_KEYWORD = "_PAN_"
+WINDOW_KEYWORD = "_Rain"
 
-SIMULATION_DATES = [(20, 3)]
-YEAR = 2026
-START_HOUR = 5
-END_HOUR = 22
+SIMULATION_DATES = [(21, 6)]
+YEAR = 2025
+START_HOUR = 10
+END_HOUR = 11
 MINUTES_STEP = 15
 
 
@@ -150,7 +149,8 @@ def run_final_simulation():
     
     raw_sensors = [obj for obj in bpy.context.scene.objects 
                    if WINDOW_KEYWORD in obj.name 
-                   and "Style" not in obj.name 
+                   and "Style" not in obj.name
+                   and "FAS_PAN_XXX_TB_L" not in obj.name
                    and obj.type == 'MESH']
     
     print(f"Sortiere {len(raw_sensors)} Fenster...")

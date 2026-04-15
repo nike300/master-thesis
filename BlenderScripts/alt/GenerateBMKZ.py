@@ -13,7 +13,7 @@ def generate_bmkz():
     
     # 1. Alle relevanten Fenster holen (ohne Styles)
     windows = [obj for obj in bpy.context.scene.objects 
-               if "IfcWindow" in obj.name 
+               if "_Rain" in obj.name 
                and "Style" not in obj.name 
                and obj.type == 'MESH']
 
@@ -47,7 +47,7 @@ def generate_bmkz():
     # Wir sortieren die Stockwerke von unten nach oben
     sorted_levels = sorted(floors.keys())
     
-    floor_index = 0
+    floor_index = 6
     total_renamed = 0
 
     for z in sorted_levels:

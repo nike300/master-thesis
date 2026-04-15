@@ -34,13 +34,18 @@
 )
 
 #let DECLARATION_OF_AUTHORSHIP_TITLE = (
-  "de": "Selbstständigkeitserklärung",
+  "de": "Selbstständigkeitserklärung und KI-Vermerk",
   "en": "Declaration of Authorship",
 )
 
 #let DECLARATION_OF_AUTHORSHIP_SECTION = ( 
- "de": "Hiermit versichere ich, dass ich die vorliegende Arbeit in allen Teilen selbstständig angefertigt und keine anderen als die in der Arbeit angegebenen Quellen und KI-Hilfsmittel benutzt habe, und dass die Arbeit in gleicher oder ähnlicher Form in noch keiner anderen Prüfung vorgelegen hat. Sämtliche wörtlichen oder sinngemäßen Übernahmen und Zitate sind kenntlich gemacht und nachgewiesen. Die Zeichnungen oder Abbildungen in dieser Arbeit sind von mir selbst erstellt worden oder mit einem entsprechenden Quellennachweis versehen. 
- Ich versichere zudem, dass alle Teile der vorliegenden Arbeit, inklusive der Teile deren Erstellung durch generative KI unterstützt wurde, von mir geprüft wurden und daher meine eigene wissenschaftliche Leistung darstellen. Ich übernehme die volle Verantwortung für den gesamten Inhalt der vorliegenden Arbeit.",
+  "de": "Hiermit versichere ich, dass ich die vorliegende Arbeit in allen Teilen selbstständig angefertigt und keine anderen als die in der Arbeit angegebenen Quellen und KI-Hilfsmittel benutzt habe, und dass die Arbeit in gleicher oder ähnlicher Form in noch keiner anderen Prüfung vorgelegen hat. Sämtliche wörtlichen oder sinngemäßen Übernahmen und Zitate sind kenntlich gemacht und nachgewiesen. Die Zeichnungen oder Abbildungen in dieser Arbeit sind von mir selbst erstellt worden oder mit einem entsprechenden Quellennachweis versehen. 
+    Ich versichere zudem, dass alle Teile der vorliegenden Arbeit, inklusive der Teile deren Erstellung durch generative KI unterstützt wurde, von mir geprüft wurden und daher meine eigene wissenschaftliche Leistung darstellen. Ich übernehme die volle Verantwortung für den gesamten Inhalt der vorliegenden Arbeit.
+
+ Folgende Modelle künstlicher Intelligenz wurden verwendet:
+- Gemini 2.5 Pro Deep Research: Recherchearbeit; Vorschläge für Technologiestack der Anwendung
+- Gemini 3.0-3.1 Pro: Recherche, Entwicklung der Forschungsfrage, Generierung von Ideen, Codegenerierung
+- Perplexity AI: Recherche zu Normen und technischen Grundlagen",
 
 
  "en": "I hereby certify that I have written this thesis independently and have not used any sources other than those listed in the bibliography. All passages taken verbatim or in spirit from published or as yet unpublished sources are identified as such. The drawings or illustrations in this work have been created by myself or have been provided with a corresponding source reference. This thesis has not been submitted in the same or a similar form to any other examination authority.",

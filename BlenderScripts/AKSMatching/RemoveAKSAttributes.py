@@ -6,7 +6,7 @@ def remove_aks_attributes():
 
     for obj in selected_objs:
         # Pruefung auf beide gelaeufige Schreibweisen des Attributs
-        for prop_name in ["SE-AKS", "SE_AKS"]:
+        for prop_name in ["SE-AKS", "BMKZ"]:
             if prop_name in obj:
                 del obj[prop_name]
                 removed_count += 1

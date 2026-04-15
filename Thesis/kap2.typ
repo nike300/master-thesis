@@ -168,6 +168,7 @@ Um Fehlkalkulationen auszuschließen, muss im Vorfeld garantiert werden, dass al
 == Verschattungssysteme <Verschattungssysteme>
 === Bauphysikalische und lichttechnische Zielgrößen <BauphysikalischeLichttechnischeZielgroessen>
 
+
 Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamellenwinkel) erfüllen in der modernen Gebäudeautomation wesentliche energetische und ergonomische Funktionen. Die primären Zielgrößen einer optimalen Steuerung definieren sich wie folgt:
 
 - *Sommerlicher Wärmeschutz:* Ziel ist die Minimierung des solaren Energieeintrags in das Gebäude, um die anfallende Kühllast und den damit verbundenen Energieverbrauch der Klimatisierung effektiv zu senken. Intelligente Sonnenschutzsysteme können die benötigte Kühlenergie um 30% reduzieren@hutchins2015shading[S. 12] seite 21#cite(<hutchins2015shading>)).

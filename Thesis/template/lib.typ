@@ -6,6 +6,8 @@
 #import "confidentiality-statement.typ": *
 #import "declaration-of-authorship.typ": *
 #import "check-attributes.typ": *
+#import "@preview/mmdr:0.2.1": mermaid
+
 
 // Workaround for the lack of an `std` scope.
 #let std-bibliography = bibliography
@@ -106,6 +108,7 @@
 
   // show links in dark blue
   // show link: set text(fill: blue.darken(40%))
+  // 
 
   // ========== TITLEPAGE ========================================
 
@@ -306,7 +309,7 @@
 
   // ========== APPENDIX ========================================
 
-  in-body.update(false)
+  in-body.update(true)
   set heading(numbering: "A.1")
   counter(heading).update(0)
 

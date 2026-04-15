@@ -6,7 +6,7 @@ Die Entwicklung und Validierung dieses Prototyps erfolgt anhand eines komplexen 
 Hier noch ein Bild vom FOUR wäre gut
 
 // Vorstellung Four (Turm 1)
-Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Gebäuden (Podesten), die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Endphase und soll im Laufe des Jahres 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am 233m hohen Büroturm T1 angewendet. Der Turm besteht pro Geschoss aus vier Mietbereichen und hat pro Segment einen außenliegenden Sonnenschutz und einen innenliegenden Blendschutz. Die Türme stehen eng beieinander im Zentrum von Frankfurt zwischen verschiedenen Hochhäusern (z.B. dem Commerzbank-Tower und dem MAIN-Tower). Durch dieses eng bebautes Areal treten sehr dynamische Verschattungssituationen auf, die nur durch eine präzise Simulation der Umgebung korrekt dargestellt werden können.
+Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Gebäuden (Podesten), die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Endphase und soll im Laufe des Jahres 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am 233m hohen Büroturm T1 angewendet. Der Turm besteht pro Geschoss aus vier Mietbereichen und hat pro Segment einen außenliegenden Sonnenschutz und einen innenliegenden Blendschutz. Er hat 6297 außenliegende Fenster. Die Türme stehen eng beieinander im Zentrum von Frankfurt zwischen verschiedenen Hochhäusern (z.B. dem Commerzbank-Tower und dem MAIN-Tower). Durch dieses eng bebautes Areal treten sehr dynamische Verschattungssituationen auf, die nur durch eine präzise Simulation der Umgebung korrekt dargestellt werden können.
 Eine architektonische Besonderheit des FOUR sind die diagonal abgeschrägten Fassadenabschnitte (@fig-FourTageslicht), die den visuellen Freiraum und die Tageslichtzufuhr verbessern sollen.
 
 #figure(
@@ -57,8 +57,10 @@ Da in den CityGML-Daten die FOUR-Türme zum Zeitpunkt dieser Arbeit noch nicht e
 Nach dem Hinterlegen muss die Position nicht verändert werden, da die Türme 2-4 den gleichen Ursprung hinterlegt haben wie der Turm 1.
 
 == Aufbereitung IFC-Modell Turm 1?
-- Fenster geometrische Mitte festlegen (immer noch notwendig? oder nicht wegen der vier Ecken Variante? Oder doch benötigt für Backwards culling?)
-- Balkonfensterflächen isolieren und ausblenden
+- Temporäre AKS vergeben für die Fenster, da Fensterbezeichnung keine Aussage über Geschoss gibt
+- Fenster geometrische Mitte festlegen (immer noch notwendig? oder nicht wegen der vier Ecken Variante? Oder doch benötigt für Backwards culling?) -> nicht mehr nötig
+- Balkonfensterflächen, isolieren und ausblenden. Weil das Modell keine Materialien zugeordnet hat und somit nicht als transparent gezählt werden würde.
+- AnalyzeNormals drauf eingehen? Also dass normals nicht richtig sind von haus aus
 
 == Einrichten der Umgebung (Sonne und Kamera)
 #grid(
@@ -102,8 +104,32 @@ Dieser Weg ist zeitaufwendig und wird im Rahmen der Arbeit nur für ein Geschoss
 == Die eigentliche Simulation der Jahresverschattung <SimulationJahresverschattung>
 Für die Verschattungssimulation wird ein Python-Skript ausgeführt, welches über die @ide @vs-code#[]@vscode gestartet wird. Der Code unterteilt sich in mehrere Teile:
 
+Am Anfang muss in der Konfiguration der zu berechnende Zeitbereich eingestellt werden und die zeitliche Auflösung (z.B. 15 Minuten).
 
+#figure(
+  image("assets/Verschattung1.svg"),
+  caption: [test]
+)
 
+Funktionsweise der softwaregestützten Verschattungssimulation
+
+Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette. Es automatisiert die geometrische Verschattungsanalyse innerhalb der 3D-Umgebung und generiert Steuerungsdaten für die Gebäudeautomation. Der programmatische Ablauf lässt sich in vier konsekutive Phasen unterteilen:
+
+==== Initialisierung und Extraktion der Gebäudegeometrie
+In der Vorbereitungsphase durchsucht der Algorithmus den Szenengraphen der Simulationsumgebung nach allen Objekten, die anhand ihrer Namenskonvention als Fenstersensoren ("\_PAN\_" im Namen enthalten) klassifiziert sind. 
+// Um die spätere Rechenlast während der Zeitschleifen zu minimieren, werden die geometrischen Eigenschaften jedes Fensters nur ein einziges Mal zu Beginn extrahiert. 
+Das Skript ermittelt für jedes Fenster die primäre Glasfläche und berechnet deren physikalischen Normalenvektor. Durch einen vektoriellen Abgleich mit dem geometrischen Zentrum des Gebäudes wird mathematisch verifiziert, dass dieser Normalenvektor stets nach außen zeigt. Parallel dazu speichert das System die exakten 3D-Weltkoordinaten der vier Eckpunkte der Fensterfläche ab, welche als Ausgangspunkte für die spätere Strahlenverfolgung dienen.
+
+==== Astronomische Berechnung der Sonnenvektoren
+Die eigentliche Simulation iteriert über den festgelegten Betrachtungszeitraum in diskreten 15-Minuten-Schritten. Für jeden iterativen Zeitschritt übersetzt der integrierte NOAA-Algorithmus den lokalen Längen- und Breitengrad sowie den UTC-korrigierten Zeitstempel in einen dreidimensionalen Richtungsvektor zur Sonne. In dieser Phase findet zudem ein effizienzsteigernder Filterprozess statt: Liegt der berechnete Höhenwinkel der Sonne unter null Grad, registriert das System den Zustand global als Nacht. Der Algorithmus weist allen Fenstern für diesen Zeitstempel den entsprechenden Statuswert zu und überspringt die rechenintensiven Kollisionsprüfungen.
+
+==== Filterung und Vierpunkt-Raycasting
+Sobald ein Tag-Zustand vorliegt, iteriert das Skript über alle registrierten Fenster. Die Ermittlung des Verschattungsstatus erfolgt hierbei in einem zweistufigen Verfahren. Der erste Schritt ist ein mathematischer Ausschluss, das sogenannte Backface Culling. Über das Skalarprodukt aus dem berechneten Sonnenvektor und dem zuvor gespeicherten Fensternormalenvektor wird geprüft, ob die direkte Solarstrahlung die Fassade von hinten trifft. Ist dies der Fall, wird die Berechnung für dieses Fenster sofort abgebrochen und der Status für eine rückseitige Verschattung dokumentiert.
+
+Fällt das Licht hingegen in einem positiven Winkel auf die Fassadenvorderseite, initiiert das Skript das Vierpunkt-Raycasting. Von den vier Randkoordinaten des Fensters wird ein theoretischer Sehstrahl in Richtung der Sonne projiziert. Der Algorithmus prüft, ob dieser Strahl auf seinem Weg durch die Szene ein Objekt der umgebenden Bebauung schneidet. Die Schleife bricht ab, sobald nur ein einziger der vier Strahlen die Sonne ungehindert erreicht. In diesem Fall wird das gesamte Fenster als besonnt klassifiziert. Nur wenn alle vier Eckpunkte durch externe Geometrien verdeckt sind, meldet der Algorithmus eine vollständige Verschattung.
+
+==== Datenaggregation und Export
+Im finalen Schritt überführt das Skript die akkumulierten Statuswerte in eine Struktur, die als csv-Datei gespeichert wird. Die generierte Exportdatei listet die chronologischen Zeitstempel als Zeilen und ordnet die zugehörigen @aks der Fenster als Spalten an. Diese Formatierung ermöglicht es der Gebäudeautomation im späteren operativen Betrieb, die Matrix sequenziell einzulesen. "Die ausgegebenen diskreten Zahlenwerte differenzieren dabei klar zwischen aktiver Besonnung, Fremdverschattung, Eigenverschattung und fehlender astronomischer Einstrahlung bei Nacht."
 
 
 === Zeitliche Auflösung und Umfang (vlt. lieber in Kap 3?) <ZeitlicheAufloesungUmfang>
@@ -201,7 +227,7 @@ Eine Validierung erfolgt über einen Abgleich zwischen einem gerendertem Bild au
     image("assets/webcam_foto.png", width: 100%),
     image("assets/blender_render.png", width: 100%)
   ),
-  caption: [Validierung der Verschattungssimulation am Turm 1. Links: Webcam-Aufnahme vom 21.06.2025 (9:15 Uhr). Rechts: Simulationsergebnis zum identischen Zeitpunkt.],
+  caption: [Validierung der Verschattungssimulation am Turm 1. Links: Webcam-Aufnahme vom 21.06.2025 (10:15 Uhr). Rechts: Simulationsergebnis zum identischen Zeitpunkt.],
   placement: auto
 ) <fig:validierung_t1>
 
