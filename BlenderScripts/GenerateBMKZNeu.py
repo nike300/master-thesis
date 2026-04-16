@@ -30,8 +30,8 @@ def generate_bmkz():
     windows = [obj for obj in bpy.context.scene.objects 
                if "_Rain" in obj.name 
                and "Style" not in obj.name
-               and "FAS_PAN_XXX_TB_L" not in obj.name 
-               and obj.type == 'MESH']
+               and obj.type == 'MESH'
+               and obj.visible_get()]
 
     if not windows:
         print("Keine Fenster gefunden!")

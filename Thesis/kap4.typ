@@ -6,7 +6,7 @@ Die Entwicklung und Validierung dieses Prototyps erfolgt anhand eines komplexen 
 Hier noch ein Bild vom FOUR wäre gut
 
 // Vorstellung Four (Turm 1)
-Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Gebäuden (Podesten), die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Endphase und soll im Laufe des Jahres 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am 233m hohen Büroturm T1 angewendet. Der Turm besteht pro Geschoss aus vier Mietbereichen und hat pro Segment einen außenliegenden Sonnenschutz und einen innenliegenden Blendschutz. Er hat 6297 außenliegende Fenster. Die Türme stehen eng beieinander im Zentrum von Frankfurt zwischen verschiedenen Hochhäusern (z.B. dem Commerzbank-Tower und dem MAIN-Tower). Durch dieses eng bebautes Areal treten sehr dynamische Verschattungssituationen auf, die nur durch eine präzise Simulation der Umgebung korrekt dargestellt werden können.
+Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Gebäuden (Podesten), die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Endphase und soll im Laufe des Jahres 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am 233m hohen Büroturm T1 angewendet. Der Turm besteht pro Geschoss aus vier Mietbereichen und hat pro Segment einen außenliegenden Sonnenschutz und einen innenliegenden Blendschutz. Er hat 5859 Fenster mit außenliegendem Sonnenschutz. Die Türme stehen eng beieinander im Zentrum von Frankfurt zwischen verschiedenen Hochhäusern (z.B. dem Commerzbank-Tower und dem MAIN-Tower). Durch dieses eng bebautes Areal treten sehr dynamische Verschattungssituationen auf, die nur durch eine präzise Simulation der Umgebung korrekt dargestellt werden können.
 Eine architektonische Besonderheit des FOUR sind die diagonal abgeschrägten Fassadenabschnitte (@fig-FourTageslicht), die den visuellen Freiraum und die Tageslichtzufuhr verbessern sollen.
 
 #figure(
@@ -61,6 +61,11 @@ Nach dem Hinterlegen muss die Position nicht verändert werden, da die Türme 2-
 - Fenster geometrische Mitte festlegen (immer noch notwendig? oder nicht wegen der vier Ecken Variante? Oder doch benötigt für Backwards culling?) -> nicht mehr nötig
 - Balkonfensterflächen, isolieren und ausblenden. Weil das Modell keine Materialien zugeordnet hat und somit nicht als transparent gezählt werden würde.
 - AnalyzeNormals drauf eingehen? Also dass normals nicht richtig sind von haus aus
+- Fensterobjekte überschneiden sich (siehe @FensterÜberschneidung)
+#figure(
+  image("assets/ÜberschneidendeFenster.png"),
+  caption: [was für eine scheiße]
+)<FensterÜberschneidung>
 
 == Einrichten der Umgebung (Sonne und Kamera)
 #grid(
@@ -232,3 +237,8 @@ Eine Validierung erfolgt über einen Abgleich zwischen einem gerendertem Bild au
 ) <fig:validierung_t1>
 
 Eine weitere Möglichkeit der Validierung wäre die Verortung von einem oder mehreren Helligkeitssensoren an Fensterflächen im FOUR. Diese Sensoren könnten die Helligkeit messen und somit einen Vergleich mit der Simulation an Tagen ohne Bewölkung ermöglichen. Diese Möglichkeit konnte im Rahmen dieser Arbeit aus zeitlichen Aspekten nicht untersucht werden.
+
+#figure(
+    image("assets/ValidierungSkript.png", width: 70%),
+    caption: [etwas]
+)<fig-validierungSkript>

@@ -3,13 +3,9 @@ import bpy
 # --- KONFIGURATION ---
 # Liste der Textbausteine, nach denen gesucht werden soll
 SEARCH_KEYWORDS = [
-    "FAS_PAN_XXX_TB_L_G_TX_",
-    "FAS_PAN_XXX_TB_L_B_SX_",
-    "FAS_PAN_XXX_TB_L_K_XX_",
-    "FAS_PAN_XXX_TB_L_S_XX_",
-    "FAS_PAN_XXX_TB_L_G_XX_",
-    "FAS_PAN_XXX_TB_L_B_XX_",
-    "FAS_PAN_XXX_TB_L"
+    "FAS_PAN_XXX_TB_L" #Balkonfenster
+#    "_Rain"
+#    "Kuche"
 ]
 # ---------------------
 
