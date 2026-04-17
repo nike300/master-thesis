@@ -1,3 +1,3 @@
-= Anhang
-== Dateistruktur der digitalen Anlage:
+= Anhang<Anhang>
+== Digitale Anlage:<DigitaleAnlage>
 - VerschattungsSimulation.py

@@ -45,44 +45,58 @@ Der finale Import der Gebäudekörper in die 3D-Umgebung erfolgte über das Open
 
 .. es wurde darauf verzichtet, die gebäude nördlich rauszufiltern wie in kap 3 besprochen
 
-== Import und Positionierung Türme 2-4
-Da in den CityGML-Daten die FOUR-Türme zum Zeitpunkt dieser Arbeit noch nicht enthalten sind, muss auf die Fassadenmodelle der restlichen Türme zurückgegriffen werden. Sie liegen in LOD 500 vor, was für den genauen Schattenwurf von Vorteil ist. Allerdings sind viele Daten enthalten, die nicht benötigt werden. Somit werden folgende Maßnahmen getroffen, um die Dateigröße zu reduzieren und den Arbeitsspeicher zu entlasten:
+== Import und Positionierung der Türme 2 bis 4 <ImportT24>
 
-+ Die ifc-Dateien werden in seperate Blenderdateien importiert
-+ Alle Objekte (Meshes) werden zu einem großen Objekt vereint
-+ Alles restlichen Informationen werden aus der Datei gelöscht
-+ Es wird der Decimate Modifier (Collapse + Planar) auf das Objekt angewandt, um die Komplexität zu reduzieren
-+ Die seperaten Blenderdateien werden mit der Link-Funktion in der Hauptdatei hinterlegt
+Da das Gebäudeensemble FOUR zum Zeitpunkt der Datenerhebung noch nicht in den amtlichen CityGML-Datensätzen erfasst ist, werden für die Verschattungssimulation die detaillierten IFC-Fassadenmodelle der Türme 2 bis 4 herangezogen. Diese liegen in einem sehr hohen Detaillierungsgrad (LOD 500) vor. Dies ist einerseits vorteilhaft für eine hohe Präzision des Schattenwurfs, beinhaltet andererseits jedoch eine massive Menge an nicht benötigten geometrischen und semantischen Daten. Um die Dateigröße zu minimieren und den Arbeitsspeicher während der Simulation zu entlasten, wird eine systematische Reduktion der Modelle durchgeführt:
 
-Nach dem Hinterlegen muss die Position nicht verändert werden, da die Türme 2-4 den gleichen Ursprung hinterlegt haben wie der Turm 1.
++ Isolierter Import: Die IFC-Dateien der Nachbartürme werden zunächst in separate Blender-Projekte importiert, um die Hauptdatei nicht initial zu überlasten.
++ Geometrische Aggregation: Sämtliche Einzelbauteile (Meshes) eines Turms werden zu einem zusammenhängenden Polygonnetz verschmolzen.
++ Semantische Bereinigung: Alle nicht-geometrischen Informationen, wie IFC-Hierarchien, Materialdaten und Objektattribute, werden restlos aus der Datei entfernt.
++ Topologische Reduktion: Zur Verringerung der Polygonanzahl wird ein algorithmischer Filter (Decimate-Modifier mit den Parametern Collapse und Planar) auf das aggregierte Modell angewendet. Dieser reduziert redundante Geometrie auf flachen Ebenen, ohne die äußere, schattenwerfende Silhouette zu verfälschen.
++ Referenzierung: Die optimierten Modelldateien werden abschließend über die Link-Funktion speichereffizient in die Simulations-Hauptszene eingebunden.
 
-== Aufbereitung IFC-Modell Turm 1?
-- Temporäre AKS vergeben für die Fenster, da Fensterbezeichnung keine Aussage über Geschoss gibt
-- Fenster geometrische Mitte festlegen (immer noch notwendig? oder nicht wegen der vier Ecken Variante? Oder doch benötigt für Backwards culling?) -> nicht mehr nötig
-- Balkonfensterflächen, isolieren und ausblenden. Weil das Modell keine Materialien zugeordnet hat und somit nicht als transparent gezählt werden würde.
-- AnalyzeNormals drauf eingehen? Also dass normals nicht richtig sind von haus aus
-- Fensterobjekte überschneiden sich (siehe @FensterÜberschneidung)
+Eine manuelle räumliche Transformation oder Neuausrichtung entfällt bei diesem Prozess. Da die Modelle der Türme 2 bis 4 denselben globalen Koordinatenursprung (Projektbasispunkt) wie das Referenzmodell des Turms 1 aufweisen, positionieren sie sich beim Import automatisch an den korrekten relativen Koordinaten.
+== Aufbereitung des IFC-Modells Turm 1 <AufbereitungIFC>
+
+Die Qualität des vorliegenden IFC-Modells erforderte eine gezielte Vorbearbeitung, um eine konsistente Datengrundlage für die Verschattungssimulation zu schaffen. Im Fokus standen dabei die eindeutige Identifizierbarkeit der Fassadenelemente sowie die Bereinigung geometrischer Inkonsistenzen.
+
+Hinsichtlich der Datenstruktur wurde festgestellt, dass die Zuordnung der Bauteile zu den jeweiligen Geschossen teilweise fehlerhaft war. So waren vertikal übereinanderliegende Fenster demselben Geschoss zugewiesen. Für den weiteren Prozessverlauf wurde diese strukturelle Ungenauigkeit ignoriert, da die Simulation auf den absoluten Koordinaten der Geometrie basiert und nicht auf der logischen Geschosshierarchie des IFC-Baums.
+
+Die ursprünglich vorgesehene Berechnung der geometrischen Fenstermittelpunkte wurde im Zuge der Prozessoptimierung als hinfällig eingestuft. Durch den gewählten Ansatz, die Verschattung an allen vier Eckpunkten eines Fensters zu validieren, entfällt die Notwendigkeit eines zentralen Bezugspunktes. Die Vier-Ecken-Methode bietet zudem eine höhere Granularität bei der Bewertung von Teilverschattungen.
+
+Ein wesentlicher Schritt der Aufbereitung betraf die Fensterflächen im Bereich der Balkone. Diese wurden isoliert und für die Simulation ausgeblendet. Da das IFC-Modell keine Materialeigenschaften übermittelt, würden diese Flächen durch den Simulationsalgorithmus als opake Hindernisse gewertet werden. Dies hätte zur Folge, dass dahinterliegende Fenster fälschlicherweise als verschattet markiert würden, obwohl in der Realität transparente Verglasungen vorliegen.
+
+Zusätzlich wies das Modell geometrische Redundanzen in Form von sich überschneidenden oder doppelt vorhandenen Fensterelementen auf, wie in @fig-FensterÜberschneidung dargestellt. Diese Duplikate wurden manuell identifiziert und entfernt, um Fehlberechnungen und eine unnötige Erhöhung der Rechenlast zu vermeiden.
+
+Schlussendlich wurde ein temporäres Anlagenkennzeichnungssystem für sämtliche Fensterelemente mithilfe eines Skripts implementiert. Diese Maßnahme war notwendig, da die ursprünglichen Objektbezeichnungen keine Informationen über die geschossweise Zuordnung enthielten. Hierfür mussten mithilfe eines Filterlogik, alle relevanten Fensterobjekte vorselektiert werden.
+Ein Ansatz um den finalen @aks zuzuordnen wird in @AKSZuordnung aufgezeigt.
+
 #figure(
-  image("assets/ÜberschneidendeFenster.png"),
-  caption: [was für eine scheiße]
-)<FensterÜberschneidung>
+  image("assets/ÜberschneidendeFenster.png", width: 80%),
+  caption: [Bildausschnitt von sich überlagernden Fensterelementen innerhalb der IFC-Struktur.],
+  placement: auto
+) <fig-FensterÜberschneidung>
 
-== Einrichten der Umgebung (Sonne und Kamera)
+== Einrichten der Sonne
 #grid(
   columns: (1.5fr, 2fr),
   gutter: 1cm,
   figure(
     image("assets/BlenderSunSettings.png", width: 100%),
-    caption: [Hochkant-Abbildung im FOUR Frankfurt],
+    caption: [Einstellungen für Sun Position Add-On],
   ),
   [
-    In diesem Bereich steht der begleitende Text. Diese Methode 
-    eignet sich hervorragend, wenn Bild und Text eine logische 
-    Einheit bilden und genau nebeneinander stehen bleiben sollen.
+    Für die visuelle Darstellung und Validierung des Sonnenstandes innerhalb der 3D-Umgebung wird das in Blender integrierte Add-On Sun Position@blender_sun_position verwendet. Die korrekte Ausrichtung des simulierten Sonnenlichts erfordert die Parametrierung folgender Randbedingungen:
+
+    Im Abschnitt Location werden die exakten geografischen Koordinaten des Projektstandorts definiert. Für das Gebäudeareal FOUR entsprechen diese einem Breitengrad von 50,113 und einem Längengrad von 8,675. Die Nordausrichtung des Modells (North Offset) bleibt in diesem Fall auf null Grad, da die Gebäude bereits korrekt ausgerichtet ist. Die Distanz gibt den Abstand des Sonnenobjekts vom Ursprung an und hat keine Relevanz für den Sonnenstand.
+    
+    Im Abschnitt Time wird die zeitliche Basis festgelegt. Durch die Zuweisung der lokalen Zeitzone (hier UTC+1) sowie der Eingabe eines spezifischen Datums und einer Uhrzeit berechnet der interne Algorithmus des Moduls automatisch den resultierenden Azimut- und Höhenwinkel. Es muss darauf geachtet werden, während der Sommerzeit das Feld "Dailight Savings" zu aktivieren.
   ]
 )
+Das gekoppelte Lichtobjekt der Szene wird daraufhin in der virtuellen Umgebung exakt positioniert. Dies ermöglicht eine präzise visuelle Simulation des Schattenwurfs für jeden beliebigen Zeitpunkt im Jahresverlauf.
 
-== Zuordnung AKS Jalousieaktor zu Fenster in BIM-Modell
+
+== Zuordnung AKS Jalousieaktor zu Fenster in BIM-Modell<AKSZuordnung>
 Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden. 
 Um die Gebäudeautomation zu planen wurde die Engineering-Software eConfigure von Schneider Electric eingesetzt. Die Planung war zum Zeitpunkt der Arbeit schon komplett abgeschlossen. Bei der Planung wurden Grundrisse der Etagen hinterlegt und alle Komponenten der Raumautomation verortet (siehe @fig-eConfigure). Hierbei gibt es mehrere Symbole für Jalousien, die zum einen den außenliegenden Sonnenschutz und zum anderen den innenliegenden Blendschutz beschreiben. Der Text neben den Symbolen beinhaltet den erforderlichen @aks.
 #figure(
@@ -197,12 +211,12 @@ Es wird ein einzelner Raycast vom geometrischen Zentrum des Fensters zur Sonne b
 Dieser Ansatz hat den Vorteil, dass er die geringste Rechenzeit aufweist. Allerdings ist die Einpunkt-Messung anfällig für Halbschatten-Situationen. Verdeckt ein Schatten beispielsweise nur die untere Fensterhälfte, meldet der Mittelpunkt unter Umständen noch keine Verschattung. Umgekehrt kann der Mittelpunkt bereits verschattet sein, während die obere Fensterhälfte noch stark blendet.
 
 *2. Vierpunkt-Messung (Eckpunkte):*
-Die Simulation prüft die vier Extrempunkte der Fenstergeometrie. Die Auswertung erfolgt über eine logische ODER-Verknüpfung: Sobald mindestens einer der vier Punkte direkte Sonneneinstrahlung detektiert, gilt das gesamte Fenster als besonnt.
-Diagonale oder wandernde Schattenkanten werden sicher erkannt, wodurch temporäre Blendungen (die bei der Einpunkt-Messung übersehen würden) verhindert werden.
-Der Nachteil ist die Vervierfachung der Rechenzeit gegenüber der Einpunkt-Messung. Zudem können sehr schmale, vertikale Objekte (z. B. Masten), die schmaler als die Fensterbreite sind, theoretisch übersehen werden. Dies stellt im urbanen Kontext jedoch ein vernachlässigbares Restrisiko dar. In einzelnen Fällen, kann auch ein Schattenwurf, der nur die untere Fensterkante streift, zu einer nicht notwendigen Reaktion der Jalousie führen. Dies könnte mit dem Hochsetzen der unteren beiden Eckpunkte verhindert werden.
+Die Simulation prüft die vier Extrempunkte der Fenstergeometrie. Sobald mindestens einer der vier Punkte direkte Sonneneinstrahlung detektiert, gilt das gesamte Fenster als besonnt.
+Teilverschattungen werden somit sicher erkannt, wodurch temporäre Blendungen verhindert werden.
+Der Nachteil ist eine ca. Verdopplung der Rechenzeit gegenüber der Einpunkt-Messung. Zudem können sehr schmale, vertikale Objekte (z. B. Masten), die schmaler als die Fensterbreite sind, theoretisch übersehen werden. Dies stellt im urbanen Kontext jedoch ein vernachlässigbares Restrisiko dar. In einzelnen Fällen, kann auch ein Schattenwurf, der nur die untere Fensterkante streift, zu einer nicht notwendigen Reaktion der Jalousie führen. Dies könnte mit dem Hochsetzen der unteren beiden Eckpunkte verhindert werden.
 
-*Fazit für den Prototyp: (XXX)*
-Um den visuellen Komfort (Blendschutz) der Nutzer zu garantieren, wird für den entwickelten Workflow die Vierpunkt-Messung gewählt. Die Erhöhung der Rechenzeit wird durch die drastisch verbesserte Steuerungssicherheit gerechtfertigt. Die vier booleschen Einzelwerte werden bereits im Python-Skript durch eine ODER-Logik zu einem einzelnen Status pro Fenster aggregiert, sodass die zu exportierende Datenmenge für die Automationsstation identisch mit der Einpunkt-Messung bleibt.
+*Fazit für den Prototyp:*
+Um den visuellen Komfort der Nutzer zu garantieren, wird für den entwickelten Workflow die Vierpunkt-Messung gewählt. Die Erhöhung der Rechenzeit wird durch die verbesserte Steuerungssicherheit gerechtfertigt. Die vier booleschen Einzelwerte werden bereits im Python-Skript zu einem einzelnen Status pro Fenster aggregiert, sodass die zu exportierende Datenmenge für die Automationsstation identisch mit der Einpunkt-Messung bleibt.
 
 === Berechnungsaufwand und Optimierung <Simulationsoptimierung>
 Für diese Arbeit wurde der 20.03.26 im 15-Minuten Takt simuliert. Dieser Tag beschreibt die frühjährliche Tag-Nacht-Gleiche (Äquinoktium) an dem die Sonne genau gleich lang über und unter dem Horizont verbleibt. Da die Hälfte des Jahres mehr und die andere Hälfte weniger Sonnenstunden aufweist, eignet sich dieser Tag für eine Hochrechnung der Simulationsdauer auf das gesamte Jahr.
@@ -211,7 +225,7 @@ Die Simulation dauerte 21 Minuten#footnote[Die Berechnung der Jahressimulation e
 Auf Backwards Culling eingehen und wieviel es spart
 /*
 68 x 365 = 24.820 Spalten
- 4,7Ghz
+
 
 - Ohne Optimierung (760s)
 - Zusammenfügen von umliegenden Objekten 786s (Optimierungepotenzial bei -3,4%)
@@ -221,9 +235,11 @@ Auf Backwards Culling eingehen und wieviel es spart
 - ""+Winkel: 434s
 */
 == Validierung <ValidierungErgebnisse>
-vlt. auch validierung des NOAA-Algorithmus noch mit aufnehmen? mit den eingefärbten fenstern
 
-Eine Validierung erfolgt über einen Abgleich zwischen einem gerendertem Bild aus der Simulation und einer Fotoaufnahme des FOUR zu einem festgelegten Zeitpunkt. Für die Fotoaufnahme wird auf die für die Bauüberwachung und Marketing benutzte Webcam zurückgegriffen. Sie befindet sich auf dem 137m hohen Nextower am Thurn-und-Taxis-Platz, der sich ca. 500m vom FOUR entfernt befindet. Auf der Website des Webcamanbieters@zeitrafferFOURFrankfurt können die Bilder der letzten 5 Jahren abgerufen werden. Für die Validierung wurde ein Tag mit wenig Wolken am Himmel gewählt, um bei möglichst wenig diffusem Licht, eine klare Schattenbildung zu erkennen. In der Simulation ist der Nextower enthalten um die Kameraposition möglichst genau nachzustellen. Das Ergebnis ist in @fig:validierung_t1 erkenntlich: Es besteht eine visuell sehr hohe Übereinstimmung der Schattenkanten der beiden Bilder.
+=== Validierung der virtuellen Szene
+Die Validierung der virtuellen Szene erfolgt durch einen visuellen Abgleich zwischen einem gerenderten Bild der Simulation und einer fotografischen Aufnahme des FOUR zu einem definierten Zeitpunkt. Als Referenz dient eine für die Bauüberwachung und das Marketing genutzte Webcam auf dem 137 Meter hohen Nextower am Thurn-und-Taxis-Platz, welcher sich in etwa 500 Metern Entfernung befindet. Die historischen Aufnahmen sind über die Website des Anbieters @zeitrafferFOURFrankfurt abrufbar. Für den Abgleich wurde ein wolkenarmer Tag gewählt, um durch ein Minimum an diffusem Licht klare Schattenkanten zu erhalten. Der Nextower ist im digitalen Modell integriert, um die Kameraposition exakt nachzubilden.
+
+Das Ergebnis dieses Abgleichs ist in @fig-validierung_t1 dargestellt. Es zeigt sich eine visuell sehr hohe Übereinstimmung der Schattenkanten zwischen Referenzbild und Simulation. Dies belegt die korrekte geometrische Anordnung der Szene in Blender sowie die Präzision des integrierten Sonnenmodells für den gewählten Zeitpunkt.
 
 #figure(
   grid(
@@ -232,13 +248,28 @@ Eine Validierung erfolgt über einen Abgleich zwischen einem gerendertem Bild au
     image("assets/webcam_foto.png", width: 100%),
     image("assets/blender_render.png", width: 100%)
   ),
-  caption: [Validierung der Verschattungssimulation am Turm 1. Links: Webcam-Aufnahme vom 21.06.2025 (10:15 Uhr). Rechts: Simulationsergebnis zum identischen Zeitpunkt.],
+  caption: [Validierung der Verschattungssimulation am Turm 1. Links: Webcam-Aufnahme vom 21.06.2025 (9:15 Uhr). Rechts: Simulationsergebnis zum identischen Zeitpunkt.],
   placement: auto
-) <fig:validierung_t1>
+) <fig-validierung_t1>
 
-Eine weitere Möglichkeit der Validierung wäre die Verortung von einem oder mehreren Helligkeitssensoren an Fensterflächen im FOUR. Diese Sensoren könnten die Helligkeit messen und somit einen Vergleich mit der Simulation an Tagen ohne Bewölkung ermöglichen. Diese Möglichkeit konnte im Rahmen dieser Arbeit aus zeitlichen Aspekten nicht untersucht werden.
+Eine alternative Validierungsmethode bestünde in der Installation von Helligkeitssensoren an den Fassaden des FOUR zur Erfassung realer Messwerte an wolkenlosen Tagen. Dieser Ansatz wurde aus zeitlichen Gründen im Rahmen dieser Arbeit nicht weiter verfolgt.
+
+=== Validierung der skriptbasierten Simulation
+Während die visuelle Validierung die Geometrie und das interne Sonnenmodell der Software bestätigt, erfordert das entwickelte Simulationsskript eine separate Überprüfung. Dieses Skript greift nicht auf das interne Sonnenstands-Plug-in von Blender zurück, sondern implementiert den NOAA-Algorithmus zur Berechnung des Sonnenstandes.
+
+Zur Validierung des Skripts wird der Verschattungszustand für denselben Referenzzeitpunkt berechnet und in eine CSV-Datei exportiert. Ein separates Auswertungsskript visualisiert diese Daten, indem es die Fassadenelemente des FOUR basierend auf ihrem simulierten Verschattungsstatus einfärbt. Eine Rotfärbung indiziert dabei eine vollständige Verschattung des jeweiligen Fensters, definiert durch die Verdeckung aller vier Eckpunkte.
+
+Wie in @fig-validierungSkript zu erkennen ist, liegen die als verschattet identifizierten Fensterelemente exakt innerhalb der optisch gerenderten Schattenflächen. Diese Deckungsgleichheit bestätigt die korrekte Implementierung des NOAA-Algorithmus sowie die funktionale Zuverlässigkeit des entwickelten Skripts zur algorithmischen Bestimmung der Fassadenverschattung.
 
 #figure(
-    image("assets/ValidierungSkript.png", width: 70%),
-    caption: [etwas]
-)<fig-validierungSkript>
+  box(
+    width: 12cm, 
+    height: 12cm, 
+    clip: true,
+    align(center + horizon)[
+      #image("assets/ValidierungSkript.png", width: 200%)
+    ]
+  ),
+  caption: [Detailansicht der Szene zur Überprüfung der Simulationsergebnisse. Rot eingefärbte Elemente markieren eine algorithmisch ermittelte vollständige Verschattung.],
+  placement: auto
+) <fig-validierungSkript>

@@ -1,6 +1,7 @@
 = Diskussion und Fazit<Kap5>
-== Integration der Daten in die Gebäudeautomation
 == Zusammenfassung der Ergebnisse
+- obwohl das ifc-modell viele fehler hatte und es einiges zu beachten gab
+schreiben mit KI
 == Marktanalyse und wirtschaftliches Potenzial
 === Marktbeschreibung und Marktgröße
 Ein großes Interesse an intelligenten Verschattungslösungen existiert vor allem für große, prestigeträchtige Immobilien, wie Hochhäuser in zentraler Lage. Alleine in der Stadt Frankfurt sollen bis 2040 14 Hochhäuser (Gebäude über 60m) errichtet werden@frankfurt_hep_2024_anhang2. Der Markt für umgebungsabhängige Verschattungssimulationen beschränkt sich nicht nur auf Hochhäuser. Generell profitieren Zweckgebäude mit zentraler GA und großen Fensterflächen hiervon. Vermehrt wird in Ausschreibungen eine intelligente Verschattung gefordert.
@@ -23,6 +24,7 @@ Zusammenfassend transformiert der entwickelte Workflow die Jahresverschattung vo
 
 == Grenzen des entwickelten Prozesses
 == Ausblick
-- Raytracing probieren - Um spiegelung mit zu berücksichtigen
+- Raytracing probieren - Um spiegelungen mit zu berücksichtigen
+  - Da der Rechenaufwand um ein vielfaches höher ist, müsste hier die wahrscheinlich parallel zum Betrieb laufen und es wird immer nur der nächste Tag berechnet
 - 
 Man könnte eine Exceltabelle entwickeln, die die vorliegenden IFC-Daten bewertet und daraus einen zusätzlichen Arbeitsaufwand berechnet. Dies könnte für die Angebotserstellung als Entscheidungsgrundlage herangezogen werden.

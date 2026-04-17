@@ -93,3 +93,39 @@ Hier geht es um die Grundsatzentscheidung: Handelt es sich um ein zustandsloses 
 - *Datenschnittstelle zur Automation:* Spezifikation des Exportformats (z. B. CSV-Struktur) und Festlegung der zu übergebenden Steuergrößen wie Verschattungsgrad und Status.
 - Lieber status 0, -1. -2, -3, Winkel oder nur 0, 1
 - *Mapping-Konzept:* Entwicklung einer Logik zur Verknüpfung der Simulationsergebnisse mit den physischen Datenpunkten der Gebäudeautomation (beispielsweise BACnet-Objekt-IDs).
+
+/*
+1. Problemstellung: Die Mehrdeutigkeit des 3D-Einfallswinkels
+
+Kritik am Skalarprodukt: Die direkte Berechnung des Winkels zwischen Fensternormale und Sonnenvektor liefert einen absoluten 3D-Winkel.
+
+Fehlende Spezifität: Ein berechneter Winkel von beispielsweise 65° ist mehrdeutig. Er kann entstehen durch einen sehr hohen Sonnenstand (Mittagszeit im Sommer) oder durch einen extrem flachen, seitlichen Lichteinfall (Morgens/Abends).
+
+Steuerungsproblem: Für eine automatisierte Jalousiesteuerung (Blendschutz) ist diese Information unzureichend, da beide Szenarien völlig unterschiedliche Behanghöhen oder Lamellenwinkel erfordern würden.
+
+2. Methodischer Lösungsansatz: Trennung von Azimut und Elevation
+
+Vektorzerlegung: Die Sonnenposition wird nicht als einzelner 3D-Vektor betrachtet, sondern in ihre horizontalen (Sonnenazimut) und vertikalen (Sonnenhöhe/Elevation) Komponenten aufgeteilt.
+
+Der relative Azimut: Berechnung der exakten Winkeldifferenz zwischen der Ausrichtung des Fensters (Fensternormalen-Azimut) und dem Sonnenazimut in der horizontalen Ebene.
+
+Vorzeichen-Logik: Einführung von Vorzeichen (+/-) beim relativen Azimut, um die exakte Einfallsrichtung (linksseitig vs. rechtsseitig der Flächennormalen) zu definieren. Wichtig für asymmetrische Fassaden.
+
+3. Anwendung in der Praxis: Der Profilwinkel und bauliche Eigenverschattung
+
+Implementierung von Cut-Off-Winkeln: Festlegung von Grenzwerten (z. B. relative Azimut-Differenz > 75°), ab denen ein Sonneneinfall von der Steuerung ignoriert wird.
+
+Berücksichtigung der Mikro-Geometrie: Bei extrem flachen seitlichen Winken wird die direkte Sonneneinstrahlung in der Realität oft durch bauliche Elemente (Fensterlaibungen, Rahmen, vorgelagerte Säulen oder Lisenen) geblockt, bevor sie das Glas trifft.
+
+Nutzerkomfort & Energieeffizienz: Durch das bewusste Ignorieren dieser "harmlosen" Sonnenstrahlen bleiben Jalousien länger geöffnet. Das maximiert die Tageslichtautonomie im Raum und senkt den Bedarf an künstlicher Beleuchtung.
+
+4. Datenökonomie und Systemarchitektur
+
+Vermeidung von Redundanz: Die Sonnenhöhe (Elevation) ist zu einem bestimmten Zeitpunkt für das gesamte Gebäude (und somit für alle ~6000 Fenster) identisch.
+
+Effiziente Speicherung: Statt die Elevation in jeder einzelnen Zelle der CSV-Datei mitzuschleifen, wird sie als globaler Parameter in einer separaten Tabelle oder Datenbankstruktur geloggt (1 Wert pro Zeitschritt statt 6000).
+
+Performance-Gewinn: Deutliche Reduktion der Dateigröße der Simulationsergebnisse (CSV) und schnellere Lade- bzw. Abfragezeiten für nachgelagerte Tools oder Datenbanken.
+*/
+
+== Integration in die Gebäudeautomation

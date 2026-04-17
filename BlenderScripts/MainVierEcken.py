@@ -185,8 +185,19 @@ def run_final_simulation():
                     results[i].append("-1") # Komplett im Schatten
                 else:
                     if OUTPUT_ANGLE:
-                        angle_deg = math.degrees(math.acos(min(dot, 1.0)))
-                        results[i].append(f"{angle_deg:.1f}")
+                        # --- NEU: Relativer horizontaler Azimut ---
+                        # 1. 2D-Winkel (XY-Ebene) von Sonne und Fenster berechnen
+                        sun_az = math.atan2(sun_vec_direction.y, sun_vec_direction.x)
+                        win_az = math.atan2(geom["normal"].y, geom["normal"].x)
+                        
+                        # 2. Differenz in Grad berechnen
+                        az_diff = math.degrees(sun_az - win_az)
+                        
+                        # 3. Winkel auf den Bereich -180° bis +180° normieren
+                        az_diff = (az_diff + 180) % 360 - 180
+                        
+                        # Ausgabe in die Liste (z.B. -45.2 oder 70.1)
+                        results[i].append(f"{az_diff:.1f}")
                     else:
                         results[i].append("0")
 
