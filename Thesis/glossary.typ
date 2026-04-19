@@ -46,5 +46,10 @@
     key: "nn",
     short: "NN",
     long: "Normalnull"
-  )
+  ),
+  (
+    key: "poc",
+    short: "PoC",
+    long: "Proof of Concept"
+  ),
 )

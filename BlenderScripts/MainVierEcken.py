@@ -16,16 +16,16 @@ except:
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "Visualisierung.csv")
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, "20.03.26_E_TagNachtGleiche.csv")
 print(f"Ziel-Datei: {OUTPUT_FILE}")
 
 # --- SCHALTER ---
 OUTPUT_ANGLE = False  # True: Gibt den Einfallswinkel aus | False: Gibt nur '0' aus
 # ----------------
 
-SIMULATION_DATES = [(21, 6)] 
-START_HOUR = 9
-END_HOUR = 10
+SIMULATION_DATES = [(20, 3)] 
+START_HOUR = 5
+END_HOUR = 22
 MINUTES_STEP = 15
 YEAR = 2026
 
@@ -102,7 +102,7 @@ def get_true_window_normal_and_corners(obj, tower_center_2d):
 def run_final_simulation():
     start_time = time.time()
     print("=" * 60)
-    print(f"STARTE SIMULATION (BMKZ Filter")
+    print(f"STARTE SIMULATION")
     print("=" * 60)
     
     depsgraph = bpy.context.evaluated_depsgraph_get()

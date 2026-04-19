@@ -79,6 +79,39 @@ Die Auswahl des geeigneten Datenanbieters für das Referenzprojekt erfolgt anhan
 === Georeferenzierung und Zeitbasis <GeoreferenzierungZeitbasis>
  Definition der Anforderungen an die räumliche und zeitliche Einordnung, inklusive Koordinatensystemen und dem Handling von Zeitzonen.
 
+=== Zeitliche Auflösung und Simulationsumfang <ZeitlicheAufloesungUmfang>
+
+*Zeitliche Diskretisierung:* Die Wahl der zeitlichen Auflösung für die Verschattungsdaten hat maßgeblichen Einfluss auf das Verhältnis zwischen visuellem Komfort (Blendschutz) und der Tageslichtausbeute des Gebäudes. Da die Verschattungsinformation in der Steuerung eine binäre Freigabe (Schatten oder Sonne) darstellt, muss bei einer Reduktion der Datenauflösung zwingend eine Worst-Case-Annahme getroffen werden: Fällt innerhalb eines Simulationsintervalls auch nur für einen Bruchteil der Zeit Sonne auf das Fenster, muss der Sonnenschutz für das gesamte Intervall geschlossen werden, um temporäre Blendung auszuschließen. 
+
+#figure(
+  image("assets/AuflösungZeitstrahl.svg" ),
+  caption: [Theoretischer Verschattungsverlauf an einem Referenzfenster mit beispielhafter Steuerung bei 5-, 15- und 60-minütiger Datenauflösung.],
+  placement: none
+)<fig-Zeitstrahl>
+
+
+@fig-Zeitstrahl veranschaulicht diesen Effekt am Beispiel einer theoretischen Steuerung mit integrierten Verschattungsdaten in verschiedenen Auflösungen. Die Steuerungslogik definiert sich dabei wie folgt:
+- *Fall offener Behang:* Die Steuerung detektiert für einen Zeitpunkt $t$, ob für den nächsten berechneten Zeitpunkt ($t+1$) Sonne auf das Fenster fällt. Falls ja, werden die Behänge präventiv geschlossen. 
+- *Fall geschlossener Behang:* Die Steuerung detektiert für einen Zeitpunkt $t$, ob für den nächsten berechneten Zeitpunkt $t+1$ keine Sonne mehr auf das Fenster fällt und öffnet die Behänge erst zu diesem Zeitpunkt ($t+1$).
+
+Dadurch wird garantiert, dass der Nutzer zu keinem Zeitpunkt einer Blendung ausgesetzt ist. Am beispielhaften Zeitstrahl verlässt der Schatten das Fenster um 10:23 Uhr. Bei einer groben stündlichen Diskretisierung hält die Steuerung den Behang jedoch schon ab 10:00 Uhr geschlossen, was zu 23 Minuten Verlust an natürlichem Tageslicht führt. Besonders gravierend wirkt sich diese zu grobe Abtastung bei schnellen, iterativen Verschattungsänderungen aus (beispielsweise in Großstädten mit dichter Hochhausbebauung). 
+
+Im Gegensatz dazu ermöglicht eine feine Auflösung von 5 Minuten, die Behänge sehr nah am realen Schattenverlauf des Fensters zu führen. Sie bildet den realen Schattenverlauf exakt ab und erfasst auch kurze Sonneneinstrahlungen durch Lücken in der Nachbarbebauung. Werden diese schnellen Wechsel jedoch direkt als Fahrbefehle an die Motoren weitergegeben, sinkt der Nutzerkomfort erheblich. Eine sich ständig bewegende Jalousie lenkt visuell und akustisch ab und erhöht den Verschleiß der Motoren deutlich.
+
+Um diesen Konflikt zu lösen, muss die Steuerung die präzisen Umgebungsdaten von den tatsächlichen Fahrbefehlen entkoppeln. In der Gebäudeautomation werden dafür Verzögerungszeiten, sogenannte Totzonen, oder Hysteresen eingesetzt. Dadurch reagiert der Sonnenschutz nicht mehr auf jede minimale und kurzzeitige Schattenänderung.
+
+Eine hohe Datenauflösung bleibt somit das konzeptionelle Optimum. Voraussetzung ist lediglich, dass die technische Infrastruktur die großen Datenmengen verarbeiten kann und die Steuerungsprogrammierung ständige Fahrbewegungen zuverlässig dämpft.
+
+*Zeitlicher Simulationsumfang:* Für die Konzeption der Simulation stellt sich zudem die Frage, wie viele Kalenderjahre berechnet werden müssen, um den realen Sonnenverlauf hinreichend abzubilden. Der Umlauf der Erde um die Sonne unterliegt zwar langperiodischen Schwankungen (Milanković-Zyklen@dwdMilanZyklen), diese sind für die Lebensdauer eines Gebäudes jedoch nicht relevant. Der berechnete Sonnenverlauf kann für den Betrachtungszeitraum als statisch angesehen werden. 
+
+Da das kalendarische Jahr vom astronomischen Sonnenjahr (365,24 Tage) abweicht@astr04eduSonnenjahr, wird diese Differenz alle vier Jahre durch ein Schaltjahr korrigiert. Die hieraus resultierende zeitliche Verschiebung des Sonnenstandes am selben Kalendertag ist für einen simulierten Schattenwurf in @fig-schaltjahr beispielhaft dargestellt. Da sich die räumlichen Abweichungen des Schattens lediglich im Zentimeterbereich bewegen (roter Bereich), ist es für den Systemansatz ausreichend, die Simulation auf ein einzelnes Referenzjahr zu beschränken.
+
+
+#figure(
+  image("assets/SchaltjahrUnterschied.png"), 
+  caption: [Differenz des Schattenwurfs am 01.03. eines Normaljahres gegenüber einem Schaltjahr um 09:00 Uhr.],
+  placement: auto
+)<fig-schaltjahr>
 
 == Konzeption der Simulationslogik (Processing) <KonzeptionSimulationslogik>
 - *Methodenauswahl:* Begründung des gewählten geometrischen Raycasting-Verfahrens gegenüber alternativen Ansätzen wie Radiosity oder rein thermischen Simulationen.
@@ -91,6 +124,8 @@ Hier geht es um die Grundsatzentscheidung: Handelt es sich um ein zustandsloses 
 
 - *Workflow-Design:* Erstellung einer schematischen Darstellung des gesamten Datenflusses, ausgehend von der digitalen Planung bis hin zur Ansteuerung der Aktoren.
 - *Datenschnittstelle zur Automation:* Spezifikation des Exportformats (z. B. CSV-Struktur) und Festlegung der zu übergebenden Steuergrößen wie Verschattungsgrad und Status.
+
+- Auch die Frage: Auf welchem Rechner sollten die Daten gespeichert werden? Extern oder intern beim Kunden?
 - Lieber status 0, -1. -2, -3, Winkel oder nur 0, 1
 - *Mapping-Konzept:* Entwicklung einer Logik zur Verknüpfung der Simulationsergebnisse mit den physischen Datenpunkten der Gebäudeautomation (beispielsweise BACnet-Objekt-IDs).
 
