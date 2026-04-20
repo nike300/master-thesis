@@ -165,7 +165,7 @@
     ),
     header:
       grid(
-        columns: (1fr, 1fr),
+        columns: (10fr, 1fr),
         align: (left, right),
         row-gutter: 0.5em,
         smallcaps(text(font: heading-font, size: body-size, 
@@ -254,7 +254,7 @@
     v(page-grid, weak: true)
   }
 
- show heading.where(level: 1): it => {
+  show heading.where(level: 1): it => {
     set par(justify: false)
     pagebreak()
     
@@ -262,33 +262,33 @@
       if in-body.get() {
         v(page-grid * 1.5)
         
-        // --- ÄNDERUNG: Alles in EINEN Container-Block ---
-        // Damit teilen sich Nummer und Text den gleichen Ursprung.
         block(width: 100%, below: 1em)[
-           
-           // 1. Die Nummer (absolut oben rechts INNERHALB dieses Blocks)
-           #place(top + right,
-             text(counter(heading).display(), 
-               size: h1-size, 
-               weight: 0, 
-               fill: luma(43.53%),
-               font: "New Computer Modern Math",
-               // WICHTIG: "cap-height" statt "bounds" für präzise Ausrichtung am Text
-               top-edge: "cap-height" 
-             )
-           )
-           
-           // 2. Der Titel selbst
-           #set par(leading: 0.3em) 
-           #text(
-             it.body, 
-             size: h1-size,
-             top-edge: "cap-height"
-           )
+            
+            // 1. Die Nummer (absolut oben rechts INNERHALB dieses Blocks)
+            #place(top + right,
+              text(counter(heading).display(), 
+                size: h1-size, 
+                weight: 0, 
+                fill: luma(43.53%),
+                font: "New Computer Modern Math",
+                top-edge: "cap-height" 
+              )
+            )
+            
+            // 2. Der Titel selbst
+            #set par(leading: 0.3em) 
+            
+            // --- ÄNDERUNG: pad fügt rechts einen unsichtbaren Abstand ein ---
+            #pad(right: 1.5em)[
+              #text(
+                it.body, 
+                size: h1-size,
+                top-edge: "cap-height"
+              )
+            ]
         ]
 
       } else {
-        // Anhang-Formatierung (unverändert)
         v(2 * page-grid) 
         text(size: 2 * page-grid, counter(heading).display() + h(0.5em) + it.body) 
       }

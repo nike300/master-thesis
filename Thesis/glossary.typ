@@ -52,4 +52,9 @@
     short: "PoC",
     long: "Proof of Concept"
   ),
+  (
+    key: "lod",
+    short: "LoD",
+    long: "Level of Detail"
+  )
 )

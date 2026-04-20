@@ -41,7 +41,7 @@ Um einen fehlerfreien und automatisierten Datenfluss von der digitalen Planung i
 
 - *Eindeutige Identifikation (AKS):* Um die berechneten Verschattungsdaten nach der Simulation fehlerfrei an die operative Steuerungsebene zu übergeben, muss jedes Fensterobjekt zwingend mit einem Anlagenkennzeichnungssystem (AKS) versehen sein (beispielsweise im IFC-Attribut `Name` oder `Tag`). Dieses AKS sollte konsequent nach dem hierarchischen Schalenmodell der VDI 3814-1 aufgebaut sein, um das direkte Mapping auf die BACnet-Objekte der Automationsstation zu ermöglichen @vdi3814-1.
 
-  - Weil oft von Architekten bei Hochhäusern auch Sonnenstudien durchgeführt werden, sind wahrscheinlich schon komplette Stadtmodelle vorhanden, die man weiterverwenden könnte
+  - Weil oft von Architekten bei Hochhäusern auch Sonnenstudien durchgeführt werden oder Modelle für Marketingszwecke generiert werden, sind wahrscheinlich schon komplette Stadtmodelle vorhanden, die man weiterverwenden könnte
   
 
   HIER AUF CHECKLISTE IM ANHANG VERWEISEN FÜR ARCHITEKTEN
@@ -104,14 +104,27 @@ Eine hohe Datenauflösung bleibt somit das konzeptionelle Optimum. Voraussetzung
 
 *Zeitlicher Simulationsumfang:* Für die Konzeption der Simulation stellt sich zudem die Frage, wie viele Kalenderjahre berechnet werden müssen, um den realen Sonnenverlauf hinreichend abzubilden. Der Umlauf der Erde um die Sonne unterliegt zwar langperiodischen Schwankungen (Milanković-Zyklen@dwdMilanZyklen), diese sind für die Lebensdauer eines Gebäudes jedoch nicht relevant. Der berechnete Sonnenverlauf kann für den Betrachtungszeitraum als statisch angesehen werden. 
 
-Da das kalendarische Jahr vom astronomischen Sonnenjahr (365,24 Tage) abweicht@astr04eduSonnenjahr, wird diese Differenz alle vier Jahre durch ein Schaltjahr korrigiert. Die hieraus resultierende zeitliche Verschiebung des Sonnenstandes am selben Kalendertag ist für einen simulierten Schattenwurf in @fig-schaltjahr beispielhaft dargestellt. Da sich die räumlichen Abweichungen des Schattens lediglich im Zentimeterbereich bewegen (roter Bereich), ist es für den Systemansatz ausreichend, die Simulation auf ein einzelnes Referenzjahr zu beschränken.
-
-
+Da das kalendarische Jahr vom astronomischen Sonnenjahr (365,24 Tage) abweicht@astr04eduSonnenjahr, wird diese Differenz alle vier Jahre durch ein Schaltjahr korrigiert. Die hieraus resultierende zeitliche Verschiebung des Sonnenstandes am selben Kalendertag ist für einen simulierten Schattenwurf in @fig-schaltjahr beispielhaft dargestellt. 
 #figure(
   image("assets/SchaltjahrUnterschied.png"), 
   caption: [Differenz des Schattenwurfs am 01.03. eines Normaljahres gegenüber einem Schaltjahr um 09:00 Uhr.],
   placement: auto
 )<fig-schaltjahr>
+Da sich die räumlichen Abweichungen des Schattens lediglich im Zentimeterbereich bewegen (roter Bereich), ist es für den Systemansatz ausreichend, die Simulation auf ein einzelnes Referenzjahr zu beschränken.
+
+=== Räumliche Auflösung der Messpunkte <RaeumlicheAufloesung>
+
+Die räumliche Abtastung der Fensterflächen bestimmt die Zuverlässigkeit der Simulation. Man muss festlegen, wie viele Testpunkte pro Fenster berechnet werden. Es werden drei verschiedene Optionen untersucht:
+
+*1. Einpunkt-Messung (Fenstermittelpunkt):*
+Es wird ein einzelner Raycast vom geometrischen Zentrum des Fensters zur Sonne berechnet. Dieser Ansatz hat den Vorteil, dass er die geringste Rechenzeit aufweist, allerdings anfällig für Situationen mit Teilverschattung ist: Verdeckt ein Schatten beispielsweise nur die untere Fensterhälfte, meldet der Mittelpunkt unter Umständen schon eine Verschattung des Fensters. Dabei ist die obere Fensterhälfte noch stark besonnt und verursacht Blendung.
+
+*2. Vierpunkt-Messung (Eckpunkte):*
+Die Simulation prüft die vier Extrempunkte der Fenstergeometrie. Sobald mindestens einer der vier Punkte direkte Sonneneinstrahlung detektiert, gilt das gesamte Fenster als besonnt. Teilverschattungen werden somit sicher erkannt, wodurch temporäre Blendungen verhindert werden. Der Nachteil ist eine ca. Verdopplung der Rechenzeit gegenüber der Einpunkt-Messung. Zudem können sehr schmale, vertikale Objekte (z. B. Masten), die schmaler als die Fensterbreite sind, theoretisch übersehen werden. Dies stellt im urbanen Kontext jedoch ein vernachlässigbares Restrisiko dar. In einzelnen Fällen, kann auch ein Schattenwurf, der nur die untere Fensterkante streift, zu einer nicht notwendigen Reaktion der Jalousie führen. Dies könnte mit dem Hochsetzen der unteren beiden Eckpunkte auf eine vertretbare Höhe verhindert werden.
+
+*3. Raster-Messung:*
+Ein feines Raster würde mehrere Punkte entlang der seitlichen Kanten des Fensters messen. Dies ermöglicht theoretisch eine genauere Steuerung der Behanghöhe, müsste allerdings in Kombination mit einer hohen zeitlichen Auflösung erfolgen. Ansonsten kann die Steuerung von der hohen örtlichen Datendichte nicht profitieren und müsste die zwischen den groben Zeitintervallen weit gewanderte Schattenkante in großen Sprüngen nachführen.
+Der Nachteil wäre außerdem eine Vervielfachung der Rechenzeit und eine komplexere Datenstruktur.
 
 == Konzeption der Simulationslogik (Processing) <KonzeptionSimulationslogik>
 - *Methodenauswahl:* Begründung des gewählten geometrischen Raycasting-Verfahrens gegenüber alternativen Ansätzen wie Radiosity oder rein thermischen Simulationen.
