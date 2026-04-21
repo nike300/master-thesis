@@ -1,4 +1,5 @@
 #let short-title = state("short-title", none)
+#import "@preview/codly:1.3.0": *
 = Implementierung des Proof of Concept <Kap4>
 Um den in Kapitel 3 theoretisch konzipierten Systemansatz auf seine praktische Tragfähigkeit zu überprüfen, wird im Folgenden ein @poc durchgeführt. Ziel dieses Kapitels ist es, die softwaretechnische Machbarkeit der entwickelten Prozesskette - vom fehlerfreien Import heterogener Datensätze (IFC und GIS) über die raycastingbasierte Verschattungssimulation bis hin zum strukturierten Datenexport - exemplarisch nachzuweisen. Hierfür wurde ein funktionsfähiger Software-Prototyp auf Basis von Blender und Python implementiert. 
 
@@ -141,17 +142,40 @@ Für die räumliche Auflösung wird die Vierpunkt-Messung gewählt, da eine mitt
 == Die eigentliche Simulation der Jahresverschattung <SimulationJahresverschattung>
 Für die Verschattungssimulation wird ein Python-Skript ausgeführt, welches über die @ide @vs-code#[]@vscode gestartet wird. Der Code unterteilt sich in mehrere Teile:
 
-Am Anfang muss in der Konfiguration der zu berechnende Zeitbereich eingestellt werden und die zeitliche Auflösung (z.B. 15 Minuten).
+Am Anfang muss in der Konfiguration (siehe @code-konfiguration) der zu berechnende Zeitbereich eingestellt werden und die zeitliche Auflösung (z.B. 15 Minuten).
 
+
+
+#codly(offset: 19, zebra-fill: none)
+#codly(number-format: (n) => box(fill: luma(240), height: 1.5em, outset: 0.5em)[#text(luma(100), size: 0.8em)[#str(n)]])
 #figure(
-  image("assets/Verschattung1.svg"),
-  caption: [Flussdiagramm Verschattungsalgorithmus]
-)
+```python
+# --- Konfiguration ---
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, "")
+print(f"Ziel-Datei: {OUTPUT_FILE}")
+# Zeiteinstellungen
+SIMULATION_DATES = []
+start_date = datetime.date(YEAR, 1, 1) # Start am 1. Januar
+for i in range(365): 
+    current_date = start_date + datetime.timedelta(days=i)
+    SIMULATION_DATES.append((current_date.day, current_date.month))
+START_HOUR = 5
+END_HOUR = 22
+MINUTES_STEP = 15
+# Koordinaten
+LATITUDE = 50.1126
+LONGITUDE = 8.67472
+```,
+caption: [Konfiguration der Verschattungssimulation])<code-konfiguration>
 
 Funktionsweise der softwaregestützten Verschattungssimulation
 
-Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette. Es automatisiert die geometrische Verschattungsanalyse innerhalb der 3D-Umgebung und generiert Steuerungsdaten für die Gebäudeautomation. Der programmatische Ablauf lässt sich in vier konsekutive Phasen unterteilen:
 
+Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette. Es automatisiert die geometrische Verschattungsanalyse innerhalb der 3D-Umgebung und generiert Steuerungsdaten für die Gebäudeautomation. @fig-flussdiagramm verdeutlicht den Code. Der programmatische Ablauf lässt sich in vier konsekutive Phasen unterteilen:
+#figure(
+  image("assets/Verschattung1.svg", width: 100%),
+  caption: [Flussdiagramm Verschattungsalgorithmus]
+)<fig-flussdiagramm>
 ==== Initialisierung und Extraktion der Gebäudegeometrie
 In der Vorbereitungsphase durchsucht der Algorithmus den Szenengraphen der Simulationsumgebung nach allen Objekten, die anhand des Attributs "BMKZ" als Fenstersensoren klassifiziert sind. 
 // Um die spätere Rechenlast während der Zeitschleifen zu minimieren, werden die geometrischen Eigenschaften jedes Fensters nur ein einziges Mal zu Beginn extrahiert. 

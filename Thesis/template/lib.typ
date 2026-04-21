@@ -93,6 +93,8 @@
 
   // customize look of figure
   set figure.caption(separator: [ --- ], position: bottom)
+  // customize look of code blocks
+  // show figure.where(kind: raw): set figure(supplement: [Quellcode])
 
   // math numbering
   set math.equation(numbering: math-numbering)

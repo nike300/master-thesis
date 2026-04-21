@@ -16,20 +16,22 @@ except:
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "20.03.26_E_TagNachtGleiche.csv")
+# --- Konfiguration ---
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, "")
 print(f"Ziel-Datei: {OUTPUT_FILE}")
-
 # --- SCHALTER ---
-OUTPUT_ANGLE = False  # True: Gibt den Einfallswinkel aus | False: Gibt nur '0' aus
-# ----------------
-
-SIMULATION_DATES = [(20, 3)] 
+OUTPUT_ANGLE = True  # True: Gibt den Azimut aus | False: Gibt nur '0' aus
+# --- Zeiteinstellungen ---
+SIMULATION_DATES = []
+start_date = datetime.date(YEAR, 1, 1) # Start am 1. Januar
+for i in range(365): 
+    current_date = start_date + datetime.timedelta(days=i)
+    SIMULATION_DATES.append((current_date.day, current_date.month))
 START_HOUR = 5
 END_HOUR = 22
 MINUTES_STEP = 15
-YEAR = 2026
-
-# Koordinaten Frankfurt (Four)
+# YEAR = 2026
+# --- Koordinaten ---
 LATITUDE = 50.1126
 LONGITUDE = 8.67472
 # ------------------------------------------------------------------
@@ -156,7 +158,7 @@ def run_final_simulation():
             time_headers.append(f"{day}.{month}._{hour:02d}:{minute:02d}")
             
             if is_night:
-                for res_list in results: res_list.append("-2") 
+                for res_list in results: res_list.append("N") 
                 continue 
 
             # Raycast Schleife
@@ -166,7 +168,7 @@ def run_final_simulation():
                 
                 # Backface Culling
                 if dot <= 0:
-                     results[i].append("-3") 
+                     results[i].append("R") 
                      continue
                 
                 is_completely_shaded = True
@@ -182,7 +184,7 @@ def run_final_simulation():
                 
                 # Auswertung
                 if is_completely_shaded:
-                    results[i].append("-1") # Komplett im Schatten
+                    results[i].append("V") # Komplett im Schatten
                 else:
                     if OUTPUT_ANGLE:
                         # --- NEU: Relativer horizontaler Azimut ---

@@ -176,4 +176,7 @@ Effiziente Speicherung: Statt die Elevation in jeder einzelnen Zelle der CSV-Dat
 Performance-Gewinn: Deutliche Reduktion der Dateigröße der Simulationsergebnisse (CSV) und schnellere Lade- bzw. Abfragezeiten für nachgelagerte Tools oder Datenbanken.
 */
 
-== Integration in die Gebäudeautomation
+== Überlegung zur Integration in die Gebäudeautomation
+- Daten werden von Programmen der Raumautomation zur Jalousiensteuerung genutzt
+- Die Steuerung funktioniert nur in Kombination mit einer Wetterstation auf dem Dach
+  - Man müsste dort die direkte und indirekte strahlung messung können
