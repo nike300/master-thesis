@@ -300,7 +300,7 @@
   show heading.where(level: 2): it => {v(16pt) + text(size: h2-size, it)}
   show heading.where(level: 3): it => {v(16pt) + text(size: h3-size, it)}
   show heading.where(level: 4): it => {
-  v(16pt)
+  v(0pt)
   block(text(size: h4-size, weight: "semibold", it.body))
 }
 
