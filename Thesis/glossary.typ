@@ -56,5 +56,10 @@
     key: "lod",
     short: "LoD",
     long: "Level of Detail"
+  ),
+  (
+    key: "ebo",
+    short:"EBO",
+    long: "EcoStruxure™ Building Operation"
   )
 )

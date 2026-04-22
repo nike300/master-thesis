@@ -1,35 +1,51 @@
 = Anforderungsanalyse und Konzeption des Integrationsprozesses<Kap3>
+== Analyse der Ausgangssituation und Zieldefinition<AnalyseAusgangssituation>
 
-== Analyse der Ausgangssituation und Zieldefinition <AnalyseAusgangssituation>
-- *Defizite konventioneller Verschattungsstrategien:* Analyse der Einschränkungen heutiger Systeme, insbesondere die fehlende Berücksichtigung von Fremdverschattung durch Nachbargebäude.
-- *Anforderungsprofil an das Gesamtsystem:* Definition funktionaler Anforderungen (wie Präzision und Grad der Automatisierbarkeit) sowie nicht-funktionaler Anforderungen (Recheneffizienz und Systemkompatibilität).
+In der aktuellen Praxis der Gebäudeautomation weisen konventionelle Verschattungsstrategien signifikante Defizite auf. Die Berücksichtigung von Fremdverschattung durch umliegende Bebauung oder Topografie erfolgt oftmals über manuelle und fehleranfällige Prozesse. Dabei werden statische Verschattungsdaten für einzelne Fenster, Fenstergruppen oder ganze Fassadenabschnitte händisch in die Steuerungssysteme eingetragen.
+
+Eine etablierte Methode zur Visualisierung dieser Umgebungsverschattung für einen spezifischen Referenzpunkt am Gebäude ist das Sonnenbahndiagramm (siehe @fig-Sonnenbahndiagramm). Dafür müssen für alle hindernisse in der Umgebung der Höhenwinkel und Azimutwinkel ausgemessen werden. Aus dieser zweidimensionalen Darstellung der Sonnenbahnen und der Umgebungssilhouette lassen sich Grenzwinkel ableiten, ab denen ein externes Objekt einen Schatten auf den betrachteten Punkt wirft. 
+
+Diese spezifischen Winkel werden anschließend als statische Parameter in der Software der Jalousiesteuerung hinterlegt (siehe @fig-jalousiesteuerung). Diese Winkel werden in der Praxis oft ungefähr eingestellt und durch Trial and Error angepasst.
+
+#figure(
+  image("assets/Sonnenstandsdiagramm.png", width: 70%),
+  caption: [Sonnenbahndiagramm mit Umgebungssilhouette @Quaschning.],
+  placement: auto
+) <fig-Sonnenbahndiagramm>
+
+Im operativen Betrieb berechnet das Automationssystem fortlaufend den aktuellen Sonnenstand und gleicht diesen mit den definierten Grenzwinkeln ab. Auf Basis dieses Abgleichs entscheidet die Logik, ob der entsprechende Punkt zum gegebenen Zeitpunkt verschattet ist oder direkter Sonneneinstrahlung ausgesetzt ist.
+
+#figure(
+  image("assets/JalousiesteuerungAlt.png", width: 80%),
+  caption: [Screenshot der Parametereingabe für eine konventionelle, winkelbasierte Jalousiesteuerung in der @ebo#[]@se_ebo.],
+  placement: auto
+) <fig-jalousiesteuerung>
+
+Dieser Ansatz zwingt die Systemintegration jedoch zu Worst-Case-Annahmen. Da ein einzelner Referenzpunkt in der Regel stellvertretend für größere Fassadenbereiche genutzt wird, muss der Sonnenschutz geschlossen werden, sobald auch nur ein Teilbereich der Zone potenziell besonnt ist. Eine hohe räumliche Genauigkeit und damit eine optimale Tageslichtnutzung ist mit dieser statischen Zonenbildung kaum realisierbar.
+
+Für Gebäude mit einfacher architektonischer Geometrie und einer weitläufigen, wenig verbauten Umgebung bietet diese winkelbasierte Methode eine funktionale und passable Lösung. Sobald jedoch großvolumige Bauwerke mit komplexen Fassadenstrukturen in dichten urbanen Kontexten betrachtet werden, stößt dieser Ansatz an seine technischen Grenzen und erfordert eine dreidimensionale Betrachtungsweise.
+
+Verschattungssimulationen basierend auf 3D-Daten findet heutzutage immer mehr Einzug in die Gebäudeautomation. Es gibt Hersteller, die diese bereits als Dienstleistung anbieten (z.B. WAREMA, Sauter). 
+
+
+
+
+- Allgemeine Anforderungen an die Verschattungssimulation und den workflow (präzision, automatisierbarkeit, rechendauer, systemkompatibilität)
 
 == Auswahl der Simulationsumgebung <AuswahlSimulationsumgebung>
-In der Simulationsumgebung findet die Zusammenstellung der Szene statt. Es muss eine Software gewählt werden, die den Import verschiedener 3D-Dateiformate zulässt. Zusätzlich sollte diese Software den Sonnenstand simulieren können und eine Möglichkeit bieten Raycasts zu generieren. 
-Die Wahl fiel auf die kostenlose Open-Source-Software Blender@blender_org, die für die Erstellung von Animationsfilmen entwickelt wurde. Sie bietet in der jetzigen Version eine Vielzahl von Funktionalitäten, darunter auch die, zur Erfüllung der oben genannten Anforderungen. Außerdem bietet sie den Vorteil einer großen, aktiven Community, die eine Vielzahl an kostenlosen und kostenpflichtigen Plug-Ins entwickelt. Für diese Anwendung passende Alternativen standen nicht zur Auswahl.
+In der Simulationsumgebung findet die Zusammenstellung der Szene statt. Es muss eine Software gewählt werden, die den Import verschiedener 3D-Dateiformate zulässt. Zusätzlich sollte diese Software den Sonnenstand simulieren können und eine Möglichkeit bieten Raycasts zu generieren. Schlussendlich muss es möglich sein, Skripte auszuführen, um komplexe Algorithmen auszuführen.
+Die Wahl fällt auf die kostenlose Open-Source-Software Blender@blender_org, die für die Erstellung von Animationsfilmen entwickelt wurde. Sie bietet in der jetzigen Version eine Vielzahl von Funktionalitäten, darunter auch die, zur Erfüllung der oben genannten Anforderungen. Außerdem bietet sie den Vorteil einer großen, aktiven Community, die eine Vielzahl an kostenlosen und kostenpflichtigen Plug-Ins entwickelt. Für diese Anwendung passende Alternativen standen nicht zur Auswahl.
 
-/*
-== Spezifikation der Datengrundlage (Input)
-=== Analyse der BIM-Datengüte (IFC):
- Untersuchung der vorhandenen geometrischen Informationen und Identifikation fehlender Attribute, die für eine valide Simulation zwingend erforderlich sind.
- - Gebäudedaten (ifc) sollte haben:
-  - richtige labels für gebäudeteile (IFC-Window-Klasse)
-  - Auch schräge Fenster sollten als IFC-Window-Klasse definiert werden - Werden sie oft nicht, da sie schräg sind, in revit
-  - Nur die Fassade sollte enthalten sein, um die Dateigröße zu minimieren
-  - Die Fensterflächen sollten richtig _Face Normals_ (Flächenausrichtung)? für backwards Culling
-  - Die Fassadenelemente sollten dem entsprechenden Geschoss zugeordnet sein.
-  - Das Gebäude sollte in der ifc-Datei bereits auf der richtigen Z-Höhe und nach Norden ausgerichtet sein
-  - Da das IFC-Modell auf den Zentimeter genau im Bezug auf die Umgebung verortet werden muss. Die genauen Koordinaten eines Referenzpunktes im Modell sollten in der IFC-Datei unter IfcSite als WGS84-Referenzsystem vorliegen@buildingsmart_ifcsite
-  - Die Fenster sollten @aks  besitzen, der nach dem Schalenmodell @vdi3814-1 aufgebaut ist.
-*/
-== Spezifikation der Datengrundlage (Input) <SpezifikationDatengrundlage>
-=== Analyse der BIM-Datengüte (IFC) <AnalyseBIMDatenguete>
+
+
+== Spezifikation der Datengrundlage<SpezifikationDatengrundlage>
+=== Analyse der BIM-Datengüte <AnalyseBIMDatenguete>
 
 Um einen fehlerfreien und automatisierten Datenfluss von der digitalen Planung in die Simulationsumgebung zu gewährleisten, muss das zugrundeliegende BIM-Modell spezifische geometrische und semantische Anforderungen erfüllen. Eine Untersuchung typischer IFC-Exporte (Industry Foundation Classes) offenbart häufige Defizite, die für eine valide Verschattungssimulation zwingend im Vorfeld korrigiert oder durch klare Modellierungsrichtlinien im BIM-Abwicklungsplan (BAP) definiert werden müssen:
 
 - *Semantische Klassifizierung (IFC-Entitäten):* Die Zielflächen müssen zwingend als `IfcWindow` oder `IfcCurtainWall` deklariert sein, damit das Python-Skript sie automatisiert extrahieren kann. Eine häufige Fehlerquelle bei CAD-Exporten (z. B. aus Autodesk Revit) ist die Fehlklassifizierung von schrägen Fenstern oder Dachflächenfenstern als generische Bauteile (oft `IfcBuildingElementProxy` oder `IfcRoof`), wodurch sie von der Simulationslogik nicht als Sensorflächen erkannt werden.
 
-- *Detaillierungsgrad (Level of Detail / LOD):* Für eine aussagekräftige Simulation der Gebäudehülle ist ein minimaler geometrischer Detaillierungsgrad zwingend erforderlich. Ein reines Volumen- oder Massenmodell (z. B. LOD 100), in dem Fensteröffnungen noch nicht ausmodelliert sind, ist für diesen Zweck unbrauchbar. Um den kritischen Effekt der Eigenverschattung (beispielsweise durch tiefe Fensterlaibungen, Stürze oder auskragende Fassadenelemente) physikalisch korrekt per Raycasting berechnen zu können, müssen die entsprechenden Bauteile mindestens im LOD 300 vorliegen.
+- *Detaillierungsgrad (Level of Detail / LOD):* Für eine aussagekräftige Simulation der Gebäudehülle ist ein minimaler geometrischer Detaillierungsgrad zwingend erforderlich.  Um den kritischen Effekt der Eigenverschattung (beispielsweise durch tiefe Fensterlaibungen, Stürze oder auskragende Fassadenelemente) physikalisch korrekt per Raycasting berechnen zu können, müssen die entsprechenden Bauteile mindestens im LOD 300 vorliegen.
 
 - *Datenreduktion:* Um die Dateigröße und die Berechnungszeiten beim Import in die 3D-Engine (Blender) zu minimieren, muss das IFC-Modell um nicht-relevante Architekturdetails bereinigt werden. Für die geometrische Verschattungssimulation sind ausschließlich die Elemente der thermischen Gebäudehülle (Fassaden, Fenster) sowie potenziell eigenverschattende Bauteile (Balkone, Erker, Laibungen) erforderlich. Innenwände oder Inventar sind vor allem bei großen Gebäuden zwingend auszuschließen. Meist liegen diese Modelle als Fassadenteilmodelle vor.
 
@@ -37,14 +53,17 @@ Um einen fehlerfreien und automatisierten Datenfluss von der digitalen Planung i
 
 - *Georeferenzierung und Ausrichtung:* Eine zentimetergenaue Überlagerung des Gebäudemodells mit den externen GIS-Umgebungsdaten (siehe Kapitel 4.3....) erfordert eine exakte Verortung. Das Gebäude muss auf der korrekten absoluten Z-Höhe (z. B. Höhe über NHN) modelliert und geografisch nach dem Wahren Norden ausgerichtet sein. Hierfür müssen die exakten Koordinaten des Projekt-Referenzpunktes unter der Entität `IfcSite` in einem globalen Referenzsystem (z. B. WGS84) hinterlegt vorliegen @buildingsmart_ifcsite.
 
-- *Räumliche Zuordnung (Spatial Containment):* Für die spätere Integration in die Raumautomation müssen die Fensterelemente im IFC-Strukturbaum korrekt dem jeweiligen Geschoss (`IfcBuildingStorey`) logisch zugeordnet sein.
+- *Räumliche Zuordnung (Spatial Containment):* Für die spätere Übersichtlichkeit im Modell sollten die Fensterelemente im IFC-Strukturbaum dem jeweiligen Geschoss (`IfcBuildingStorey`) korrekt zugeordnet sein.
 
-- *Eindeutige Identifikation (AKS):* Um die berechneten Verschattungsdaten nach der Simulation fehlerfrei an die operative Steuerungsebene zu übergeben, muss jedes Fensterobjekt zwingend mit einem Anlagenkennzeichnungssystem (AKS) versehen sein (beispielsweise im IFC-Attribut `Name` oder `Tag`). Dieses AKS sollte konsequent nach dem hierarchischen Schalenmodell der VDI 3814-1 aufgebaut sein, um das direkte Mapping auf die BACnet-Objekte der Automationsstation zu ermöglichen @vdi3814-1.
+- *Anlagenkennzeichnungsschlüssel*: Um die berechneten Verschattungsdaten nach der Simulation fehlerfrei an die operative Steuerungsebene zu übergeben, muss jedes Fensterobjekt zwingend mit einem @aks versehen sein (beispielsweise im IFC-Attribut `Name` oder `Tag`). Das Anlagenkennzeichnungssystem sollte konsequent nach dem hierarchischen Schalenmodell der VDI 3814-1 aufgebaut sein, um das direkte Mapping in der Automationsstation zu ermöglichen @vdi3814-1. Dabei sollten die Fenster ihrem jeweiligen Raumsegment zugeordnet werden.
 
-  - Weil oft von Architekten bei Hochhäusern auch Sonnenstudien durchgeführt werden oder Modelle für Marketingszwecke generiert werden, sind wahrscheinlich schon komplette Stadtmodelle vorhanden, die man weiterverwenden könnte
+
+In der Planungspraxis werden diese strukturellen und semantischen Anforderungen an die IFC-Datenqualität oftmals nicht vollumfänglich erfüllt. Dies erzwingt in der Konsequenz eine manuelle und ressourcenintensive Vorverarbeitung des Gebäudemodells vor dem eigentlichen Simulationsstart.
+
+Um diesen Aufwand zu minimieren, sollten frühzeitig Synergieeffekte im integralen Planungsprozess geprüft werden. Insbesondere bei innerstädtischen Groß- und Hochhausprojekten erstellen Architekturbüros für Genehmigungsverfahren oder Marketingzwecke häufig eigene Sonnenstudien. Die hierfür bereits aggregierten digitalen Stadtmodelle stellen eine wertvolle Datenquelle dar. Deren Nachnutzung für den Workflow der Verschattungssimulation kann eine erneute Modellierung oder externe Datenbeschaffung obsolet machen.
   
 
-  HIER AUF CHECKLISTE IM ANHANG VERWEISEN FÜR ARCHITEKTEN
+OPTIONAL: HIER AUF CHECKLISTE IM ANHANG VERWEISEN FÜR ARCHITEKTEN
 === Analyse externer Geodaten <AnalyseExternerGeodaten>
 // Notwendigkeit und Anforderungen an Umgebungsmodelle, beispielsweise der Detaillierungsgrad (LOD) der Nachbarbebauung aus GIS- oder OpenStreetMap-Daten.
 
@@ -54,10 +73,11 @@ Die Auswahl des geeigneten Datenanbieters für das Referenzprojekt erfolgt anhan
 
 - *Verfügbarkeit und Abdeckung:* Zunächst muss geprüft werden, welcher Anbieter Daten für den spezifischen Standort in der erforderlichen Dichte bereitstellt. Während globale Anbieter oft flächendeckende, aber detailarme Daten liefern, bieten kommunale Geoportale (z. B. Katasterämter) oft präzisere Datensätze an. Zu beachten sind hierbei lizenzrechtliche und technische Einschränkungen: So sind beispielsweise die photogrammetrischen 3D-Tiles der Google Maps Platform in der EU derzeit nur eingeschränkt für Simulationszwecke nutzbar @GoogleTilesAdjustments.
 
-- *Level of Detail (LOD):* Der Detaillierungsgrad der Gebäudegeometrie ist der kritischste Parameter für die Simulation. Gemäß dem Standard der _Open Geospatial Consortium (OGC)_ für CityGML unterscheidet man:
+-------LOD Abschnitt sollte wahrscheinlich in Kapitel2 ---------
+- *Level of Detail (LOD):* Der Detaillierungsgrad der Gebäudegeometrie ist ein wichtiger Parameter für die Simulation. Gemäß dem Standard der Open Geospatial Consortium (OGC) für CityGML unterscheidet man:
   - *LOD1 (Blockmodell):* Das Gebäude wird als einfacher Kubus mit Flachdach dargestellt (Extrusion der Grundfläche). Dies ist für weit entfernte Verschattungsobjekte ausreichend, führt aber im Nahbereich zu Fehlern, da die tatsächliche Dachform ignoriert wird.
-  - *LOD2 (Dachmodell):* Das Modell beinhaltet standardisierte Dachformen und grobe Dachaufbauten. Für die Verschattungssimulation stellt LOD 2 oft den optimalen Kompromiss aus Genauigkeit und Dateigröße dar, da die Schattenlänge durch die Dachfirsthöhe maßgeblich beeinflusst wird @Hessen3D.
-  - *LOD3 (3D Mesh)* Detaillierte Gebäudehüllen werden mit Auskragungen, Fensterlaibungen und Texturen modelliert. LOD3 bietet einen sehr hohe Genauigkeit, die jedoch einen negativen Einfluss auf die spätere Rechenleistung hat.  
+  - *LOD2 (Dachmodell):* Das Modell beinhaltet standardisierte Dachformen und grobe Dachaufbauten. Für die Verschattungssimulation stellt LOD 2 oft den optimalen Kompromiss aus Genauigkeit und Dateigröße dar @Hessen3D.
+  - *LOD3 (3D Mesh)* Detaillierte Gebäudehüllen werden mit Auskragungen, Fensterlaibungen und Texturen modelliert. LOD3 bietet eine sehr hohe Genauigkeit, die jedoch einen negativen Einfluss auf die spätere Rechenleistung hat.  
 #figure(
   image("assets/LOD1-3.png", width: 80%),
   caption: [LOD 1-3 @ogcCityGeography]
@@ -71,14 +91,20 @@ Die Auswahl des geeigneten Datenanbieters für das Referenzprojekt erfolgt anhan
 
 - *Kostenstruktur:* Es ist zwischen kostenpflichtigen kommerziellen Daten und Open-Data-Initiativen zu unterscheiden. Viele Bundesländer (darunter Hessen und NRW) stellen ihre 3D-Gebäudemodelle mittlerweile kostenfrei über Open-Data-Portale zur Verfügung, was die wirtschaftliche Hürde für die Integration in die Gebäudeautomation eliminiert.
 
-==== Auswahl der Umgebungsszene
-- Gebäude, die nördlich des Referenzgebäudes liegen, müssen theoretisch nicht in der Simulation berücksichtigt werden. Um den genauen Bereich herauszufinden, muss der minimale und maximale Azimut der Sonne während der Sommersonnenwende (21./22. Juni) ermittelt werden. In Frankfurt am Main geht die Sonne mit einem Azimut von 50° auf und mit 310° unter. Somit kann die Umgebung in einem Azimut von 310°-50° zum Referenzgebäude nie einen direkt Schatten auf dieses werfen und somit vernachlässigt werden.
-  - bei sehr tiefliegender sonne sind auch weit entferne gebäude relevant
-  - niedrige gebäude sind nur für die niedrigen etagen interessant (vielleicht simulationen so aufsplitten?)
-- Topologie nur, wenn Berge, Hügel etc. das Gebäude verschatten könnten
-=== Georeferenzierung und Zeitbasis <GeoreferenzierungZeitbasis>
- Definition der Anforderungen an die räumliche und zeitliche Einordnung, inklusive Koordinatensystemen und dem Handling von Zeitzonen.
+// ==== Auswahl der Umgebungsszene
+// - Gebäude, die nördlich des Referenzgebäudes liegen, müssen theoretisch nicht in der Simulation berücksichtigt werden. Um den genauen Bereich herauszufinden, muss der minimale und maximale Azimut der Sonne während der Sommersonnenwende (21./22. Juni) ermittelt werden. In Frankfurt am Main geht die Sonne mit einem Azimut von 50° auf und mit 310° unter. Somit kann die Umgebung in einem Azimut von 310°-50° zum Referenzgebäude nie einen direkt Schatten auf dieses werfen und somit vernachlässigt werden.
+//   - bei sehr tiefliegender sonne werfen auch weit entferne gebäude schatten, dies ist allerdings vernachlässigbar, da die schattenkanten sich auch schnell bewegen
+//   - gebäude sind nur  interessant, wenn sie einen schatten auf das referenzgebäude werfen können. somit sind gebäude in zweiter und dritter reihe nicht mehr zu berücksichtigen
+// - Topologie muss nur importiert werden, wenn Berge, Hügel etc. das Gebäude verschatten könnten
+// 
+=== Auswahl der Umgebungsszene <AuswahlUmgebungsszene>
+Die Auswahl der zu importierenden Umgebungsszene orientiert sich an der potenziellen Verschattungsrelevanz für das Referenzgebäude. Umliegende Bebauungen in zweiter oder dritter Reihe, deren Schattenwurf bereits durch näherstehende Objekte verdeckt wird, können von der Simulation ausgeschlossen werden. Gleiches gilt für topografische Gegebenheiten: Ein Import von digitalen Geländemodellen ist nur dann erforderlich, wenn signifikante Erhebungen das betrachtete Gebäude in der Realität verschatten könnten.
 
+Eine weitere Maßnahme zur Reduktion der Rechenlast und Datenmenge ist die Beschränkung auf relevante Himmelsrichtungen anhand der lokalen Sonnenbahn. Objekte, die sich nördlich des Referenzgebäudes befinden, können systematisch vernachlässigt werden. Die exakte Eingrenzung dieses Bereichs erfolgt über den minimalen und maximalen Sonnenazimut zum Zeitpunkt der Sommersonnenwende (21. beziehungsweise 22. Juni). Zum Beispiel für den Standort Frankfurt am Main liegt der Sonnenaufgang an diesem Tag bei einem Azimut von etwa 50° und der Sonnenuntergang bei 310°. Demzufolge kann die Umgebung im nördlichen Kreissektor zwischen 310° und 50° physikalisch zu keinem Zeitpunkt im Jahr einen direkten Schatten auf das Referenzgebäude werfen und bleibt im Modell unberücksichtigt.
+
+Zwar können weit entfernte Gebäude bei einer sehr tief stehenden Sonne (in den Morgen- oder Abendstunden) theoretisch einen Schattenwurf auf die Referenzfassade verursachen. Dieser Effekt ist im Kontext der Gebäudeautomation jedoch vernachlässigbar, da sich die resultierenden Schattenkanten aufgrund des flachen Einfallswinkels sehr schnell über die Fassade bewegen und somit keine relevante Tageslichtnutzung durch öffnen der Behänge erzielt werden könnte.
+
+== Georeferenzierung und Zeitbasis <GeoreferenzierungZeitbasis>
 === Zeitliche Auflösung und Simulationsumfang <ZeitlicheAufloesungUmfang>
 
 *Zeitliche Diskretisierung:* Die Wahl der zeitlichen Auflösung für die Verschattungsdaten hat maßgeblichen Einfluss auf das Verhältnis zwischen visuellem Komfort (Blendschutz) und der Tageslichtausbeute des Gebäudes. Da die Verschattungsinformation in der Steuerung eine binäre Freigabe (Schatten oder Sonne) darstellt, muss bei einer Reduktion der Datenauflösung zwingend eine Worst-Case-Annahme getroffen werden: Fällt innerhalb eines Simulationsintervalls auch nur für einen Bruchteil der Zeit Sonne auf das Fenster, muss der Sonnenschutz für das gesamte Intervall geschlossen werden, um temporäre Blendung auszuschließen. 
@@ -112,6 +138,8 @@ Da das kalendarische Jahr vom astronomischen Sonnenjahr (365,24 Tage) abweicht@a
 )<fig-schaltjahr>
 Da sich die räumlichen Abweichungen des Schattens lediglich im Zentimeterbereich bewegen (roter Bereich), ist es für den Systemansatz ausreichend, die Simulation auf ein einzelnes Referenzjahr zu beschränken.
 
+Zur weiteren Reduktion von Datenmenge und Rechenzeit ließe sich die Simulation auf jeden zweiten oder dritten Tag eines Jahres beschränken. Da die geometrischen Abweichungen des Sonnenstandes zwischen aufeinanderfolgenden Tagen marginal ausfallen, stellt dies einen methodisch vertretbaren Ansatz dar.
+
 === Räumliche Auflösung der Messpunkte <RaeumlicheAufloesung>
 
 Die räumliche Abtastung der Fensterflächen bestimmt die Zuverlässigkeit der Simulation. Man muss festlegen, wie viele Testpunkte pro Fenster berechnet werden. Es werden drei verschiedene Optionen untersucht:
@@ -136,7 +164,7 @@ Der Nachteil wäre außerdem eine Vervielfachung der Rechenzeit und eine komplex
 Hier geht es um die Grundsatzentscheidung: Handelt es sich um ein zustandsloses System, das einmalig einen Fahrplan (Schedule) generiert, oder um ein dynamisches System, das auf Veränderungen (beispielsweise neue Verschattungsobjekte durch Baustellen) reagieren kann. Du kannst hier begründen, warum du dich für den einen oder anderen Weg entschieden hast, bevor du in die Umsetzung gehst.
 
 - *Workflow-Design:* Erstellung einer schematischen Darstellung des gesamten Datenflusses, ausgehend von der digitalen Planung bis hin zur Ansteuerung der Aktoren.
-- *Datenschnittstelle zur Automation:* Spezifikation des Exportformats (z. B. CSV-Struktur) und Festlegung der zu übergebenden Steuergrößen wie Verschattungsgrad und Status.
+- *Datenschnittstelle zur Automation:* Spezifikation des Exportformats (z.B. CSV-Struktur) und Festlegung der zu übergebenden Steuergrößen wie Verschattungsgrad und Status.
 
 - Auch die Frage: Auf welchem Rechner sollten die Daten gespeichert werden? Extern oder intern beim Kunden?
 - Lieber status 0, -1. -2, -3, Winkel oder nur 0, 1

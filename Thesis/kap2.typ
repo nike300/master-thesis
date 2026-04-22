@@ -56,13 +56,13 @@ $ delta(J) &= 0.3948 \
   &- 0.3915 dot cos(2 dot J' + 5.4 degree) \
   &- 0.1764 dot cos(3 dot J' + 26.0 degree) $ <deklinationsgleichung>
 
-#block(inset: 8pt, fill: luma(240))[
-  *Hinweis zur Implementierung:*
-  Die Koeffizienten liefern das Ergebnis in Grad. Für die geometrische Weiterverarbeitung im Simulationsmodell (siehe kapitel 5???) erfolgt eine Umrechnung in das Bogenmaß (Radiant).
-]
+// #block(inset: 8pt, fill: luma(240))[
+//   *Hinweis zur Implementierung:*
+//   Die Koeffizienten liefern das Ergebnis in Grad. Für die geometrische Weiterverarbeitung im Simulationsmodell (siehe kapitel 5???) erfolgt eine Umrechnung in das Bogenmaß (Radiant).
+// ]
 
 ==== Sonnenhöhenwinkel ($gamma_s$) <Sonnenhoehenwinkel>
-Der Sonnenhöhenwinkel beschreibt den vertikalen Winkel zwischen der horizontalen Ebene und dem Mittelpunkt der Sonnenscheibe. Er ist maßgeblich für die effektive Einstrahlung auf Fassadenflächen sowie für die Berechnung der Schattenlängen.
+Der Sonnenhöhenwinkel beschreibt den vertikalen Winkel zwischen der horizontalen und der Sonne. Er ist maßgeblich für die effektive Einstrahlung auf Fassadenflächen sowie für die Berechnung der Schattenlängen.
 
 Basierend auf dem geografischen Breitengrad $phi$, der zuvor berechneten Deklination $delta$ und dem Stundenwinkel $omega$ ergibt sich der Höhenwinkel aus der grundlegenden Gleichung der sphärischen Astronomie:
 
@@ -76,7 +76,7 @@ Dabei gelten folgende Randbedingungen:
 - $gamma_s > 0 degree$: Die Sonne steht über dem Horizont (Tag).
 - $gamma_s <= 0 degree$: Die Sonne steht unter dem Horizont (Nacht/Dämmerung).
 
-#block(inset: 8pt, fill: luma(240))[*Relevanz für die Simulation:*In der Prozesskette (Kapitel 5) dient die Prüfung $gamma_s > 0$ als erster Filter ("Early Exit"). Ist der Wert negativ, muss kein aufwendiges Raycasting durchgeführt werden, da keine direkte Verschattung möglich ist.]
+// #block(inset: 8pt, fill: luma(240))[*Relevanz für die Simulation:*In der Prozesskette (Kapitel 5) dient die Prüfung $gamma_s > 0$ als erster Filter ("Early Exit"). Ist der Wert negativ, muss kein aufwendiges Raycasting durchgeführt werden, da keine direkte Verschattung möglich ist.]
 
 ==== Sonnenazimut ($alpha_s$) <Sonnenazimut>
 Der Sonnenazimut beschreibt die horizontale Himmelsrichtung der Sonne. In Übereinstimmung mit der Norm DIN 5034-1 ist der Bezugspunkt die geografische Nordrichtung. Der Winkel wird im Uhrzeigersinn von $0 degree$ (Nord) bis $360 degree$ gemessen.
@@ -91,12 +91,12 @@ $ alpha_s = cases(
 //#block(inset: 8pt, fill: luma(240))[ *Vorteil für die Simulation:* Diese Definition (Nord = $0 degree$, im Uhrzeigersinn) entspricht dem Koordinatensystem gängiger 3D-Software und GIS-Daten.]
 
 === Vergleich und Auswahl der Berechnungsverfahren <VergleichAuswahlBerechnungsverfahren>
-Die in den vorangegangenen Abschnitten dargestellten Formeln der DIN EN 17037 stellen die normative Grundlage für die Tageslichtplanung in Europa dar. Sie bieten eine für architektonische Entwürfe hinreichende Genauigkeit.
+Die in den vorangegangenen Abschnitten dargestellten Formeln der DIN EN 17037 stellen die normative Grundlage für die Tageslichtplanung in Europa dar. Sie bieten eine hinreichende Genauigkeit.
 
-Für die Implementierung des Simulations-Prototyps (siehe Kapitel 4) wird jedoch auf den Algorithmus der *National Oceanic and Atmospheric Administration* (NOAA) zurückgegriffen. Dieser zeichnet sich durch folgende Merkmale aus:
+Für die Implementierung des Simulations-Prototyps (siehe Kapitel 4) wird jedoch auf den Algorithmus der National Oceanic and Atmospheric Administration (NOAA) zurückgegriffen. Dieser zeichnet sich durch folgende Merkmale aus:
 
-- *Höhere Präzision:* Während einfache Näherungen Fehler von bis zu $1 degree$ aufweisen können, minimiert der NOAA-Algorithmus (basierend auf den Arbeiten von Jean Meeus @Meeus1998) die Abweichungen auf unter $0,0001 degree$.
-- *Berücksichtigung atmosphärischer Effekte:* Der Algorithmus inkludiert Korrekturfaktoren für die atmosphärische Refraktion, was insbesondere bei flachen Sonnenständen (Morgen- und Abendstunden) für die Lamellennachführung in der Gebäudeautomation kritisch ist.
+- Höhere Präzision: Während einfache Näherungen Fehler von bis zu $1 degree$ aufweisen können, minimiert der NOAA-Algorithmus (basierend auf den Arbeiten von Jean Meeus @Meeus1998) die Abweichungen auf unter $0,0001 degree$.
+- Berücksichtigung atmosphärischer Effekte: Der Algorithmus inkludiert Korrekturfaktoren für die atmosphärische Refraktion, was insbesondere bei flachen Sonnenständen (Morgen- und Abendstunden) für die Lamellennachführung in der Gebäudeautomation kritisch ist.
 
 Auf eine detaillierte mathematische Herleitung der über 30 Korrekturterme des NOAA-Verfahrens wird an dieser Stelle verzichtet; die Berechnung folgt der dokumentierten Implementierung gemäß @NOAASolar2021.
 
@@ -243,6 +243,7 @@ Folgende Dateiformate werden verwendet:
 .blend
 .gml
 .csv
+
 === Koordinatenreferenzsysteme <Koordinatenreferenzsysteme>
 Die Georeferenzierung beschreibt die Zuweisung räumlicher Bezugsinformationen zu einem Datensatz. Für die dynamische Verschattungssimulation ist sie von zentraler Bedeutung, da das lokale Gebäudemodell (BIM) millimetergenau mit den Umgebungsdaten überlagert werden muss. Nur durch einen einheitlichen räumlichen Bezug lässt sich der korrekte solare Einfallswinkel auf die Fassade berechnen. In der Bauplanung und Geoinformatik wird dabei zwischen globalen geografischen und lokalen projizierten Koordinatensystemen unterschieden:
 

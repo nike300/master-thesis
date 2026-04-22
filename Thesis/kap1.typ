@@ -1,5 +1,5 @@
 = Einleitung<Kap1>
-== Problemstellung
+== Problemstellung (neu machen)
 //Die Gebäudeautomation hat ein Problem bei der Simulation und Integration von Verschattungsberechnungen in Gebäuden: Der Engineering-Aufwand ist sehr hoch... Da in der Zukunft allerdings immer weniger personelle Ressourcen zur Verfügung stehen werden und der Sonnenschutz im Zuge des Klimawandels eine immer bedeutendere Rolle einnehmen wird, ist es notwendig die gesamte Prozesskette neu zu betrachten. Es gilt, integrierte Lösungen zu finden, damit der Datenfluss vom Gebäudemodell des Architekten bis hin zur Systemintegration
 //  der Verschattungsdaten gut funktioniert. 
 // "Urbaner Kontext" benutzen? 
@@ -17,7 +17,7 @@ Das nachgelagerte Problem betrifft die fehlende Prozessdefinition für die Daten
 Angesichts sinkender personeller Ressourcen im Engineering und der steigenden Notwendigkeit, Gebäude klimaresilient zu betreiben, stellen diese Medienbrüche an beiden Enden der Simulationsphase ein kritisches Hemmnis dar. Es ist daher notwendig, die Prozesskette ganzheitlich zu betrachten und Lösungen zu entwickeln, die den Datenfluss vom Gebäudemodell des Architekten bis hin zur Systemintegration der Verschattungsdaten durchgängig und aufwandsarm gestalten.
 
 
-== Zielsetzung
+== Zielsetzung (nochmal neu machen)
 // Entwicklung einer durchgängigen Prozesskette (Data Workflow).
 Das übergeordnete Ziel dieser Arbeit ist die Entwicklung einer durchgängigen Prozesskette zur Integration dynamischer Verschattungssimulationen in die Gebäudeautomation. Es soll ein strukturierter Workflow definiert werden, der den Informationsfluss von der digitalen Planung (BIM) bis zur operativen Steuerungsebene der Raumautomation automatisiert und standardisiert.
 

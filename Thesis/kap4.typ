@@ -34,6 +34,27 @@ Für die Positionierung des Gebäudes sollte zuerst auf die im IfcSite-Tag hinte
 
 Für die weitere Verwendung werden die XY-Koordinaten mithilfe einer Anwendung des Bundesamt für Kartographie und Geodäsie@bkg_koordinatentransformation in das benötigte UTM32 Koordinatenreferenzsystem übersetzt. Dafür wird das Verschiebegitter Beta2007 verwendet.
 
+=== Aufbereitung des IFC-Modells Turm 1 <AufbereitungIFC>
+
+Die Qualität des vorliegenden IFC-Modells erforderte eine gezielte Vorbearbeitung, um eine konsistente Datengrundlage für die Verschattungssimulation zu schaffen. Im Fokus standen dabei die eindeutige Identifizierbarkeit der Fassadenelemente sowie die Bereinigung geometrischer Inkonsistenzen.
+
+Hinsichtlich der Datenstruktur wurde festgestellt, dass die Zuordnung der Bauteile zu den jeweiligen Geschossen teilweise fehlerhaft war. So waren vertikal übereinanderliegende Fenster demselben Geschoss zugewiesen. Für den weiteren Prozessverlauf wurde diese strukturelle Ungenauigkeit ignoriert, da die Simulation auf den absoluten Koordinaten der Geometrie basiert und nicht auf der logischen Geschosshierarchie des IFC-Baums.
+
+Die ursprünglich vorgesehene Berechnung der geometrischen Fenstermittelpunkte wurde im Zuge der Prozessoptimierung als hinfällig eingestuft. Durch den gewählten Ansatz, die Verschattung an allen vier Eckpunkten eines Fensters zu validieren, entfällt die Notwendigkeit eines zentralen Bezugspunktes. Die Vier-Ecken-Methode bietet zudem eine höhere Granularität bei der Bewertung von Teilverschattungen.
+
+Ein wesentlicher Schritt der Aufbereitung betraf die Fensterflächen im Bereich der Balkone. Diese wurden isoliert und für die Simulation ausgeblendet. Da das IFC-Modell keine Materialeigenschaften übermittelt, würden diese Flächen durch den Simulationsalgorithmus als opake Hindernisse gewertet werden. Dies hätte zur Folge, dass dahinterliegende Fenster fälschlicherweise als verschattet markiert würden, obwohl in der Realität transparente Verglasungen vorliegen.
+
+Zusätzlich wies das Modell geometrische Redundanzen in Form von sich überschneidenden oder doppelt vorhandenen Fensterelementen auf, wie in @fig-FensterÜberschneidung dargestellt. Diese Duplikate wurden manuell identifiziert und entfernt, um Fehlberechnungen und eine unnötige Erhöhung der Rechenlast zu vermeiden.
+
+#figure(
+  image("assets/ÜberschneidendeFenster.png", width: 80%),
+  caption: [Bildausschnitt von sich überlagernden Fensterelementen innerhalb der IFC-Struktur.],
+  placement: none
+) <fig-FensterÜberschneidung>
+
+Schlussendlich wird ein temporäres Anlagenkennzeichnungssystem erstellt, dass sich auf das jeweilige Geschoss und eine fortlaufende Nummer für sämtliche Fensterelemente bezieht. Dies wird mithilfe eines Skripts (@DigitaleAnlage) implementiert. Diese Maßnahme ist notwendig, da die ursprünglichen Objektbezeichnungen keine Informationen über die räumliche Zuordnung enthalten. Hierfür müssen mithilfe einer Filterlogik, alle relevanten Fensterobjekte vorselektiert werden. Glasscheiben für die Balkonbrüstung und sehr kleine Fensterflächen haben keine Jalousie und werden somit nicht berücksichtigt.
+Ein Ansatz, um den finalen @aks des Jalousieaktors dem Fenster zuzuordnen, wird in @AKSZuordnung aufgezeigt.
+
 === Import und Positionierung der Umgebungsdaten<ImportUmgebungsdaten>
 
 Für die Modellierung der umgebenden, verschattenden Bebauung wird auf die offenen Geodaten der Hessischen Verwaltung für Bodenmanagement und Geoinformation (HVBG) @Hessen3D zurückgegriffen. Die 3D-Gebäudemodelle für das Stadtgebiet Frankfurt am Main werden von offizieller Seite standardmäßig im Format CityGML bereitgestellt.
@@ -62,28 +83,6 @@ Da das Gebäudeensemble FOUR zum Zeitpunkt der Datenerhebung noch nicht in den a
 + *Referenzierung*: Die optimierten Modelldateien werden abschließend über die Link-Funktion in die Simulations-Hauptszene eingebunden.
 
 Eine manuelle räumliche Transformation oder Neuausrichtung entfällt bei diesem Prozess. Da die Modelle der Türme 2 bis 4 denselben globalen Koordinatenursprung (Projektbasispunkt) wie das Referenzmodell des Turms 1 aufweisen, positionieren sie sich beim Import automatisch an den korrekten relativen Koordinaten.
-=== Aufbereitung des IFC-Modells Turm 1 <AufbereitungIFC>
-
-Die Qualität des vorliegenden IFC-Modells erforderte eine gezielte Vorbearbeitung, um eine konsistente Datengrundlage für die Verschattungssimulation zu schaffen. Im Fokus standen dabei die eindeutige Identifizierbarkeit der Fassadenelemente sowie die Bereinigung geometrischer Inkonsistenzen.
-
-Hinsichtlich der Datenstruktur wurde festgestellt, dass die Zuordnung der Bauteile zu den jeweiligen Geschossen teilweise fehlerhaft war. So waren vertikal übereinanderliegende Fenster demselben Geschoss zugewiesen. Für den weiteren Prozessverlauf wurde diese strukturelle Ungenauigkeit ignoriert, da die Simulation auf den absoluten Koordinaten der Geometrie basiert und nicht auf der logischen Geschosshierarchie des IFC-Baums.
-
-Die ursprünglich vorgesehene Berechnung der geometrischen Fenstermittelpunkte wurde im Zuge der Prozessoptimierung als hinfällig eingestuft. Durch den gewählten Ansatz, die Verschattung an allen vier Eckpunkten eines Fensters zu validieren, entfällt die Notwendigkeit eines zentralen Bezugspunktes. Die Vier-Ecken-Methode bietet zudem eine höhere Granularität bei der Bewertung von Teilverschattungen.
-
-Ein wesentlicher Schritt der Aufbereitung betraf die Fensterflächen im Bereich der Balkone. Diese wurden isoliert und für die Simulation ausgeblendet. Da das IFC-Modell keine Materialeigenschaften übermittelt, würden diese Flächen durch den Simulationsalgorithmus als opake Hindernisse gewertet werden. Dies hätte zur Folge, dass dahinterliegende Fenster fälschlicherweise als verschattet markiert würden, obwohl in der Realität transparente Verglasungen vorliegen.
-
-Zusätzlich wies das Modell geometrische Redundanzen in Form von sich überschneidenden oder doppelt vorhandenen Fensterelementen auf, wie in @fig-FensterÜberschneidung dargestellt. Diese Duplikate wurden manuell identifiziert und entfernt, um Fehlberechnungen und eine unnötige Erhöhung der Rechenlast zu vermeiden.
-
-#figure(
-  image("assets/ÜberschneidendeFenster.png", width: 80%),
-  caption: [Bildausschnitt von sich überlagernden Fensterelementen innerhalb der IFC-Struktur.],
-  placement: none
-) <fig-FensterÜberschneidung>
-
-Schlussendlich wurde ein temporäres Anlagenkennzeichnungssystem für sämtliche Fensterelemente mithilfe eines Skripts implementiert. Diese Maßnahme war notwendig, da die ursprünglichen Objektbezeichnungen keine Informationen über die geschossweise Zuordnung enthielten. Hierfür mussten mithilfe eines Filterlogik, alle relevanten Fensterobjekte vorselektiert werden.
-Ein Ansatz um den finalen @aks zuzuordnen wird in @AKSZuordnung aufgezeigt.
-
-
 
 === Einrichten der Sonne
 #grid(
@@ -103,8 +102,8 @@ Ein Ansatz um den finalen @aks zuzuordnen wird in @AKSZuordnung aufgezeigt.
 )
 Das gekoppelte Lichtobjekt der Szene wird daraufhin in der virtuellen Umgebung exakt positioniert. Dies ermöglicht eine präzise visuelle Simulation des Schattenwurfs für jeden beliebigen Zeitpunkt im Jahresverlauf.
 
-== Zuordnung AKS Jalousieaktor zu Fenster in BIM-Modell<AKSZuordnung>
-Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden. 
+== Zuordnung @aks Jalousieaktor zu Fenster in BIM-Modell<AKSZuordnung>
+Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden.
 Um die Gebäudeautomation zu planen wurde die Engineering-Software eConfigure von Schneider Electric eingesetzt. Die Planung war zum Zeitpunkt der Arbeit schon komplett abgeschlossen. Bei der Planung wurden Grundrisse der Etagen hinterlegt und alle Komponenten der Raumautomation verortet (siehe @fig-eConfigure). Hierbei gibt es mehrere Symbole für Jalousien, die zum einen den außenliegenden Sonnenschutz und zum anderen den innenliegenden Blendschutz beschreiben. Der Text neben den Symbolen beinhaltet den erforderlichen @aks.
 #figure(
   image("assets/AusschnittEConfigure.png"),
@@ -126,11 +125,11 @@ Im nachfolgenden wird ein vorläufiger Prozess stichpunktartig beschrieben:
 + *Datenexport*: Die Grundrisse der vier Mietbereiche werden aus eConfigure in das etablierte CAD-Austauschformat DWG exportiert.
 + *Aufbereitung und Referenzierung*: In AutoCAD werden die Teilgrundrisse zusammengeführt, bereinigt, maßstäblich skaliert und räumlich positioniert.
 + *Überlagerung*: Die geometrischen Referenzdaten aus Blender und die Planungsdaten aus eConfigure werden visuell überlagert.
-+ *Datenreduktion*: Sämtliche Planinhalte mit Ausnahme der textuellen AKS-Bezeichner werden entfernt.
++ *Datenreduktion*: Sämtliche Planinhalte mit Ausnahme der textuellen @aks#[]-Bezeichner werden entfernt.
 + *Reimport in die 3D-Umgebung*: Die bereinigte DWG-Datei wird in Blender importiert. Die textuellen Bezeichner befinden sich nun räumlich exakt entlang der Fassadenlinie (siehe @fig-AKSumFenster).
 + *Algorithmische Zuweisung*: Ein Python-Skript iteriert über alle Fensterelemente und identifiziert für jedes Fenster das räumlich nächstgelegene Textobjekt (Nearest-Neighbor-Suche). Der ausgelesene String wird als Attribut in das Fensterobjekt geschrieben. Dieses Attribut dient in der anschließenden Verschattungssimulation als eindeutiger, auslesbarer Identifikator.
 
-Da dieser prototypischer Weg sehr zeitaufwendig ist, wird im Rahmen dieser Arbeit nur ein Geschoss bearbeitet. Für die spätere Simulation wird der in @AufbereitungIFC
+Da dieser prototypischer Weg sehr zeitaufwendig ist, wird im Rahmen dieser Arbeit nur ein Geschoss bearbeitet. Für die spätere Simulation wird der in @AufbereitungIFC festgelegte, temporäre @aks für die Bezeichnung der Fenster verwendet.
 
 == Festlegung der zeitlichen und räumlichen Auflösung
 Basierend auf den theoretischen Vorüberlegungen aus @ZeitlicheAufloesungUmfang[Kapitel] ist eine hohe zeitliche Auflösung der Simulation zu bevorzugen. Aufgrund der hohen Komplexität des Projektes (5859 Fenster) und der damit einhergehenden langen Simulationsdauer, wird nur ein 15-Minuten-Raster festgelegt. Auf ein Kalenderjahr (Referenzjahr ohne Schaltjahr) hochgerechnet, resultiert dies in 35.040 Datenpunkten pro Fenster, die im Anschluss an die Raumautomationsstation übergeben werden müssen.
@@ -139,7 +138,7 @@ Da die Sonne in Frankfurt am Main am längsten Sommertag nach 05:00 Uhr aufgeht 
 
 Für die räumliche Auflösung wird die Vierpunkt-Messung gewählt, da eine mittlere zeitliche Auflösung von 15 Minuten verwendet wird. Aufgrund der hohen Anzahl der Fenster, wäre eine Rastermessung zu Rechenintensiv und würde eine große Datenmenge generieren.
 
-== Die eigentliche Simulation der Jahresverschattung <SimulationJahresverschattung>
+== Simulation der Jahresverschattung <SimulationJahresverschattung>
 Für die Verschattungssimulation wird ein Python-Skript ausgeführt, welches über die @ide @vs-code#[]@vscode gestartet wird. Der Code unterteilt sich in mehrere Teile:
 
 Am Anfang muss in der Konfiguration (siehe @code-konfiguration) der zu berechnende Zeitbereich eingestellt werden und die zeitliche Auflösung (z.B. 15 Minuten).
@@ -177,7 +176,7 @@ Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette.
   caption: [Flussdiagramm Verschattungsalgorithmus]
 )<fig-flussdiagramm>
 ==== Initialisierung und Extraktion der Gebäudegeometrie
-In der Vorbereitungsphase durchsucht der Algorithmus den Szenengraphen der Simulationsumgebung nach allen Objekten, die anhand des Attributs "BMKZ" als Fenstersensoren klassifiziert sind. 
+In der Vorbereitungsphase durchsucht der Algorithmus den Szenengraphen der Simulationsumgebung nach allen Objekten, die anhand des Attributs "@aks" als Fenstersensoren klassifiziert sind. 
 // Um die spätere Rechenlast während der Zeitschleifen zu minimieren, werden die geometrischen Eigenschaften jedes Fensters nur ein einziges Mal zu Beginn extrahiert. 
 Das Skript ermittelt für jedes Fenster die primäre Glasfläche und berechnet deren physikalischen Normalenvektor. Durch einen vektoriellen Abgleich mit dem geometrischen Zentrum des Gebäudes wird mathematisch verifiziert, dass dieser Normalenvektor stets nach außen zeigt. Parallel dazu speichert das System die exakten 3D-Weltkoordinaten der vier Eckpunkte der Fensterfläche ab, welche als Ausgangspunkte für die spätere Strahlenverfolgung dienen.
 
