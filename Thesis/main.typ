@@ -36,8 +36,6 @@
   appendix: include "anhang.typ"
 )
 
-
-
 // Chapter Includes
 #include "kap1.typ"
 #include "kap2.typ"

@@ -17,20 +17,20 @@ if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
 # --- Konfiguration ---
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "")
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, "21.06.2026.csv")
 print(f"Ziel-Datei: {OUTPUT_FILE}")
 # --- SCHALTER ---
 OUTPUT_ANGLE = True  # True: Gibt den Azimut aus | False: Gibt nur '0' aus
 # --- Zeiteinstellungen ---
+YEAR = 2026
 SIMULATION_DATES = []
-start_date = datetime.date(YEAR, 1, 1) # Start am 1. Januar
-for i in range(365): 
+start_date = datetime.date(YEAR, 6, 21)
+for i in range(1): 
     current_date = start_date + datetime.timedelta(days=i)
     SIMULATION_DATES.append((current_date.day, current_date.month))
 START_HOUR = 5
 END_HOUR = 22
 MINUTES_STEP = 15
-# YEAR = 2026
 # --- Koordinaten ---
 LATITUDE = 50.1126
 LONGITUDE = 8.67472
@@ -204,7 +204,7 @@ def run_final_simulation():
                         results[i].append("0")
 
     # --- CSV EXPORT (TRANSIPONIERT) ---
-    print("Schreibe invertierte CSV...")
+    print("Schreibe CSV...")
     with open(OUTPUT_FILE, "w") as f:
         # Kopfzeile mit allen echten BMKZ Werten
         sensor_names = [str(sensor["BMKZ"]) for sensor in sensors]
@@ -212,9 +212,9 @@ def run_final_simulation():
         
         # Daten-Zeilen (Zeiten)
         for t, time_label in enumerate(time_headers):
-            row_data = [results[i][t] for i in range(len(sensors))]
+            # Hier die Änderung: .replace('.', ',') für jeden Wert
+            row_data = [str(results[i][t]).replace('.', ',') for i in range(len(sensors))]
             f.write(f"{time_label};" + ";".join(row_data) + "\n")
-            
     print(f"FERTIG in {time.time() - start_time:.2f} Sekunden.")
 
 run_final_simulation()
