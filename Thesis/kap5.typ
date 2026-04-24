@@ -1,8 +1,10 @@
-= Diskussion und Fazit<Kap5>
-== Zusammenfassung der Ergebnisse
-- obwohl das ifc-modell viele fehler hatte und es einiges zu beachten gab
-schreiben mit KI
+= Diskussion und Fazit (30% fertig)<Kap5>
+== Zusammenfassung der Ergebnisse...
+- obwohl das ifc-modell viele fehler hatte wurden alle probleme behoben
 - simulation dauert 3 tage 16 stunden für ein sehr großes und kompliziertes projekt für das four. für üblichere kleiner projekt wird simulationsdauer ein bruchteil davon sein.
+- ergebnisse wurden erfolgreich validiert
+- es muss schon früh im BIM-Abwicklungsplan (BAP) anforderungen an BIM-Modell gestellt werden
+- Es wurden XX Open Source-Software, -Plug-ins und -Datenquellen verwendet im Verlauf der Arbeit (siehe @OpenSourceListe).
 == Marktanalyse und wirtschaftliches Potenzial
 === Marktbeschreibung und Marktgröße
 Ein großes Interesse an intelligenten Verschattungslösungen existiert vor allem für große, prestigeträchtige Immobilien, wie Hochhäuser in zentraler Lage. Alleine in der Stadt Frankfurt sollen bis 2040 14 Hochhäuser (Gebäude über 60m) errichtet werden@frankfurt_hep_2024_anhang2. Der Markt für umgebungsabhängige Verschattungssimulationen beschränkt sich nicht nur auf Hochhäuser. Generell profitieren Zweckgebäude mit zentraler GA und großen Fensterflächen hiervon. Vermehrt wird in Ausschreibungen eine intelligente Verschattung gefordert.
@@ -17,15 +19,18 @@ Um das wirtschaftliche und technische Potenzial des entwickelten Workflows einzu
 
 - *Kostenstruktur und räumliche Granularität:* Das Preismodell kommerzieller Anbieter basiert in der Regel auf der Anzahl der zu berechnenden Verschattungszonen. Um Kosten zu sparen, werden in der Praxis oft große Fassadenbereiche zu einer Zone zusammengefasst, was zu Lasten der Tageslichtautonomie geht. Die Iteration über alle Fenster in der Simulation verursacht außer einer erhöhten Rechendauer keinen Zusatzaufwand, wodurch eine fenstergenaue Simulation auch bei Großprojekten umsetzbar ist.
 
-- *Herstellerunabhängigkeit:* Während Herstellerlösungen die errechneten Schattenverläufe meist über firmeneigene Software in herstellerspezifische Controller laden, ist der Output dieses Proof of Concepts (CSV/JSON) systemunabhängig. (((Die Verschattungsdaten können auf Standard-BACnet-Objekte gemappt und von Automationsstationen beliebiger Fabrikate verarbeitet werden.)))
+- *Herstellerunabhängigkeit:* Während Herstellerlösungen die errechneten Schattenverläufe meist über firmeneigene Software in herstellerspezifische Controller laden, ist der Output dieses Proof of Concepts (CSV/JSON) systemunabhängig. Die Verschattungsdaten können...
+// auf Standard-BACnet-Objekte gemappt und von Automationsstationen beliebiger Fabrikate verarbeitet werden.)))
 
 Zusammenfassend transformiert der entwickelte Workflow die Jahresverschattung von einer manuellen, fehleranfälligen und ungenauen Dienstleistung hin zu einem transparenten und skalierbaren Engineering-Prozess.
 
-=== Marktpotenzialanalyse
+=== Marktpotenzialanalyse (entfällt)
 
-== Grenzen des entwickelten Prozesses
-== Ausblick
+== Grenzen des entwickelten Prozesses...
+- es ist immer noch wenig automatisiert, da jedes Projekt unterschiedlich ist (Topografie Ja/Nein, Gute Umgebungsdaten vorhanden Ja/Nein etc.)
+- umgebungsdaten und ifc-modelle liegen in unterschiedlicher qualität vor
+
+== Ausblick...
 - Raytracing probieren - Um spiegelungen mit zu berücksichtigen
   - Da der Rechenaufwand um ein vielfaches höher ist, müsste hier die wahrscheinlich parallel zum Betrieb laufen und es wird immer nur der nächste Tag berechnet
-- 
-Man könnte eine Exceltabelle entwickeln, die die vorliegenden IFC-Daten bewertet und daraus einen zusätzlichen Arbeitsaufwand berechnet. Dies könnte für die Angebotserstellung als Entscheidungsgrundlage herangezogen werden.
+- Man könnte eine Exceltabelle entwickeln, die die vorliegenden IFC-Daten bewertet und daraus einen zusätzlichen Arbeitsaufwand berechnet. Dies könnte für die Angebotserstellung als Entscheidungsgrundlage herangezogen werden.

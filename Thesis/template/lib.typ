@@ -92,7 +92,10 @@
   let in-body = state("in-body", true)                  // to control heading formatting in/outside of body
 
   // customize look of figure
-  set figure.caption(separator: [ --- ], position: bottom)
+  set figure.caption(separator: [ --- ], position: bottom,)
+  // set figure(supplement: [Abb.])
+  // customize look of code blocks
+  // show figure.where(kind: raw): set figure(supplement: [Quellcode])
 
   // math numbering
   set math.equation(numbering: math-numbering)
@@ -108,6 +111,16 @@
 
   // show links in dark blue
   // show link: set text(fill: blue.darken(40%))
+  // 
+  show ref: it => {
+    let el = it.element
+    if el != none and el.func() == figure and el.kind == image {
+      // Hier wird definiert, dass im Text "Abb." statt "Abbildung" steht
+      [Abb. #numbering(el.numbering, ..counter(figure).at(el.location()))]
+    } else {
+      it
+    }
+  }
   // 
 
   // ========== TITLEPAGE ========================================
@@ -296,15 +309,17 @@
   }
 
   show heading.where(level: 2): it => {v(16pt) + text(size: h2-size, it)}
-  show heading.where(level: 3): it => {v(16pt) + text(size: h3-size, it)}
-  show heading.where(level: 4): it => {
-  v(16pt)
+  show heading.where(level: 3): it => {v(0pt) + text(size: h3-size, it)}
+  show heading.where(level: 4): it => {v(6pt)
   block(text(size: h4-size, weight: "semibold", it.body))
 }
 
  // ---------- Body Text ---------------------------------------
 
   body
+
+
+
 
 
   // ========== APPENDIX ========================================

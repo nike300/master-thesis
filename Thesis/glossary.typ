@@ -56,5 +56,20 @@
     key: "lod",
     short: "LoD",
     long: "Level of Detail"
+  ),
+  (
+    key: "ebo",
+    short:"EBO",
+    long: "EcoStruxure™ Building Operation"
+  ),
+  (
+    key: "noaa",
+    short: "NOAA",
+    long: "National Oceanic and Atmospheric Administration"
+  ),
+  (
+    key: "hvbg",
+    short: "HVBG",
+    long: "Hessischen Verwaltung für Bodenmanagement und Geoinformation"
   )
 )

@@ -3,6 +3,14 @@
 #import "@preview/codly:1.3.0": *
 #import "@preview/mmdr:0.2.1": mermaid
 
+#show: codly-init.with()
+#codly(
+  languages: (
+    python: (name: "Python", color: rgb("#3572A5")),
+  ),
+)
+#show raw.where(block: true): set text(size: 8pt)
+
 #show: clean-hda.with(
   title: "Entwicklung einer durchgängigen Prozesskette zur Integration dynamischer Verschattungssimulationen in die Gebäudeautomation",
   subtitle: "Softwaregestützte Umsetzung und Validierung eines Workflows vom BIM-Modell bis zur operativen Steuerung.",
@@ -27,14 +35,6 @@
   university-short: "fh_m",
   appendix: include "anhang.typ"
 )
-
-#show: codly-init.with()
-#codly(
-  languages: (
-    python: (name: "Python", color: rgb("#3572A5")),
-  ),
-)
-
 
 // Chapter Includes
 #include "kap1.typ"

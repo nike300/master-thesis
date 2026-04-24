@@ -1,4 +1,4 @@
-= Theoretische Grundlagen<TheoretischeGrundlagen>
+= Theoretische Grundlagen (70% fertig)<TheoretischeGrundlagen>
 == Geometrische Grundlagen <GeometrischeGrundlagen>
 
 In diesem Kapitel werden die astronomischen und geometrischen Gesetzmäßigkeiten hergeleitet, die für die Berechnung des Schattenwurfs maßgeblich sind. Zudem erfolgt eine Klassifizierung der aktorischen Komponenten und der zu optimierenden Zielgrößen.
@@ -56,13 +56,13 @@ $ delta(J) &= 0.3948 \
   &- 0.3915 dot cos(2 dot J' + 5.4 degree) \
   &- 0.1764 dot cos(3 dot J' + 26.0 degree) $ <deklinationsgleichung>
 
-#block(inset: 8pt, fill: luma(240))[
-  *Hinweis zur Implementierung:*
-  Die Koeffizienten liefern das Ergebnis in Grad. Für die geometrische Weiterverarbeitung im Simulationsmodell (siehe kapitel 5???) erfolgt eine Umrechnung in das Bogenmaß (Radiant).
-]
+// #block(inset: 8pt, fill: luma(240))[
+//   *Hinweis zur Implementierung:*
+//   Die Koeffizienten liefern das Ergebnis in Grad. Für die geometrische Weiterverarbeitung im Simulationsmodell (siehe kapitel 5???) erfolgt eine Umrechnung in das Bogenmaß (Radiant).
+// ]
 
 ==== Sonnenhöhenwinkel ($gamma_s$) <Sonnenhoehenwinkel>
-Der Sonnenhöhenwinkel beschreibt den vertikalen Winkel zwischen der horizontalen Ebene und dem Mittelpunkt der Sonnenscheibe. Er ist maßgeblich für die effektive Einstrahlung auf Fassadenflächen sowie für die Berechnung der Schattenlängen.
+Der Sonnenhöhenwinkel beschreibt den vertikalen Winkel zwischen der horizontalen und der Sonne. Er ist maßgeblich für die effektive Einstrahlung auf Fassadenflächen sowie für die Berechnung der Schattenlängen.
 
 Basierend auf dem geografischen Breitengrad $phi$, der zuvor berechneten Deklination $delta$ und dem Stundenwinkel $omega$ ergibt sich der Höhenwinkel aus der grundlegenden Gleichung der sphärischen Astronomie:
 
@@ -76,7 +76,7 @@ Dabei gelten folgende Randbedingungen:
 - $gamma_s > 0 degree$: Die Sonne steht über dem Horizont (Tag).
 - $gamma_s <= 0 degree$: Die Sonne steht unter dem Horizont (Nacht/Dämmerung).
 
-#block(inset: 8pt, fill: luma(240))[*Relevanz für die Simulation:*In der Prozesskette (Kapitel 5) dient die Prüfung $gamma_s > 0$ als erster Filter ("Early Exit"). Ist der Wert negativ, muss kein aufwendiges Raycasting durchgeführt werden, da keine direkte Verschattung möglich ist.]
+// #block(inset: 8pt, fill: luma(240))[*Relevanz für die Simulation:*In der Prozesskette (Kapitel 5) dient die Prüfung $gamma_s > 0$ als erster Filter ("Early Exit"). Ist der Wert negativ, muss kein aufwendiges Raycasting durchgeführt werden, da keine direkte Verschattung möglich ist.]
 
 ==== Sonnenazimut ($alpha_s$) <Sonnenazimut>
 Der Sonnenazimut beschreibt die horizontale Himmelsrichtung der Sonne. In Übereinstimmung mit der Norm DIN 5034-1 ist der Bezugspunkt die geografische Nordrichtung. Der Winkel wird im Uhrzeigersinn von $0 degree$ (Nord) bis $360 degree$ gemessen.
@@ -91,14 +91,14 @@ $ alpha_s = cases(
 //#block(inset: 8pt, fill: luma(240))[ *Vorteil für die Simulation:* Diese Definition (Nord = $0 degree$, im Uhrzeigersinn) entspricht dem Koordinatensystem gängiger 3D-Software und GIS-Daten.]
 
 === Vergleich und Auswahl der Berechnungsverfahren <VergleichAuswahlBerechnungsverfahren>
-Die in den vorangegangenen Abschnitten dargestellten Formeln der DIN EN 17037 stellen die normative Grundlage für die Tageslichtplanung in Europa dar. Sie bieten eine für architektonische Entwürfe hinreichende Genauigkeit.
+Die in den vorangegangenen Abschnitten dargestellten Formeln der DIN EN 17037 stellen die normative Grundlage für die Tageslichtplanung in Europa dar. Sie bieten eine hinreichende Genauigkeit.
 
-Für die Implementierung des Simulations-Prototyps (siehe Kapitel 4) wird jedoch auf den Algorithmus der *National Oceanic and Atmospheric Administration* (NOAA) zurückgegriffen. Dieser zeichnet sich durch folgende Merkmale aus:
+Für die Implementierung des Simulations-Prototyps (siehe Kapitel 4) wird jedoch auf den Algorithmus der National Oceanic and Atmospheric Administration (@noaa) zurückgegriffen. Dieser zeichnet sich durch folgende Merkmale aus:
 
-- *Höhere Präzision:* Während einfache Näherungen Fehler von bis zu $1 degree$ aufweisen können, minimiert der NOAA-Algorithmus (basierend auf den Arbeiten von Jean Meeus @Meeus1998) die Abweichungen auf unter $0,0001 degree$.
-- *Berücksichtigung atmosphärischer Effekte:* Der Algorithmus inkludiert Korrekturfaktoren für die atmosphärische Refraktion, was insbesondere bei flachen Sonnenständen (Morgen- und Abendstunden) für die Lamellennachführung in der Gebäudeautomation kritisch ist.
+- Höhere Präzision: Während einfache Näherungen Fehler von bis zu $1 degree$ aufweisen können, minimiert der @noaa#[]-Algorithmus (basierend auf den Arbeiten von Jean Meeus @Meeus1998) die Abweichungen auf unter $0,0001 degree$.
+- Berücksichtigung atmosphärischer Effekte: Der Algorithmus inkludiert Korrekturfaktoren für die atmosphärische Refraktion, was insbesondere bei flachen Sonnenständen (Morgen- und Abendstunden) für die Lamellennachführung in der Gebäudeautomation kritisch ist.
 
-Auf eine detaillierte mathematische Herleitung der über 30 Korrekturterme des NOAA-Verfahrens wird an dieser Stelle verzichtet; die Berechnung folgt der dokumentierten Implementierung gemäß @NOAASolar2021.
+Auf eine detaillierte mathematische Herleitung der über 30 Korrekturterme des @noaa#[]-Verfahrens wird an dieser Stelle verzichtet; die Berechnung folgt der dokumentierten Implementierung gemäß @NOAASolar2021.
 
 
 === Geometrie der Verschattung <GeometrieVerschattung>
@@ -166,7 +166,7 @@ Um Fehlkalkulationen auszuschließen, muss im Vorfeld garantiert werden, dass al
 )<fig-culling>
 
 == Verschattungssysteme <Verschattungssysteme>
-=== Bauphysikalische und lichttechnische Zielgrößen <BauphysikalischeLichttechnischeZielgroessen>
+=== Bauphysikalische und lichttechnische Zielgrößen... <BauphysikalischeLichttechnischeZielgroessen>
 
 
 Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamellenwinkel) erfüllen in der modernen Gebäudeautomation wesentliche energetische und ergonomische Funktionen. Die primären Zielgrößen einer optimalen Steuerung definieren sich wie folgt:
@@ -177,7 +177,8 @@ Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamelle
 
 - *Visueller Komfort:* Hierbei steht die Vermeidung von ungewollter Direkt- und Reflexblendung an Arbeitsplätzen im Vordergrund. Gleichzeitig soll durch eine präzise Lamellennachführung die Sichtverbindung nach außen gemäß DIN EN 14501 weitestgehend erhalten bleiben, was den visuellen Komfort maßgeblich erhöht.
 
-- *Thermischer Komfort:(AIXXX)* Der thermische Komfort wird maßgeblich durch die operative Raumtemperatur $theta_"op"$ bestimmt, welche durch eine gezielte Regulierung des solaren Wärmeeintrags begrenzt werden muss. Sonnenschutzeinrichtungen steuern diese Dynamik gemäß DIN EN 14501, indem sie die direkte Bestrahlung von Personen verhindern und den Gesamtenergiedurchlassgrad ($g_"tot"$) sowie sekundäre Wärmeabgaben des Behanges optimieren.
+- *Thermischer Komfort:* Der thermische Komfort wird maßgeblich durch die operative Raumtemperatur $theta_"op"$ bestimmt, welche sich aus dem Mittelwert von Lufttemperatur und der mittleren Strahlungstemperatur der Umgebung zusammensetzt. Sonnenschutzeinrichtungen leisten hier einen wichtigen Beitrag die direkte Bestrahlung der Person und somit Überhitzung der Person im Sommer zu vermeiden. 
+// Der thermische Komfort wird maßgeblich durch die operative Raumtemperatur $theta_"op"$ bestimmt, welche durch eine gezielte Regulierung des solaren Wärmeeintrags begrenzt werden muss. Sonnenschutzeinrichtungen steuern diese Dynamik gemäß DIN EN 14501, indem sie die direkte Bestrahlung von Personen verhindern und den Gesamtenergiedurchlassgrad ($g_"tot"$) sowie sekundäre Wärmeabgaben des Behanges optimieren.
 
 - *Tageslichtversorgung:* Diese Zielgröße maximiert die relative Nutzungszeit des natürlichen Lichts, um den Einsatz von Kunstlicht zu minimieren @din5034-1. Dynamische Verschattung kann den jährlichen Energieverbrauch der Beleuchtung in den Räumen um 14-42% reduzieren@fernandes2021potential. Eine hohe Tageslichtautonomie wirkt sich zudem nachweislich positiv auf den circadianen Rhythmus sowie die psychische und physische Gesundheit der Gebäudenutzer aus @dgnb1.4.
 
@@ -187,7 +188,7 @@ Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamelle
 
 Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häufig in einem direkten Zielkonflikt zueinander (beispielsweise konkurriert ein maximaler Blendschutz direkt mit einer hohen Tageslichtautonomie). Die Steuerung der Raumautomation muss daher definieren, in welcher Kaskade diese Funktionen priorisiert werden.
 
-=== Klassifizierung steuerbarer Sonnenschutzsysteme <KlassifizierungSteuerbarerSonnenschutzsysteme>
+=== Klassifizierung steuerbarer Sonnenschutzsysteme... <KlassifizierungSteuerbarerSonnenschutzsysteme>
 - Systeme mit einem Freiheitsgrad (z. B. Rollläden, Screens): Variable Position $h$ (0-100%).
 - Systeme mit zwei Freiheitsgraden (z. B. Raffstore/Jalousien): Variablen Position $h$ und Lamellenwinkel $lambda$.
 - Relevanz für die Automation: Je komplexer das System, desto wichtiger ist die präzise Simulation des Winkels.
@@ -196,7 +197,7 @@ Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häu
 - cut off Winkel
 
 
-=== Jahresverschattung <Jahresverschattung>
+=== Jahresverschattung... <Jahresverschattung>
 /*Nutzen für Eigentümer/Mieter:
 - Reduzierte Energiekosten durch geringeren Kühl- und Heizbedarf
 - Attraktiveres Gebäude durch verbesserten Komfort
@@ -224,15 +225,15 @@ Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel
 }
 
 #definition("Jahresverschattung")[
-  Die Jahresverschattung bezeichnet die zeitabhängige Veränderung der solaren Exposition auf der Gebäudehülle im Verlauf eines meteorologischen Jahres. Sie ist das Resultat der Interaktion zwischen dem dynamischen Sonnenstand, der Gebäudeorientierung sowie der umgebenden Bebauung und Vegetation. Im Kontext der Gebäudeautomation definiert sie die zeitlichen und räumlichen Randbedingungen, unter denen ein variabler Sonnenschutz agieren muss.
+  Die Jahresverschattung bezeichnet die zeitabhängige Veränderung der solaren Exposition auf der Gebäudehülle im Verlauf eines meteorologischen Jahres. Sie ist das Resultat der Interaktion zwischen dem dynamischen Sonnenstand, der Gebäudeorientierung sowie der umgebenden Bebauung und Vegetation. Im Kontext der Gebäudeautomation definiert sie die zeitlichen und räumlichen Randbedingungen, unter denen ein variabler Sonnenschutz agieren muss...
 ]
 Begriff wird von WAREMA übernommen, ist allerdings nirgends richtig definiert.
 
-Die Jahresverschattungssimulation bezeichnet ein simulationsgestütztes Verfahren zur Analyse und Steuerung des solaren Energie- und Lichteintrags in ein Gebäude über den Zeitraum eines vollständigen meteorologischen Jahres. Im Gegensatz zu statischen Verschattungselementen oder reinen Echtzeit-Helligkeitsregelungen basiert sie auf der zeitabhängigen Interaktion zwischen dem astronomischen Sonnenstand, der Gebäudegeometrie sowie der umgebenden Bebauung. Ziel ist die Ermittlung optimaler Positionierungsstrategien für variable Sonnenschutzsysteme, um ein Gleichgewicht zwischen der Minimierung thermischer Lasten (sommerlicher Wärmeschutz), der Maximierung solarer Gewinne (winterlicher Heizbedarf) und der Gewährleistung des visuellen Komforts (Blendfreiheit bei maximaler Tageslichtnutzung) sicherzustellen.
+Die Jahresverschattungssimulation bezeichnet ein simulationsgestütztes Verfahren zur Analyse und Steuerung des solaren Energie- und Lichteintrags in ein Gebäude über den Zeitraum eines vollständigen meteorologischen Jahres. Im Gegensatz zu statischen Verschattungselementen oder reinen Echtzeit-Helligkeitsregelungen basiert sie auf der zeitabhängigen Interaktion zwischen dem astronomischen Sonnenstand, der Gebäudegeometrie sowie der umgebenden Bebauung. Ziel ist die Ermittlung optimaler Positionierungsstrategien für variable Sonnenschutzsysteme, um ein Gleichgewicht zwischen der Minimierung thermischer Lasten (sommerlicher Wärmeschutz), der Maximierung solarer Gewinne (winterlicher Heizbedarf) und der Gewährleistung des visuellen Komforts (Blendfreiheit bei maximaler Tageslichtnutzung) sicherzustellen....
 // Physikalische Prinzipien und Ziele (Energie vs. Komfort).
 
 
-== Digitale Planungsmethoden (Datenformate?)??? <DigitalePlanungsmethoden>
+== Digitale Planungsmethoden (Datenformate?)... <DigitalePlanungsmethoden>
 Wenn früher vor allem Papierpläne zum Datenkommunikationsaustausch im Planungsprozess verwendet wurden, gibt es mittlerweile eine Vielzahl an digitalen Möglichkeiten. Etabliert über die letzten Jahrzehnte, haben sich vor allem 2D-Grundrissdateien, die z.B. im proprietären Austauschformat dwg zwischen Architekten und Ingenieuren geteilt wurden. Während diese Methode heutzutage noch weite Anwendung findet, greifen die auf 3D-Modellen basierenden Austauschformate weiter um sich. Bereits einfache 3D-Modelle bieten große Vorteile bei der Verständlichkeit und Dichte der übermittelnden geometrischen Informationen. Zusätzlich ist es möglich im Rahmen eines BIM-Modells semantische Daten mit zu übermitteln. Das hierfür benutzte Austauschformat IFC bietet wichtige Funktionalitäten, um für die Verschattungssimulation relevante Daten zu  teilen.
 // BIM, IFC, Simulationswerkzeuge (Überblick).
 Folgende Dateiformate werden verwendet:
@@ -243,6 +244,7 @@ Folgende Dateiformate werden verwendet:
 .blend
 .gml
 .csv
+
 === Koordinatenreferenzsysteme <Koordinatenreferenzsysteme>
 Die Georeferenzierung beschreibt die Zuweisung räumlicher Bezugsinformationen zu einem Datensatz. Für die dynamische Verschattungssimulation ist sie von zentraler Bedeutung, da das lokale Gebäudemodell (BIM) millimetergenau mit den Umgebungsdaten überlagert werden muss. Nur durch einen einheitlichen räumlichen Bezug lässt sich der korrekte solare Einfallswinkel auf die Fassade berechnen. In der Bauplanung und Geoinformatik wird dabei zwischen globalen geografischen und lokalen projizierten Koordinatensystemen unterschieden:
 
@@ -253,7 +255,7 @@ Die Georeferenzierung beschreibt die Zuweisung räumlicher Bezugsinformationen z
 - *UTM (Universal Transverse Mercator):* Das UTM-System ist der heutige internationale Standard für projizierte Koordinatensysteme. Ähnlich wie das GK-System liefert es ein ebenes, rechtwinkliges Raster mit metrischen X- und Y-Koordinaten (Rechts- und Hochwert), unterteilt die Erde jedoch in 6-Grad breite Zonen. Für die in dieser Arbeit entwickelte Simulationsumgebung ist UTM das präferierte System. Da 3D-Engines (wie Blender) zwingend ein metrisches, kartesisches Koordinatensystem erfordern, lassen sich UTM-koordinierte Umgebungsmodelle ohne Verzerrung direkt in die Raycasting-Logik überführen.
 
 
-== Normative Grundlagen <NormativeGrundlagen>
+== Normative Grundlagen... <NormativeGrundlagen>
 === Grundlagen der Licht- und Wärmesteuerung <GrundlagenLichtWaermesteuerung>
 Ein Grundziel der Verschattung ist der Blendschutz, der in der DIN EN 17037 @dinen17037 behandelt wird.
 Nutzen:
@@ -272,3 +274,4 @@ Siehe @fig-Funktionsblock
   image("assets/FunktionsblockVerschattung3813.png"),
   caption: [Funktionsblock für die Verschattungskorrektur@vdi3813-2]
 )<fig-Funktionsblock>
+...
