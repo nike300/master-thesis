@@ -12,8 +12,8 @@ Die Entwicklung und Validierung dieses Prototyps erfolgt anhand eines komplexen 
 )
 
 == Vorstellung des Referenzprojekts
-Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Gebäuden (Podesten), die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Endphase und soll im Laufe des Jahres 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am 233m hohen Büroturm T1 angewendet. Der Turm besteht pro Geschoss aus vier Mietbereichen und hat pro Segment einen außenliegenden Sonnenschutz und einen innenliegenden Blendschutz. Es werden 5859 Fenster relevante Fenster im Turm 1 gezählt. Die Türme stehen eng beieinander im Zentrum von Frankfurt zwischen verschiedenen Hochhäusern (z.B. dem Commerzbank-Tower und dem MAIN-Tower). Durch dieses eng bebaute Areal treten sehr dynamische Verschattungssituationen auf, die nur durch eine präzise Simulation der Umgebung korrekt dargestellt werden können.
-Eine architektonische Besonderheit des FOUR sind die diagonal abgeschrägten Fassadenabschnitte (@fig-FourTageslicht), die den visuellen Freiraum und die Tageslichtzufuhr verbessern sollen.
+Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Gebäuden (Podesten), die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Endphase und soll im Laufe des Jahres 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am 233m hohen Büroturm T1 angewendet. Der Turm besteht pro Geschoss aus vier Mietbereichen und hat pro Segment einen außenliegenden Sonnenschutz und einen innenliegenden Blendschutz. Es werden 5859 relevante Fenster im Turm 1 gezählt. Die Türme stehen eng beieinander im Zentrum von Frankfurt zwischen verschiedenen Hochhäusern (z.B. dem Commerzbank-Tower und dem MAIN-Tower). Durch dieses eng bebaute Areal treten sehr dynamische Verschattungssituationen auf, die nur durch eine präzise Simulation der Umgebung korrekt dargestellt werden können.
+Eine architektonische Besonderheit des FOUR sind die diagonal abgeschrägten Fassadenabschnitte (@fig-FourTageslicht), die den visuellen Freiraum und die Tageslichtzufuhr verbessern sollen und die Fenster, welche in unterschiedlichen Winkel zur Fassade angeordnet sind.
 
 #figure(
   image("assets/FourTageslichtSchnitte.png"),
@@ -52,14 +52,14 @@ Zusätzlich wies das Modell geometrische Redundanzen in Form von sich überschne
   placement: none
 ) <fig-FensterÜberschneidung>
 
-Schlussendlich wird ein temporäres Anlagenkennzeichnungssystem erstellt, dass sich auf das jeweilige Geschoss und eine fortlaufende Nummer für sämtliche Fensterelemente bezieht. Dies wird mithilfe eines Skripts (@DigitaleAnlage) implementiert. Diese Maßnahme ist notwendig, da die ursprünglichen Objektbezeichnungen keine Informationen über die räumliche Zuordnung enthalten. Hierfür müssen mithilfe einer Filterlogik, alle relevanten Fensterobjekte vorselektiert werden. Glasscheiben für die Balkonbrüstung und sehr kleine Fensterflächen haben keine Jalousie und werden somit nicht berücksichtigt.
+Schlussendlich wird ein temporäres Anlagenkennzeichnungssystem erstellt, dass sich auf das jeweilige Geschoss und eine fortlaufende Nummer für sämtliche Fensterelemente bezieht. Zum Beispiel FL13_W034 steht für:  13. Geschoss (Floor) an der 34. Position. Dies wird mithilfe eines Skripts (@DigitaleAnlage) implementiert. Diese Maßnahme ist notwendig, da die ursprünglichen Objektbezeichnungen keine Informationen über die räumliche Zuordnung enthalten. Hierfür müssen mithilfe einer Filterlogik, alle relevanten Fensterobjekte vorselektiert werden. Glasscheiben für die Balkonbrüstung und sehr kleine Fensterflächen haben keine Jalousie und werden somit nicht berücksichtigt.
 Ein Ansatz, um den finalen @aks des Jalousieaktors dem Fenster zuzuordnen, wird in @AKSZuordnung aufgezeigt.
 
 === Import und Positionierung der Umgebungsdaten...<ImportUmgebungsdaten>
 
-Für die Modellierung der umgebenden, verschattenden Bebauung wird auf die offenen Geodaten der @hvbg#[]@Hessen3D zurückgegriffen. Die 3D-Gebäudemodelle für das Stadtgebiet Frankfurt am Main werden von offizieller Seite standardmäßig im Format CityGML bereitgestellt.
+Für die Modellierung der umgebenden, verschattenden Bebauung wird auf die offenen Geodaten der @hvbg#[]@Hessen3D zurückgegriffen. Die 3D-Gebäudemodelle für das Stadtgebiet Frankfurt am Main werden von offizieller Seite standardmäßig im Format CityGML (internationaler Standard des Open Geospatial Consortiums (OGC) zur Modellierung, Speicherung und dem Austausch semantischer 3D-Stadtmodelle@citygml_30) bereitgestellt.
 
-Da für Blender keine native Import-Schnittstelle für CityGML-Dateien existiert, ist eine vorherige Datenkonvertierung erforderlich. Die Datensätze werden hierfür in das JSON-basierte Format CityJSON (Datenaustauschformat für digitale 3D-Modelle von Städten und Landschaften@cityjson) mithilfe eines Tools@cityjson_conversion überführt.
+Da für Blender keine native Import-Schnittstelle für CityGML-Dateien existiert, ist eine vorherige Datenkonvertierung erforderlich. Die Datensätze werden hierfür in das JSON-basierte Format CityJSON (ebenfalls Datenaustauschformat für digitale 3D-Modelle von Städten und Landschaften@cityjson) mithilfe eines Tools@cityjson_conversion überführt.
 
 Der finale Import der Gebäudekörper in die 3D-Umgebung erfolgt über das Open-Source-Plugin CityJSONEditor@github_cityjsoneditor für Blender. Da die hierarchische Struktur der amtlichen Frankfurter Daten teilweise von den Standardannahmen des Plugins abwich, wurden im Rahmen dieser Arbeit gezielte Anpassungen am Python-Quellcode der Import-Erweiterung vorgenommen. Diese Fehlerbehebungen umfassen im Wesentlichen drei Aspekte:
 + *Toleranz bei fehlenden Texturen:* Es wird eine Abfrage implementiert, die den Importprozess bei Objekten ohne definierte Fassadentexturen (Appearances) nicht abbricht, sondern die reine Geometrie weiterverarbeitet.
@@ -68,7 +68,6 @@ Der finale Import der Gebäudekörper in die 3D-Umgebung erfolgt über das Open-
 
 Im Anschluss erfolgt die räumliche Verortung des Stadtmodells in der Simulationsumgebung. Die originären CityJSON-Daten sind im globalen ETRS89/UTM-Koordinatensystem referenziert. Da der Projektbasispunkt (P1) in Blender auf (0,0,0) gesetzt ist, muss P1 von den Koordinaten der Umgebungsdaten subtrahiert werden. Die Koordinaten werden im Quellcode hinterlegt. Durch diese Nullpunktverschiebung wird das Makromodell der Umgebung präzise in das kartesische System der Software überführt. Zuletzt werden Gebäude die in zweiter und dritter Reihe zum Turm 1 stehen, ausgewählt und aus der Szene gelöscht. Gebäude, die direkt nördlich des Referenzgebäudes (Turm 1) stehen, werden ebenfalls entfernt.
 
-------- HIER BILD VON GANZER SZENE ODER ERST SPÄTER? ---
 
 === Import und Positionierung der Türme 2 bis 4 <ImportT24>
 Da das Gebäudeensemble FOUR zum Zeitpunkt der Datenerhebung noch nicht in den amtlichen CityGML-Datensätzen erfasst ist, werden für die Verschattungssimulation die detaillierten IFC-Fassadenmodelle der Türme 2 bis 4 herangezogen. Diese liegen in einem sehr hohen Detaillierungsgrad (@lod 500) vor. Dies ist einerseits vorteilhaft für eine hohe Präzision des Schattenwurfs, beinhaltet andererseits jedoch eine massive Menge an nicht benötigten geometrischen und semantischen Daten. Um die Dateigröße zu minimieren und den Arbeitsspeicher während der Simulation zu entlasten, wird eine systematische Reduktion der Modelle durchgeführt:
@@ -80,6 +79,14 @@ Da das Gebäudeensemble FOUR zum Zeitpunkt der Datenerhebung noch nicht in den a
 + *Referenzierung*: Die optimierten Modelldateien werden abschließend über die Link-Funktion in die Simulations-Hauptszene eingebunden.
 
 Eine manuelle räumliche Transformation oder Neuausrichtung entfällt bei diesem Prozess. Da die Modelle der Türme 2 bis 4 denselben globalen Koordinatenursprung (Projektbasispunkt) wie das Referenzmodell des Turms 1 aufweisen, positionieren sie sich beim Import automatisch an den korrekten relativen Koordinaten.
+
+Die aggregierte Szene ist in @fig-fertigeSzene zu sehen...
+
+#figure(
+  image("assets/FertigeSzene.png", width: 100%),
+  caption: [Aufnahme der fertigen Szene mit Turm 1-4 FOUR und den umgebenden Gebäuden in Blender],
+  placement: auto
+)<fig-fertigeSzene>
 
 === Einrichten der Sonne
 #grid(
@@ -187,7 +194,85 @@ Im finalen Schritt überführt das Skript die akkumulierten Statuswerte in eine 
   caption: [Flussdiagramm Verschattungsalgorithmus],
   placement: auto
 )<fig-flussdiagramm>
+#pagebreak()
 
+== Simulationsergebnisse
+Die Simulationsergebnisse werden im nachfolgenden an einem Auszug aus der CSV-Datei präsentiert.
+#grid(
+  columns: (19em, 20.5em),
+  gutter: 1em,
+  // Zwingt beide Spalten nach oben und linksbündig an den Rand
+  // align: (top + left, top + left), 
+  [
+    #set text(size: 9pt) 
+    // figure.align steuert, dass die Caption linksbündig unter der Tabelle steht
+    #show figure: set align(left)
+    #figure(
+      table(
+        columns: 3,
+        align: (left, center, center),
+        
+        // x-Wert weiter verringert, macht die Tabelle schmaler = mehr Platz für Text
+        inset: (y: 2.5pt, x: 3pt),
+        
+        stroke: (x, y) => (
+          left: none,
+          right: none,
+          top: if y == 0 { 0.5pt } else { none },
+          bottom: 0.5pt,
+        ),
+        
+        fill: (col, row) => if row == 110 { luma(240) } else { none },
+        [*Zeitpunkt*], [*FL13_W034*], [*FL13_W035*],
+        [21.6.-05:00], [N], [N],
+        [21.6.-05:15], [N], [N],
+        [21.6.-05:30], [R], [R],
+        [21.6.-05:45], [R], [R],
+        [21.6.-06:00], [R], [R],
+        [21.6.-06:15], [R], [R],
+        [21.6.-06:30], [R], [R],
+        [21.6.-06:45], [V], [V],
+        [...], [...], [...],
+        // [21.6.-07:15], [V], [V],
+        // [21.6.-07:30], [V], [V],
+        // [21.6.-07:45], [V], [V],
+        // [21.6.-08:00], [V], [V],
+        // [21.6.-08:15], [V], [V],
+        // [21.6.-08:30], [V], [V],
+        // [21.6.-08:45], [V], [V],
+        // [21.6.-09:00], [V], [V],
+        // [21.6.-09:15], [V], [V],
+        [21.6.-09:30], [V], [V],
+        [21.6.-09:45], [56,1], [53,7],
+        [21.6.-10:00], [52,7], [50,4],
+        [21.6.-10:15], [49,2], [46,9],
+        [21.6.-10:30], [45,6], [43,2],
+        [21.6.-10:45], [41,6], [39,3],
+        [21.6.-11:00], [37,5], [35,1],
+        [21.6.-11:15], [33], [30,6],
+        [21.6.-11:30], [28,1], [25,8],
+        [21.6.-11:45], [V], [V],
+        [21.6.-12:00], [V], [V],
+        [21.6.-12:15], [11,2], [8,9],
+        [21.6.-12:30], [4,7], [2,4],
+        [21.6.-12:45], [-2,2], [-4,6],
+        [21.6.-13:00], [-9,5], [-11,8],
+        [21.6.-13:15], [-17], [-19,4],
+        [21.6.-13:30], [-24,7], [-27],
+        [21.6.-13:45], [V], [V],
+        [...], [...], [...],
+      ),
+      caption: [Auszug der zeitaufgelösten Verschattungsdaten für zwei Fenster]
+    ) <tab-verschattungsdaten>
+  ],
+  [
+  In @tab-verschattungsdaten ist ein Auszug der Simulationsergebnisse für den 21.06.2026 (Sommersonnenwende) dargestellt. Die erste Spalte gibt den Zeitpunkt (Datum und Uhrzeit) der Berechnung an. Die zweite und dritte Spalte zeigen den Verschattungszustand von zwei beispielhaften Fenstern, welche mit dem in @AufbereitungIFC definierten @aks bezeichnet sind.
+
+  Zu Beginn der Simulation (5:00 bis 5:15 Uhr) ist für beide Fenster "N" (Nacht) eingetragen, da die Sonne noch unter dem Horizont liegt. Ab 5:30 Uhr wechselt der Status auf "R" (Rückseite): Die Sonne befindet sich zu diesem Zeitpunkt hinter der Fassadenebene, weshalb keine direkte Besonnung möglich ist. Zwischen 6:45 und 9:30 Uhr werden die Fenster durch externe Gebäudeobjekte verschattet ("V"). Im Anschluss trifft direkte Sonnenstrahlung auf das Glas, was durch den berechneten relativen Azimutwinkel (-90° bis +90°) abgebildet wird.
+
+  Dass die beiden Fenster zur selben Zeit abweichende Azimutwinkel aufweisen, belegt ihre leicht unterschiedliche räumliche Ausrichtung zur Sonne. Der stetig abnehmende Winkelwert spiegelt dabei den fortschreitenden Sonnenlauf wider. Eine hochdynamische Verschattungssituation zeigt sich exemplarisch um 11:45 - 12:00, als die Fenster für ein kurzes Intervall von 30 Minuten erneut verschattet werden und sich direkte Besonnung und Schatten schnell abwechseln. Zwischen 12:30 und 12:45 Uhr wechselt schließlich das Vorzeichen der Winkelwerte von positiv auf negativ. In diesem Zeitraum kreuzt die Sonne die exakte Mittelachse (Flächennormale) der jeweiligen Fenster.
+  ]
+)
 == Berechnungsaufwand und Optimierung <Simulationsoptimierung>
 Für diese Arbeit wurde der 20.03.26 im 15-Minuten Takt simuliert. Dieser Tag beschreibt die frühjährliche Tag-Nacht-Gleiche (Äquinoktium) an dem die Sonne genau gleich lang über und unter dem Horizont verbleibt. Da die Hälfte des Jahres mehr und die andere Hälfte weniger Sonnenstunden aufweist, eignet sich dieser Tag für eine Hochrechnung der Simulationsdauer auf das gesamte Jahr.
 

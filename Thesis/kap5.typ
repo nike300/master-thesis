@@ -1,9 +1,10 @@
 = Diskussion und Fazit (30% fertig)<Kap5>
 == Zusammenfassung der Ergebnisse...
-- obwohl das ifc-modell viele fehler hatte und es einiges zu beachten gab
+- obwohl das ifc-modell viele fehler hatte wurden alle probleme behoben
 - simulation dauert 3 tage 16 stunden für ein sehr großes und kompliziertes projekt für das four. für üblichere kleiner projekt wird simulationsdauer ein bruchteil davon sein.
 - ergebnisse wurden erfolgreich validiert
 - es muss schon früh im BIM-Abwicklungsplan (BAP) anforderungen an BIM-Modell gestellt werden
+- Es wurden XX Open Source-Software, -Plug-ins und -Datenquellen verwendet im Verlauf der Arbeit (siehe @OpenSourceListe).
 == Marktanalyse und wirtschaftliches Potenzial
 === Marktbeschreibung und Marktgröße
 Ein großes Interesse an intelligenten Verschattungslösungen existiert vor allem für große, prestigeträchtige Immobilien, wie Hochhäuser in zentraler Lage. Alleine in der Stadt Frankfurt sollen bis 2040 14 Hochhäuser (Gebäude über 60m) errichtet werden@frankfurt_hep_2024_anhang2. Der Markt für umgebungsabhängige Verschattungssimulationen beschränkt sich nicht nur auf Hochhäuser. Generell profitieren Zweckgebäude mit zentraler GA und großen Fensterflächen hiervon. Vermehrt wird in Ausschreibungen eine intelligente Verschattung gefordert.

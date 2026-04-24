@@ -123,6 +123,10 @@ Zwar können weit entfernte Gebäude bei einer sehr tief stehenden Sonne (in den
 
 Dadurch wird garantiert, dass der Nutzer zu keinem Zeitpunkt einer Blendung ausgesetzt ist. Am beispielhaften Zeitstrahl verlässt der Schatten das Fenster um 10:23 Uhr. Bei einer groben stündlichen Diskretisierung hält die Steuerung den Behang jedoch schon ab 10:00 Uhr geschlossen, was zu 23 Minuten Verlust an natürlichem Tageslicht führt. Besonders gravierend wirkt sich diese zu grobe Abtastung bei schnellen, iterativen Verschattungsänderungen aus (beispielsweise in Großstädten mit dichter Hochhausbebauung). 
 
+#block(inset: 8pt, fill: luma(240))[
+Eine höhere Auflösung ermöglicht eine bessere Tageslichtautonomie...
+]
+
 Im Gegensatz dazu ermöglicht eine feine Auflösung von 5 Minuten, die Behänge sehr nah am realen Schattenverlauf des Fensters zu führen. Sie bildet den realen Schattenverlauf exakt ab und erfasst auch kurze Sonneneinstrahlungen durch Lücken in der Nachbarbebauung. Werden diese schnellen Wechsel jedoch direkt als Fahrbefehle an die Motoren weitergegeben, sinkt der Nutzerkomfort erheblich. Eine sich ständig bewegende Jalousie lenkt visuell und akustisch ab und erhöht den Verschleiß der Motoren deutlich.
 
 Um diesen Konflikt zu lösen, muss die Steuerung die präzisen Umgebungsdaten von den tatsächlichen Fahrbefehlen entkoppeln. In der Gebäudeautomation werden dafür Verzögerungszeiten, sogenannte Totzonen, oder Hysteresen eingesetzt. Dadurch reagiert der Sonnenschutz nicht mehr auf jede minimale und kurzzeitige Schattenänderung.
@@ -172,5 +176,9 @@ Hier geht es um die Grundsatzentscheidung: Handelt es sich um ein zustandsloses 
 == Überlegung zur Integration in die Gebäudeautomation...
 - Daten könnten per MQTT oder andere Schnittstelle übergeben werden
 - Daten werden von Programmen der Raumautomation zur Jalousiensteuerung genutzt
+  - Stuerung muss vorausschauend funktionieren (wie in @ZeitlicheAufloesungUmfang aufgezeigt)
 - Die Steuerung funktioniert nur in Kombination mit einer Wetterstation auf dem Dach
   - Man müsste dort die direkte und indirekte strahlung messung können
+- Der Datenoutput mit N, R, V und Azimutwinkel  ermöglicht maximale Flexibilität um verschiedene Steuerung zu ermöglichen
+- Cut-Off-Angle kann definiert werden mit Höhenwinkel
+- Mit Azimut können sehr flache einfallende Sonnenstrahlen toleriert werden, wenn z.B. Säulen zwischen den Fenstern aufgestellt sind
