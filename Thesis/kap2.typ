@@ -1,7 +1,7 @@
 = Theoretische Grundlagen (70% fertig)<TheoretischeGrundlagen>
 == Geometrische Grundlagen <GeometrischeGrundlagen>
 
-In diesem Kapitel werden die astronomischen und geometrischen Gesetzmäßigkeiten hergeleitet, die für die Berechnung des Schattenwurfs maßgeblich sind. Zudem erfolgt eine Klassifizierung der aktorischen Komponenten und der zu optimierenden Zielgrößen.
+In diesem Kapitel werden die astronomischen und geometrischen Gesetzmäßigkeiten hergeleitet, die für die Berechnung des Schattenwurfs maßgeblich sind. 
 
 === Sonnenbahnmechanik <Sonnenbahnmechanik>
 Für eine exakte Verschattungssimulation muss die Position der Sonne bekannt sein. Im Folgenden werden die Berechnungsgrundlagen für die Wahre Ortszeit, den Stundenwinkel sowie für Deklination, Höhenwinkel und Azimut dargelegt (siehe @fig-sonnenmodell).
@@ -104,6 +104,13 @@ Auf eine detaillierte mathematische Herleitung der über 30 Korrekturterme des @
 === Geometrie der Verschattung <GeometrieVerschattung>
 Nachdem die Position der Sonne bestimmt wurde, muss im nächsten Schritt geprüft werden, ob die direkte Sichtlinie zwischen einem betrachteten Punkt auf der Fassade (z. B. Fenstermittelpunkt) und der Sonne durch Hindernisse unterbrochen wird.
 
+Eine etablierte Methode zur Visualisierung dieser Umgebungsverschattung für einen spezifischen Referenzpunkt am Gebäude ist das Sonnenbahndiagramm (siehe @fig-Sonnenbahndiagramm). Dafür müssen für alle hindernisse in der Umgebung der Höhenwinkel und Azimutwinkel ausgemessen werden. Aus dieser zweidimensionalen Darstellung der Sonnenbahnen und der Umgebungssilhouette lassen sich Grenzwinkel ableiten, ab denen ein externes Objekt einen Schatten auf den betrachteten Punkt wirft. 
+#figure(
+  image("assets/Sonnenstandsdiagramm.png", width: 70%),
+  caption: [Sonnenbahndiagramm mit Umgebungssilhouette @Quaschning.],
+  placement: auto
+) <fig-Sonnenbahndiagramm>
+
 ==== Der Sonnenvektor <Sonnenvektor>
 Für die geometrische Simulation in 3D-Umgebungen ist die sphärische Darstellung (Winkel) oft unpraktisch. Stattdessen wird die Sonnenposition als normierter Richtungsvektor $vec(S)$ im kartesischen Koordinatensystem definiert. 
 
@@ -117,31 +124,19 @@ $ vec(S) = mat(
 
 Dieser Vektor zeigt vom Ursprung zur Sonne. Für die Verschattungsberechnung wird der Vektor invertiert ($-vec(S)$), um die Einstrahlungsrichtung zu simulieren.
 
-==== Klassifizierung der Verschattungstypen <KlassifizierungVerschattungstypen>
-Man unterscheidet in der Simulation zwei wesentliche Ursachen für den Schattenwurf:
+// ==== Klassifizierung der Verschattungstypen <KlassifizierungVerschattungstypen>
+// Man unterscheidet in der Simulation zwei wesentliche Ursachen für den Schattenwurf:
 
-- *Fremdverschattung:* Verursacht durch Objekte außerhalb der eigenen Gebäudehülle, wie Nachbarbebauung, Vegetation oder Topografie. Diese Geometrien sind im Betrieb statisch, müssen aber im digitalen Modell (IFC/CityGML) präzise abgebildet sein.
-- *Eigenverschattung:* Verursacht durch die Gebäudegeometrie selbst, z. B. durch Fassadenvorsprünge, Balkone oder die Laibungstiefe des Fensters. Besonders die Laibungstiefe spielt bei steilen Sonnenständen eine kritische Rolle für das Vorausschauen des effektiven Lichteintrag.
+// - *Fremdverschattung:* Verursacht durch Objekte außerhalb der eigenen Gebäudehülle, wie Nachbarbebauung, Vegetation oder Topografie. Diese Geometrien sind im Betrieb statisch, müssen aber im digitalen Modell (IFC/CityGML) präzise abgebildet sein.
+// - *Eigenverschattung:* Verursacht durch die Gebäudegeometrie selbst, z. B. durch Fassadenvorsprünge, Balkone oder die Laibungstiefe des Fensters. Besonders die Laibungstiefe spielt bei steilen Sonnenständen eine kritische Rolle für das Vorausschauen des effektiven Lichteintrag.
 
-==== Das Raycasting-Verfahren <RaycastingVerfahren>
-Zur Ermittlung des Verschattungsstatus wird in modernen Simulationstools das *Raycasting* (Strahlenverfolgung) eingesetzt. Dabei wird ein theoretischer Sehstrahl $R(t)$ vom Referenzpunkt $P_0$ (z. B. Fenstermitte) in Richtung der Sonne gesendet:
+=== Raycasting-Verfahren zur Kollisionserkennung
+Das Raycasting (Strahlenverfolgung) ist ein grundlegendes Verfahren der 3D-Computergrafik, das primär zur Ermittlung von Sichtbarkeiten und geometrischen Schnittpunkten im dreidimensionalen Raum eingesetzt wird. Im Kontext der Gebäudeanalyse dient dieser Algorithmus dazu, Fremdverschattungen durch urbane Umgebungsstrukturen (wie Nachbargebäude oder Topografie) präzise zu detektieren.
 
-$ R(t) = P_0 + t dot vec(S) quad "mit" t > 0 $
+Anders als in der physikalischen Realität, in der Lichtstrahlen von der Lichtquelle emittiert werden, arbeitet das hier angewandte Verfahren aus Gründen der Recheneffizienz invers (Backward Raytracing). Ausgehend von den zu untersuchenden Empfängerflächen – in der Verschattungssimulation den Messpunkten der Fenster – wird ein linearer Prüfstrahl (Ray) generiert. Dieser Strahl wird exakt entlang des berechneten Sonnenrichtungsvektors $vec(r)$ in den Raum projiziert. Die zugrundeliegende Engine berechnet anschließend mathematisch, ob dieser Strahl auf seinem Weg eine andere Polygonfläche (Mesh) schneidet. Registriert der Algorithmus eine Kollision mit einer Objektgeometrie (Intersection), bevor der Strahl die theoretische Distanz zur Lichtquelle erreicht, gilt der ausgehende Fensterpunkt als durch ein Hindernis verschattet. Hat der Strahl hingegen freie Bahn, wird direkte Besonnung protokolliert.
 
-Der Algorithmus prüft, ob dieser Strahl ein beliebiges Polygon der Umgebungsszene (Mesh) schneidet (Intersection Test).
-
-$ S_"status" = cases(
-  1 & "wenn Schnittpunkt existiert (Schatten)",
-  0 & "wenn kein Schnittpunkt existiert (Sonne)"
-) $
-
-Für eine differenzierte Betrachtung (z. B. 50% verschattet) wird die Fensterfläche in ein Raster aus Sub-Punkten unterteilt (Sampling). Der Verschattungsgrad $F_s$ ergibt sich dann aus dem Verhältnis der verschatteten Punkte $n_"schatten"$ zur Gesamtpunktzahl $N$:
-
-$ F_s = frac(n_"schatten", N) $
-
-==== Raytracing und Reflexionen <RaytracingReflexionen>
-Während das Raycasting primär die binäre Sichtbarkeit (Schatten/Sonne) prüft, erweitert das *Raytracing* dieses Prinzip um die rekursive Verfolgung von Lichtstrahlen nach deren Interaktion mit Oberflächen.
-
+==== Raytracing und Reflexionen... <RaytracingReflexionen>
+Während das Raycasting primär die binäre Sichtbarkeit (Schatten/Sonne) prüft, erweitert das Raytracing dieses Prinzip um die rekursive Verfolgung von Lichtstrahlen nach deren ersten Interaktion mit einer Oberfläche@tuwien_raytracing.
 Dies ist relevant für die Simulation von:
 - *Spiegelungen:* Zusätzlicher Energieeintrag durch reflektierende Glasfassaden gegenüberliegender Gebäude.
 - *Diffuse Streuung:* Aufhellung von Räumen durch helle Umgebungsflächen.
@@ -150,25 +145,14 @@ Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung
 1.  *Rechenaufwand:* Die Komplexität steigt mit der Anzahl der "Bounces" (Lichtsprünge) exponentiell an.
 2.  *Datenqualität:* Für eine "korrekte Berechnung sind physikalische Materialparameter (Reflexionsgrad, Rauheit) im gesamten 3D-Modell notwendig, die in der Praxis oft fehlen (siehe Kapitel ???).
 
-*Abgrenzung für diese Arbeit:*
-???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in Standard-IFC-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (@Kap4[Kapitel]) auf das geometrische Raycasting. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (@Kap5[Kapitel]) diskutiert.
+// *Abgrenzung für diese Arbeit:*
+// ???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in 3D-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (@Kap4[Kapitel]) auf das geometrische Raycasting. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (@Kap5[Kapitel]) diskutiert.
 
-=== Back-Face Culling
-Dieses aus der 3D-Computergrafik stammende Verfahren wird eingesetzt, um die Effizienz komplexer Raycasting-Algorithmen signifikant zu steigern. Das als „Rückseiten-Ausblendung“ bekannte Prinzip sorgt dafür, dass Geometrien, die der Strahlenquelle abgewandt sind, nicht prozessiert bzw. bei der Kollisionsberechnung ignoriert werden.Die technische Umsetzung basiert auf einem mathematischen Vergleich zwischen dem Normalenvektor der Fensterfläche $vec{n}$ und dem Richtungsvektor der Solarstrahlung $vec{r}$. Wie in @fig-culling vereinfacht dargestellt, treffen Sonnenstrahlen (Rays) von links auf eine Gebäudekante. Die Entscheidung, ob eine Fläche aktiv verschattet wird, hängt vom Winkel $alpha$ zwischen diesen Vektoren ab:
-- Fenster A (zugewandt): Beträgt der Winkel $alpha_A$ mehr als 90°, weisen die Vektoren in entgegengesetzte Richtungen (das Skalarprodukt ist negativ). Das System erkennt, dass die Fensterfläche der Sonne zugewandt ist und eine Verschattungsprüfung stattfinden muss.
-- Fenster B (abgewandt): Beträgt der Winkel $alpha_B$ weniger als 90°, zeigen die Vektoren in dieselbe allgemeine Richtung – der Strahl nähert sich der Fläche also von der Rückseite. Das Skalarprodukt ist in diesem Fall positiv, und die Geometrie wird durch das Culling-Verfahren ignoriert.
-Um Fehlkalkulationen auszuschließen, muss im Vorfeld garantiert werden, dass alle Flächennormalen im BIM-Modell konsistent nach außen gerichtet sind.
 
-#figure(
-  image("assets/Back_Face_Culling.png", width: 70%),
-  caption: [test],
-  placement: auto
-)<fig-culling>
+
 
 == Verschattungssysteme <Verschattungssysteme>
 === Bauphysikalische und lichttechnische Zielgrößen... <BauphysikalischeLichttechnischeZielgroessen>
-
-
 Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamellenwinkel) erfüllen in der modernen Gebäudeautomation wesentliche energetische und ergonomische Funktionen. Die primären Zielgrößen einer optimalen Steuerung definieren sich wie folgt:
 
 - *Sommerlicher Wärmeschutz:* Ziel ist die Minimierung des solaren Energieeintrags in das Gebäude, um die anfallende Kühllast und den damit verbundenen Energieverbrauch der Klimatisierung effektiv zu senken. Intelligente Sonnenschutzsysteme können die benötigte Kühlenergie um 30% reduzieren@hutchins2015shading[S. 12] seite 21#cite(<hutchins2015shading>)).

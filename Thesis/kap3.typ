@@ -3,15 +3,10 @@
 
 In der aktuellen Praxis der Gebäudeautomation weisen konventionelle Verschattungsstrategien signifikante Defizite auf. Die Berücksichtigung von Fremdverschattung durch umliegende Bebauung oder Topografie erfolgt oftmals über manuelle und fehleranfällige Prozesse. Dabei werden statische Verschattungsdaten für einzelne Fenster, Fenstergruppen oder ganze Fassadenabschnitte händisch in die Steuerungssysteme eingetragen.
 
-Eine etablierte Methode zur Visualisierung dieser Umgebungsverschattung für einen spezifischen Referenzpunkt am Gebäude ist das Sonnenbahndiagramm (siehe @fig-Sonnenbahndiagramm). Dafür müssen für alle hindernisse in der Umgebung der Höhenwinkel und Azimutwinkel ausgemessen werden. Aus dieser zweidimensionalen Darstellung der Sonnenbahnen und der Umgebungssilhouette lassen sich Grenzwinkel ableiten, ab denen ein externes Objekt einen Schatten auf den betrachteten Punkt wirft. 
+
 
 Diese spezifischen Winkel werden anschließend als statische Parameter in der Software der Jalousiesteuerung hinterlegt (siehe @fig-jalousiesteuerung). Diese Winkel werden in der Praxis oft ungefähr eingestellt und durch Trial and Error angepasst.
 
-#figure(
-  image("assets/Sonnenstandsdiagramm.png", width: 70%),
-  caption: [Sonnenbahndiagramm mit Umgebungssilhouette @Quaschning.],
-  placement: auto
-) <fig-Sonnenbahndiagramm>
 
 Im operativen Betrieb berechnet das Automationssystem fortlaufend den aktuellen Sonnenstand und gleicht diesen mit den definierten Grenzwinkeln ab. Auf Basis dieses Abgleichs entscheidet die Logik, ob der entsprechende Punkt zum gegebenen Zeitpunkt verschattet ist oder direkter Sonneneinstrahlung ausgesetzt ist.
 
@@ -160,6 +155,27 @@ Die Simulation prüft die vier Extrempunkte der Fenstergeometrie. Sobald mindest
 Ein feines Raster würde mehrere Punkte entlang der seitlichen Kanten des Fensters messen. Dies ermöglicht theoretisch eine genauere Steuerung der Behanghöhe, müsste allerdings in Kombination mit einer hohen zeitlichen Auflösung erfolgen. Ansonsten kann die Steuerung von der hohen örtlichen Datendichte nicht profitieren und müsste die zwischen den groben Zeitintervallen weit gewanderte Schattenkante in großen Sprüngen nachführen.
 Der Nachteil wäre außerdem eine Vervielfachung der Rechenzeit und eine komplexere Datenstruktur.
 
+
+== Konzeption der Simulationslogik
+=== Front-Face Check
+Um die Rechenzeit des Algorithmus signifikant zu reduzieren und unnötige Raycasts zu vermeiden, wird den eigentlichen Kollisionsabfragen ein Filterverfahren vorgeschaltet. Dieser Schritt basiert auf der mathematischen Logik des aus der 3D-Computergrafik stammenden Back-Face Cullings (Rückseiten-Ausblendung), fungiert im physikalischen Kontext der Gebäudeanalyse jedoch als Eigenschatten-Prüfung (Front-Face Check). Das Prinzip stellt sicher, dass Fensterflächen, die auf der abgewandten Schattenseite des Gebäudes liegen, frühzeitig identifiziert und von der weiteren Berechnung ausgeschlossen werden. Die technische Umsetzung erfolgt über die Auswertung des Skalarprodukts zwischen dem Normalenvektor der Fensterfläche $vec(n)$ und dem Richtungsvektor der Solarstrahlung $vec(r)$ (Strahl vom Fenster zur Sonne). 
+Wie in @fig-normalsCheck vereinfacht dargestellt, erkennt man eine Gebäudeecke in der Draufsicht mit Fenstern an der Außenseite. Es werden Strahlen (Rays) horizontal vom Mittelpunkt des Fensters in Richtung der Sonne dargestellt.
+
+#figure(
+  image("assets/Back_Face_Culling.png", width: 70%),
+  caption: [Draufsicht einer Gebäudeecke mit sechs Fenstern],
+  placement: auto
+)<fig-normalsCheck>
+
+. Die Entscheidung, ob eine Fläche der Sonne zugewandt ist, hängt vom Winkel $alpha$ zwischen diesen beiden Vektoren ab:
+- *Fenster A (zugewandt)*: Beträgt der Winkel $alpha_A$ weniger als 90°, weisen die Vektoren in die selbe Richtungen (das Skalarprodukt ist positiv). Das System erkennt, dass die Fensterfläche der Sonne zugewandt ist und eine Verschattungsprüfung stattfinden muss.
+- *Fenster B (abgewandt)*: Beträgt der Winkel $alpha_B$ mehr als 90°, zeigen die Vektoren in die entgegengesetzte Richtung --- der Strahl entspringt also von der Rückseite der Fensterfläche. Das Skalarprodukt ist in diesem Fall negativ, und die Geometrie wird durch das den Front-Facing check ignoriert.
+Um Fehlkalkulationen in diesem Schritt auszuschließen, muss garantiert sein, dass alle Flächennormalen im 3D-Modell konsistent nach außen gerichtet sind.
+
+=== Vermeidung von Selbstverschattung
+Bei der Konzeption der auf Raycasting basierenden Simulationsarchitektur (vgl. Grundlagen in Kapitel 2.x) muss eine bekannte Problematik der 3D-Simulation berücksichtigt werden: sogenannte Self-Intersection-Fehler (Selbstverschattungen). Da Fenster in BIM- und IFC-Modellen häufig als Volumenkörper modelliert sind, kann ein direkt an der Glasfläche startender Teststrahl aufgrund von minimalen mathematischen Rundungsfehlern (Floating-Point-Ungenauigkeiten) sofort mit der Innenseite oder dem Rahmen der eigenen Geometrie kollidieren. Das Fenster würde sich algorithmisch somit selbst verschatten.
+
+Um dies zu verhindern, ohne auf rechenintensive Auswertungen der getroffenen Flächennormalen zurückgreifen zu müssen, wird in der Simulationslogik ein Start-Offset (Ray Bias) definiert. Der geometrische Ursprung des Prüfstrahls wird dabei nicht exakt auf der Glasfläche platziert, sondern entlang des Richtungsvektors virtuell um ein definiertes Maß (beispielsweise 0,3 Meter) in den Außenraum verschoben. Die eigentliche Kollisionsprüfung beginnt somit sicher außerhalb der eigenen Fenster- und Laibungsgeometrie, was die Fehlalarme eliminiert und die Robustheit der Gesamtsimulation signifikant erhöht.
 
 == Definition der Systemarchitektur und Schnittstellen...<DefinitionSystemarchitektur>
 
