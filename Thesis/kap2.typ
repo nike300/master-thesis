@@ -152,12 +152,12 @@ Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung
 
 
 == Verschattungssysteme <Verschattungssysteme>
-=== Bauphysikalische und lichttechnische Zielgrößen... <BauphysikalischeLichttechnischeZielgroessen>
+=== Bauphysikalische und lichttechnische Zielgrößen... <Zielgroessen>
 Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamellenwinkel) erfüllen in der modernen Gebäudeautomation wesentliche energetische und ergonomische Funktionen. Die primären Zielgrößen einer optimalen Steuerung definieren sich wie folgt:
 
-- *Sommerlicher Wärmeschutz:* Ziel ist die Minimierung des solaren Energieeintrags in das Gebäude, um die anfallende Kühllast und den damit verbundenen Energieverbrauch der Klimatisierung effektiv zu senken. Intelligente Sonnenschutzsysteme können die benötigte Kühlenergie um 30% reduzieren@hutchins2015shading[S. 12] seite 21#cite(<hutchins2015shading>)).
+- *Sommerlicher Wärmeschutz:* Ziel ist die Minimierung des solaren Energieeintrags in das Gebäude, um die anfallende Kühllast und den damit verbundenen Energieverbrauch der Klimatisierung effektiv zu senken. Intelligente Sonnenschutzsysteme können die benötigte Kühlenergie um 30% reduzieren@hutchins2015shading[S. 12].
 
-- *Winterliche Wärmegewinne:* Im Heizfall ist die durch transparente Hüllflächen in das Gebäude gelangende Solarstrahlung zu maximieren, um die Heizlast und den primärenergetischen Aufwand zu reduzieren.
+- *Winterlicher Wärmeschutz:* Im Heizfall ist die durch transparente Hüllflächen in das Gebäude gelangende Solarstrahlung zu maximieren, um die Heizlast und den primärenergetischen Aufwand zu reduzieren. Gleichzeitig kann der Transmissionswärmefluss von innen nach außen minimiert werden, durch das Herunterfahren von Behängen.
 
 - *Visueller Komfort:* Hierbei steht die Vermeidung von ungewollter Direkt- und Reflexblendung an Arbeitsplätzen im Vordergrund. Gleichzeitig soll durch eine präzise Lamellennachführung die Sichtverbindung nach außen gemäß DIN EN 14501 weitestgehend erhalten bleiben, was den visuellen Komfort maßgeblich erhöht.
 
@@ -168,11 +168,16 @@ Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamelle
 
 - *Reduktion von Lichtverschmutzung:* Durch das automatisierte Schließen der Behänge in den Nacht- oder frühen Morgenstunden wird verhindert, dass künstliches Licht störend in die Umgebung abstrahlt. Dies schützt umliegende Ökosysteme und natürliche Biorhythmen von Mensch und Natur @lichtverschmutzung.
 
+- *Fremdschutz:* - gegen einbrecher, gegen hagelschaden an fenstern
+
+
+- *Selbstschutz:* Für den Fall eines Extremwetterereignisses muss ein Schutz für die Jalousie vorgesehen werden. Dies kann über eine Steuerung funktionieren, die die Windgeschwindigkeit von einer Wetterstation auf dem Dach oder durch den Zugriff auf einen Online-Wetterservice erhält.
+
 - *Privatsphäre:* Zuletzt bieten steuerbare Behänge durch die Unterbrechung der Sicht nach Innen einen Beitrag zur Privatsphäre der anwesenden Personen.
 
 Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häufig in einem direkten Zielkonflikt zueinander (beispielsweise konkurriert ein maximaler Blendschutz direkt mit einer hohen Tageslichtautonomie). Die Steuerung der Raumautomation muss daher definieren, in welcher Kaskade diese Funktionen priorisiert werden.
 
-=== Klassifizierung steuerbarer Sonnenschutzsysteme... <KlassifizierungSteuerbarerSonnenschutzsysteme>
+=== Klassifizierung steuerbarer Sonnenschutzsysteme (umbenennen in Begriffserläuterung oder so?)... <KlassifizierungSteuerbarerSonnenschutzsysteme>
 - Systeme mit einem Freiheitsgrad (z. B. Rollläden, Screens): Variable Position $h$ (0-100%).
 - Systeme mit zwei Freiheitsgraden (z. B. Raffstore/Jalousien): Variablen Position $h$ und Lamellenwinkel $lambda$.
 - Relevanz für die Automation: Je komplexer das System, desto wichtiger ist die präzise Simulation des Winkels.
@@ -241,21 +246,54 @@ Die Georeferenzierung beschreibt die Zuweisung räumlicher Bezugsinformationen z
 
 == Normative Grundlagen... <NormativeGrundlagen>
 === Grundlagen der Licht- und Wärmesteuerung <GrundlagenLichtWaermesteuerung>
+@ra
+
+
 Ein Grundziel der Verschattung ist der Blendschutz, der in der DIN EN 17037 @dinen17037 behandelt wird.
 Nutzen:
 - Aussicht
 - Blendschutz 
-Für den visuellen Komfort gibt es vor allem zwei Faktoren auf die Verschattungseinrichtungen Einfluss nehmen können: Der Blendschutz soll das auftreten von einer zu hohen Leuchtdichte verhindern, da diese sonst
+Für den visuellen Komfort gibt es vor allem zwei Faktoren auf die Verschattungseinrichtungen Einfluss nehmen können: Der Blendschutz soll das Auftreten von einer zu hohen Leuchtdichte verhindern, da diese sonst
 
 "Kritische Blendungssituationen, die einen Schwellenwert DGPt überschreiten, sollten auf einen bestimmten Anteil der Bezugsnutzungsdauer fDGP,exceed beschränkt sein" S.52 17037
-=== Standards der Gebäude- und Raumautomation (VDI 3814, DIN V 18599-11) <StandardsGebaeudeRaumautomation>
 
-Die VDI 3813@vdi3813-2 definiert einen Funktionsblock welcher prüft, "ob 
-ein Fenster oder eine Gruppe von Fenstern, die z. B. einem Raum zugeordnet sind, temporär durch umliegende Bebauung oder eigene Gebäudeteile verschattet werden". #emph("S_AUTO") als Eingang definiert dabei den Positionierbefehl der Jalousie aus den Funktionsblocks der Lamellennachführung oder Sonnenautomatik, während #emph("S_AUTO") auf der Ausgangsseite den korrigierten Positionierbefehl vorgibt. Es wird beschrieben, dass der Azimut- und Höhenwinkel, sowie eine vordefinierte Parkposition übergeben werden müssen. 
 
-Siehe @fig-Funktionsblock  
+=== Erfüllung der GA-Effizienzklassen EN 15232 bzw. DIN V 18599-11) 
+
+
+=== VDI-Richtlinie 3813
+In der VDI-Richtlinie 3813 Blatt 2 werden normierte Funktionsblöcke (siehe beispielhaft @fig-FunktionsblockThermo) definiert, um komplexe @ra#[]-Funktionen herstellerneutral und einheitlich darzustellen. Hierbei werden die einzelnen Funktionsblöcke informationstechnisch miteinander verknüpft, sodass Steuersignale generiert, logisch modifiziert und in einer Kaskade weitergegeben werden können. Die programmtechnische Berechnung erfolgt meist auf Ebene der @as.
+
+==== Funktionsblock Thermoautomatik
+Die in @Zielgroessen definierten Ziele des sommerlichen und winterlichen Wärmeschutzes werden durch den Funktionsblock der Thermoautomatik abgebildet. Dieser Funktionsblock wertet Parameter wie die Raum- und Außentemperatur aus. Im Winterfall soll er garantieren, dass in unbelegten Räumen der solare Wärmeeintrag durch geöffnete Behänge maximiert wird, um die Heizlast zu senken. Im Sommerfall hingegen erzwingt der Block das Schließen des Sonnenschutzes bei zu hoher Raumtemperatur, um den solaren Energieeintrag und damit die Kühllast zu minimieren. 
+
 #figure(
-  image("assets/FunktionsblockVerschattung3813.png"),
-  caption: [Funktionsblock für die Verschattungskorrektur@vdi3813-2]
-)<fig-Funktionsblock>
-...
+  image("assets/FunktionsblockThermoautomatik3813.png", width: 50%),
+  caption: [Funktionsblock für die Thermoautomatik@vdi3813-2.]
+)<fig-FunktionsblockThermo>
+
+==== Funktionsblock Verschattungskorrektur
+Gemäß VDI 3813-2 dient dieser Funktionsblock als logischer Filter, der intern berechnet, „ob ein Fenster oder eine Gruppe von Fenstern [...] temporär durch umliegende Bebauung oder eigene Gebäudeteile verschattet werden“. Im Signalfluss empfängt der Block über den Eingang #emph("S_AUTO") den initialen Stellbefehl der vorgelagerten Automatikfunktionen. Konventionell gleicht der Algorithmus den aktuellen Sonnenstand (Azimut und Elevation) mit den im Parameter #emph("PAR_SHAD") hinterlegten statischen Verschattungsgrenzen ab. Detektiert die Logik eine Verschattung, wird der Schließbefehl blockiert und stattdessen eine definierte Parkposition an den Ausgang übergeben. 
+
+Da die in dieser Arbeit entwickelte 3D-Simulation den Verschattungsstatus jedoch bereits prozessorausgelagert (extern) und hochauflösend ermittelt, wird die interne Winkelkalkulation dieses normierten Blocks obsolet. Die Simulation ersetzt somit nicht nur den statischen Parameter #emph("PAR_SHAD"), sondern macht deutlich, dass die Architektur des gesamten Funktionsblocks im Kontext einer datengetriebenen, simulationsbasierten Gebäudeautomation konzeptionell neu gedacht werden muss.
+
+==== Funktionsblock Lamellennachführung (Blendschutz-Automatik)
+Dieser Funktionsblock dient primär der Sicherstellung des visuellen Komforts für den Gebäudenutzer. Sobald direkte Sonnenstrahlung auf die Fassade trifft – und die Verschattungskorrektur keinen Fremdschatten meldet – berechnet der Block anhand der aktuellen Sonnenelevation den optimalen Neigungswinkel der Jalousielamellen. Ziel ist es, direkte Blendung an den Arbeitsplätzen konsequent zu verhindern, gleichzeitig jedoch ein Maximum an diffusem Tageslicht in die Raumtiefe zu lenken, um die Tageslichtautonomie zu steigern.
+
+==== Funktionsblock Dämmerungsautomatik
+Zur Erfüllung der Schutzziele bezüglich der Reduktion von Lichtverschmutzung steuert dieser Block die Fassade in den Abend- und Nachtstunden. Nach dem rechnerischen oder sensorgestützten Sonnenuntergang erzwingt der Funktionsblock das Schließen der Behänge. Dies verhindert einerseits das störende Abstrahlen von künstlichem Raumlicht in die urbane Umgebung und bietet den Nutzern andererseits einen effektiven Sichtschutz.
+
+==== Funktionsblock Witterungsschutz
+Der Witterungsschutz bildet die oberste sicherheitstechnische Instanz der Raumautomation. Er wertet kontinuierlich externe Wetterparameter wie Windgeschwindigkeit, Niederschlag oder Eisbildung aus. Bei Überschreitung kritischer Grenzwerte zwingt dieser Block die externen Sonnenschutzeinrichtungen unmittelbar in eine mechanisch sichere Endlage (in der Regel den eingefahrenen Zustand). Dies dient dem Schutz der Anlage vor mechanischer Zerstörung.
+
+==== Funktionsblock Prioritätensteuerung
+Die in der VDI 3813 beschriebene Automationslogik basiert auf einem strikten Kaskaden- und Prioritätenprinzip. Die Steuerungssignale werden hierarchisch ausgewertet, wobei übergeordnete Blöcke die Befehle nachgelagerter Funktionen überschreiben können. Die fundamentale Prioritätenfolge lautet: Sicherheit (Witterungsschutz) steht über der Nutzerbedienung (manueller Eingriff), welche wiederum über der Raumautomation (Verschattungskorrektur, Blendschutz, Thermoautomatik) steht. Energetische und visuelle Automatikfunktionen greifen somit nur dann, wenn weder sicherheitskritische Ereignisse vorliegen noch der Nutzer das System manuell übersteuert hat.
+
+// Siehe @fig-FunktionsblockVersch  
+// #figure(
+//   image("assets/FunktionsblockVerschattung3813.png"),
+//   caption: [Funktionsblock für die Verschattungskorrektur@vdi3813-2]
+// )<fig-FunktionsblockVersch>
+// 
+// 
+

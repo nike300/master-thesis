@@ -158,18 +158,18 @@ Der Nachteil wäre außerdem eine Vervielfachung der Rechenzeit und eine komplex
 
 == Konzeption der Simulationslogik
 === Front-Face Check
-Um die Rechenzeit des Algorithmus signifikant zu reduzieren und unnötige Raycasts zu vermeiden, wird den eigentlichen Kollisionsabfragen ein Filterverfahren vorgeschaltet. Dieser Schritt basiert auf der mathematischen Logik des aus der 3D-Computergrafik stammenden Back-Face Cullings (Rückseiten-Ausblendung), fungiert im physikalischen Kontext der Gebäudeanalyse jedoch als Eigenschatten-Prüfung (Front-Face Check). Das Prinzip stellt sicher, dass Fensterflächen, die auf der abgewandten Schattenseite des Gebäudes liegen, frühzeitig identifiziert und von der weiteren Berechnung ausgeschlossen werden. Die technische Umsetzung erfolgt über die Auswertung des Skalarprodukts zwischen dem Normalenvektor der Fensterfläche $vec(n)$ und dem Richtungsvektor der Solarstrahlung $vec(r)$ (Strahl vom Fenster zur Sonne). 
+Um die Rechenzeit des Algorithmus signifikant zu reduzieren und unnötige Raycasts zu vermeiden, wird den eigentlichen Kollisionsabfragen ein Filterverfahren vorgeschaltet. Dieser Schritt basiert auf der mathematischen Logik des aus der 3D-Computergrafik stammenden Back-Face Cullings, fungiert im physikalischen Kontext der Gebäudeanalyse jedoch als Eigenschatten-Prüfung (Front-Face Check). Das Prinzip stellt sicher, dass Fensterflächen, die auf der abgewandten Schattenseite des Gebäudes liegen, frühzeitig identifiziert und von der weiteren Berechnung ausgeschlossen werden. Die technische Umsetzung erfolgt über die Auswertung des Skalarprodukts zwischen dem Normalenvektor der Fensterfläche $vec(n)$ und dem Richtungsvektor der Solarstrahlung $vec(r)$ (Strahl vom Fenster zur Sonne). 
 Wie in @fig-normalsCheck vereinfacht dargestellt, erkennt man eine Gebäudeecke in der Draufsicht mit Fenstern an der Außenseite. Es werden Strahlen (Rays) horizontal vom Mittelpunkt des Fensters in Richtung der Sonne dargestellt.
 
 #figure(
   image("assets/Back_Face_Culling.png", width: 70%),
-  caption: [Draufsicht einer Gebäudeecke mit sechs Fenstern],
+  caption: [Draufsicht einer Gebäudeecke mit der Sonne zugewandten und abgewandten Fenstern],
   placement: auto
 )<fig-normalsCheck>
 
-. Die Entscheidung, ob eine Fläche der Sonne zugewandt ist, hängt vom Winkel $alpha$ zwischen diesen beiden Vektoren ab:
-- *Fenster A (zugewandt)*: Beträgt der Winkel $alpha_A$ weniger als 90°, weisen die Vektoren in die selbe Richtungen (das Skalarprodukt ist positiv). Das System erkennt, dass die Fensterfläche der Sonne zugewandt ist und eine Verschattungsprüfung stattfinden muss.
-- *Fenster B (abgewandt)*: Beträgt der Winkel $alpha_B$ mehr als 90°, zeigen die Vektoren in die entgegengesetzte Richtung --- der Strahl entspringt also von der Rückseite der Fensterfläche. Das Skalarprodukt ist in diesem Fall negativ, und die Geometrie wird durch das den Front-Facing check ignoriert.
+Die Entscheidung, ob eine Fläche der Sonne zugewandt ist, hängt vom Winkel $alpha$ zwischen diesen beiden Vektoren ab:
+- *Fenster A (zugewandt)*: Da der Winkel $alpha_A$ weniger als 90° beträgt, weisen die Vektoren in die selbe Richtungen (das Skalarprodukt ist positiv). Das System erkennt, dass die Fensterfläche der Sonne zugewandt ist und eine Verschattungsprüfung stattfinden muss.
+- *Fenster B (abgewandt)*: Da der Winkel $alpha_B$ mehr als 90° beträgt, zeigen die Vektoren in die entgegengesetzte Richtung --- der Strahl entspringt also von der Rückseite der Fensterfläche. Das Skalarprodukt ist in diesem Fall negativ, und die Geometrie wird durch das den Front-Facing check ignoriert.
 Um Fehlkalkulationen in diesem Schritt auszuschließen, muss garantiert sein, dass alle Flächennormalen im 3D-Modell konsistent nach außen gerichtet sind.
 
 === Vermeidung von Selbstverschattung
@@ -188,6 +188,30 @@ Hier geht es um die Grundsatzentscheidung: Handelt es sich um ein zustandsloses 
 - Status R, V, N - Azimut erklären
 - *Mapping-Konzept:* Entwicklung einer Logik zur Verknüpfung der Simulationsergebnisse mit den physischen Datenpunkten der Gebäudeautomation (beispielsweise BACnet-Objekt-IDs).
 - Auch die Frage: Auf welchem Rechner sollten die Daten gespeichert werden? Extern oder intern beim Kunden?
+
+== Definition eines Funktionsblocks für VDI 3813 Teil 2
+=== Modifizierter Funktionsblock: Simulationsbasierte Verschattungskorrektur
+
+Basierend auf den in Kapitel 2 identifizierten Schwächen der klassischen Verschattungskorrektur nach VDI 3813-2, wird für die hier entwickelte Systemarchitektur ein modifizierter Funktionsblock konzipiert (siehe @fig-NeuerFunktionsblock). Da die komplexe geometrische Kollisionsprüfung (Raycasting) bereits in die vorgelagerte IT-Ebene ausgelagert wurde, reduziert sich die Komplexität auf der @as#[]-Ebene drastisch. 
+
+Der modifizierte Baustein benötigt keine zyklischen Sonnenkoordinaten (Azimut und Elevation) und keine statischen Grenzwinkel mehr. Er fungiert als reiner Logikschalter und wertet folgende Schnittstellen aus:
+
+- *S_AUTO (Eingang):* Empfängt den initialen Stellbefehl (Jal) der vorgelagerten Automatikfunktionen (z. B. der Thermoautomatik).
+- *SIM_SHAD (Eingang):* Ein boolesches Signal, das den aktuellen Verschattungsstatus des Fensters repräsentiert (`True` = Fremdverschattung aktiv, `False` = direkte Besonnung).
+- *PAR_PARK (Parameter):* Definiert die Position, in die die Jalousie gefahren werden soll, wenn eine Verschattung vorliegt (in der Regel Behang geöffnet zur maximalen Tageslichtnutzung).
+
+*Steuerungslogik:* Die interne Logik des Blocks ist stark vereinfacht. Weist `SIM_SHAD` den Wert `True` auf, wird ein potenzieller Schließbefehl am Eingang blockiert und stattdessen der Wert von `PAR_PARK` an den Ausgang `S_AUTO` übergeben. Meldet die Simulation hingegen, dass das Fenster besonnt ist (`SIM_SHAD` = `False`), wird das Eingangssignal `S_AUTO` unverändert an die Aktorik durchgereicht.
+
+#figure(
+  image("assets/FunktionsblockNeu.png", width: 60%),
+  caption: [Konzept des modifizierten Funktionsblocks für eine simulationsbasierte Verschattungskorrektur.]
+)<fig-NeuerFunktionsblock>
+
+*Separation of Concerns (Trennung der Zuständigkeiten):* Aus informationstechnischer Sicht wird die zeitliche Auswertung der generierten Verschattungsdaten strikt von dieser logischen Verschattungskorrektur getrennt. Ein übergeordnetes Zeitprogramm der Automationsstation (beispielsweise ein BACnet Schedule Object) gleicht die interne Systemuhr mit dem importierten CSV-Datensatz ab und übergibt lediglich den aktuellen, binären Status an den Eingang `SIM_SHAD`. Der Funktionsblock selbst benötigt somit keine Echtzeituhr (RTC) und muss keine Daten-Arrays parsen. Dies garantiert eine ressourcenschonende und echtzeitfähige Verarbeitung innerhalb der Speicherprogrammierbaren Steuerung (SPS).
+
+
+// Aus informationstechnischer Sicht (Separation of Concerns) wird die zeitliche Auswertung der generierten Verschattungsdaten (Array-Handling) von der logischen Verschattungskorrektur getrennt. Ein übergeordnetes Zeitprogramm (beispielsweise ein BACnet Schedule Object) gleicht die interne Systemuhr mit dem importierten CSV-Datensatz ab und übergibt lediglich den aktuellen, binären Verschattungsstatus an den modifizierten Funktionsblock. Der Block selbst benötigt somit keine Echtzeituhr (RTC), was ihn hardware-schonend und echtzeitfähig macht."
+
 
 == Überlegung zur Integration in die Gebäudeautomation...
 - Daten könnten per MQTT oder andere Schnittstelle übergeben werden

@@ -71,5 +71,15 @@
     key: "hvbg",
     short: "HVBG",
     long: "Hessischen Verwaltung für Bodenmanagement und Geoinformation"
+  ),
+  (
+    key: "ra",
+    short: "RA",
+    long: "Raumautomation"
+  ),
+  (
+    key: "ga",
+    short: "GA",
+    long: "Gebäudeautomation"
   )
 )
