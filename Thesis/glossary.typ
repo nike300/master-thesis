@@ -81,5 +81,10 @@
     key: "ga",
     short: "GA",
     long: "Gebäudeautomation"
+  ),
+  (
+    key:"as",
+    short: "AS",
+    long: "Automationsstation"
   )
 )
