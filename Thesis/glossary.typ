@@ -86,5 +86,30 @@
     key:"as",
     short: "AS",
     long: "Automationsstation"
-  )
+  ),
+  (
+    key:"bim",
+    short: "BIM",
+    long: "Building Information Modeling"
+  ),
+  (
+    key:"ifc",
+    short: "IFC",
+    long: "Industry Foundation Classes"
+  ),
+  (
+    key:"as",
+    short: "AS",
+    long: "Automationsstation"
+  ),
+  (
+    key:"as",
+    short: "AS",
+    long: "Automationsstation"
+  ),
+  (
+    key:"as",
+    short: "AS",
+    long: "Automationsstation"
+  ), 
 )

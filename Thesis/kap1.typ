@@ -8,6 +8,7 @@
 - Verschattungsdaten sind ein wichtiger Baustein für eine hocheffiziente Verschattungssteuerung
 - Es liegen Daten in mangelhafter Qualität vor
 - Energiekosten hoch -> Tageslichtautonomie maximieren
+- VDI Funktionsblöcke sind nicht auf Simulationsdaten vorbereitet
 
 == Zielsetzung
 // Entwicklung einer durchgängigen Prozesskette (Data Workflow).
@@ -17,6 +18,7 @@
     - Beste Output struktur der Daten festlegen
   - Es soll die zum Teil mangelhafte Datenqualität aufgezeigt werden und wie damit umgegangen werden kann
   - Nur Einsatz von Open Source Daten
+  - Entwicklung eines angepassten Funktionsblocks für die @ra für Verschattungssteuerung
 
 == Aufbau der Arbeit
 Die vorliegende Arbeit gliedert sich in ..... 

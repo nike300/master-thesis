@@ -1,7 +1,7 @@
 #let short-title = state("short-title", none)
 #import "@preview/codly:1.3.0": *
 = Implementierung des Proof of Concept (90% fertig) <Kap4>
-Um den in Kapitel 3 theoretisch konzipierten Systemansatz auf seine praktische Tragfähigkeit zu überprüfen, wird im Folgenden ein @poc durchgeführt. Ziel dieses Kapitels ist es, die softwaretechnische Machbarkeit der entwickelten Prozesskette - vom fehlerfreien Import heterogener Datensätze (IFC und GIS) über die raycastingbasierte Verschattungssimulation bis hin zum strukturierten Datenexport - exemplarisch nachzuweisen. Hierfür wurde ein funktionsfähiger Software-Prototyp auf Basis von Blender und Python implementiert. 
+Um den in Kapitel 3 konzipierten Systemansatz auf seine praktische Tragfähigkeit zu überprüfen, wird im Folgenden ein @poc durchgeführt. Ziel dieses Kapitels ist es, die softwaretechnische Machbarkeit der entwickelten Prozesskette - vom fehlerfreien Import heterogener Datensätze (IFC und GIS) über die raycastingbasierte Verschattungssimulation bis hin zum strukturierten Datenexport - exemplarisch nachzuweisen. Hierfür wurde ein funktionsfähiger Software-Prototyp auf Basis von Blender und Python implementiert. 
 
 Die Entwicklung und Validierung dieses Prototyps erfolgt anhand eines komplexen Referenzprojekts:
 
@@ -22,19 +22,20 @@ Eine architektonische Besonderheit des FOUR sind die diagonal abgeschrägten Fas
 
 Es liegen die Fassadenmodelle aller Türme und Podeste des FOUR als ifc-Dateien vor.
 
-== Einrichten der Szene in Blender
-=== Import und Positionierung des Turm 1 <ImportPositionierungT1>
-*Import* 
+== Datenaufbereitung und Modellaufbau
+=== Import, Aufbereitung und Georeferenzierung des BIM-Modells
+==== Import und Positionierung des Turm 1 <ImportPositionierungT1>
+*Import:*
 Als erstes wird eine neue Blenderdatei gespeichert und die ifc-Datei des Referenzgebäudes importiert. Dies geschieht über das Blender Add-On Bonsai@bonsai_openbim, welches den Import und die Bearbeitung von BIM-Daten ermöglicht. Da die ifc-Modelle beim FOUR schon als Fassaden-Teilmodelle vorliegen, muss hier beim Import kein Filter angewandt werden, um nicht relevante Bauteile auszuschließen.
 
 // *Import* Da die in @AnalyseBIMDatenguete[Kapitel] definierten Anforderungen zum Teil nicht erfüllt werden, musste beim Import der FOUR-IFC-Datei noch folgendes gemacht werden:
 
-*Positionierung*
+*Positionierung:*
 Für die Positionierung des Gebäudes sollte zuerst auf die im IfcSite-Tag hinterlegten Koordinaten zurückgegriffen werden. Nach eingängiger Prüfung stellt sich heraus, dass die Koordinaten auf einen Punkt in der Mitte des Baufelds verweisen und nicht auf den gewünschten Ursprung des ifc-Modells. Nach Sichtung der Planunterlagen wurden im "Masterplan für das BIM-Modell" die richtigen XY-Koordinaten (in Form des Gauß-Krüger-Koordinatensystems) entdeckt. Die Z-Koordinate, also die Höhe des ifc-Ursprungs konnte über einen Schnitt ausfindig gemacht werden. Da Frankfurt ca. 100m über @nn liegt, werden genau 100m als Koordinatenebene festgelegt. Diese Koordinaten werden somit als Ursprung des gesamten Simulationsmodells definiert. 
 
 Für die weitere Verwendung werden die XY-Koordinaten mithilfe einer Anwendung des Bundesamt für Kartographie und Geodäsie@bkg_koordinatentransformation in das benötigte UTM32 Koordinatenreferenzsystem übersetzt. Dafür wird das Verschiebegitter Beta2007 verwendet.
 
-=== Aufbereitung des IFC-Modells Turm 1 <AufbereitungIFC>
+==== Aufbereitung des IFC-Modells Turm 1 <AufbereitungIFC>
 
 Die Qualität des vorliegenden IFC-Modells erforderte eine gezielte Vorbearbeitung, um eine konsistente Datengrundlage für die Verschattungssimulation zu schaffen. Im Fokus standen dabei die eindeutige Identifizierbarkeit der Fassadenelemente sowie die Bereinigung geometrischer Inkonsistenzen.
 
@@ -55,58 +56,7 @@ Zusätzlich wies das Modell geometrische Redundanzen in Form von sich überschne
 Schlussendlich wird ein temporäres Anlagenkennzeichnungssystem erstellt, dass sich auf das jeweilige Geschoss und eine fortlaufende Nummer für sämtliche Fensterelemente bezieht. Zum Beispiel FL13_W034 steht für:  13. Geschoss (Floor) an der 34. Position. Dies wird mithilfe eines Skripts (@DigitaleAnlage) implementiert. Diese Maßnahme ist notwendig, da die ursprünglichen Objektbezeichnungen keine Informationen über die räumliche Zuordnung enthalten. Hierfür müssen mithilfe einer Filterlogik, alle relevanten Fensterobjekte vorselektiert werden. Glasscheiben für die Balkonbrüstung und sehr kleine Fensterflächen haben keine Jalousie und werden somit nicht berücksichtigt.
 Ein Ansatz, um den finalen @aks des Jalousieaktors dem Fenster zuzuordnen, wird in @AKSZuordnung aufgezeigt.
 
-=== Import und Positionierung der Umgebungsdaten...<ImportUmgebungsdaten>
-
-Für die Modellierung der umgebenden, verschattenden Bebauung wird auf die offenen Geodaten der @hvbg#[]@Hessen3D zurückgegriffen. Die 3D-Gebäudemodelle für das Stadtgebiet Frankfurt am Main werden von offizieller Seite standardmäßig im Format CityGML (internationaler Standard des Open Geospatial Consortiums (OGC) zur Modellierung, Speicherung und dem Austausch semantischer 3D-Stadtmodelle@citygml_30) bereitgestellt.
-
-Da für Blender keine native Import-Schnittstelle für CityGML-Dateien existiert, ist eine vorherige Datenkonvertierung erforderlich. Die Datensätze werden hierfür in das JSON-basierte Format CityJSON (ebenfalls Datenaustauschformat für digitale 3D-Modelle von Städten und Landschaften@cityjson) mithilfe eines Tools@cityjson_conversion überführt.
-
-Der finale Import der Gebäudekörper in die 3D-Umgebung erfolgt über das Open-Source-Plugin CityJSONEditor@github_cityjsoneditor für Blender. Da die hierarchische Struktur der amtlichen Frankfurter Daten teilweise von den Standardannahmen des Plugins abwich, wurden im Rahmen dieser Arbeit gezielte Anpassungen am Python-Quellcode der Import-Erweiterung vorgenommen. Diese Fehlerbehebungen umfassen im Wesentlichen drei Aspekte:
-+ *Toleranz bei fehlenden Texturen:* Es wird eine Abfrage implementiert, die den Importprozess bei Objekten ohne definierte Fassadentexturen (Appearances) nicht abbricht, sondern die reine Geometrie weiterverarbeitet.
-+ *Datentyp-Konvertierung (@lod):* Die Einleseroutine wird dahingehend modifiziert, dass der im Datensatz als String vorliegende Wert für den Detailgrad (@lod) programmatisch in einen Float umgewandelt wird.
-+ *Filterung geometrieloser Objekte:* Es wird eine Filterroutine integriert, die Datensätze ohne physische 3D-Geometrie (wie bspw. reine Grundstücksgrenzen oder Landnutzungsflächen) beim Import ignoriert, um Programmabbrüche zu verhindern.
-
-Im Anschluss erfolgt die räumliche Verortung des Stadtmodells in der Simulationsumgebung. Die originären CityJSON-Daten sind im globalen ETRS89/UTM-Koordinatensystem referenziert. Da der Projektbasispunkt (P1) in Blender auf (0,0,0) gesetzt ist, muss P1 von den Koordinaten der Umgebungsdaten subtrahiert werden. Die Koordinaten werden im Quellcode hinterlegt. Durch diese Nullpunktverschiebung wird das Makromodell der Umgebung präzise in das kartesische System der Software überführt. Zuletzt werden Gebäude die in zweiter und dritter Reihe zum Turm 1 stehen, ausgewählt und aus der Szene gelöscht. Gebäude, die direkt nördlich des Referenzgebäudes (Turm 1) stehen, werden ebenfalls entfernt.
-
-
-=== Import und Positionierung der Türme 2 bis 4 <ImportT24>
-Da das Gebäudeensemble FOUR zum Zeitpunkt der Datenerhebung noch nicht in den amtlichen CityGML-Datensätzen erfasst ist, werden für die Verschattungssimulation die detaillierten IFC-Fassadenmodelle der Türme 2 bis 4 herangezogen. Diese liegen in einem sehr hohen Detaillierungsgrad (@lod 500) vor. Dies ist einerseits vorteilhaft für eine hohe Präzision des Schattenwurfs, beinhaltet andererseits jedoch eine massive Menge an nicht benötigten geometrischen und semantischen Daten. Um die Dateigröße zu minimieren und den Arbeitsspeicher während der Simulation zu entlasten, wird eine systematische Reduktion der Modelle durchgeführt:
-
-+ *Isolierter Import*: Die IFC-Dateien der Nachbartürme werden zunächst in separate Blender-Projekte importiert, um die Hauptdatei nicht initial zu überlasten.
-+ *Geometrische Aggregation*: Sämtliche Einzelbauteile (Meshes) eines Turms werden zu einem zusammenhängenden Polygonnetz verschmolzen.
-+ *Semantische Bereinigung*: Alle nicht-geometrischen Informationen, wie IFC-Hierarchien, Materialdaten und Objektattribute, werden restlos aus der Datei entfernt.
-+ *Topologische Reduktion*: Zur Verringerung der Polygonanzahl wird ein algorithmischer Filter (Decimate-Modifier mit den Parametern Collapse und Planar) auf das aggregierte Modell angewendet. Dieser reduziert redundante Geometrie auf flachen Ebenen, ohne die äußere, schattenwerfende Silhouette zu verfälschen.
-+ *Referenzierung*: Die optimierten Modelldateien werden abschließend über die Link-Funktion in die Simulations-Hauptszene eingebunden.
-
-Eine manuelle räumliche Transformation oder Neuausrichtung entfällt bei diesem Prozess. Da die Modelle der Türme 2 bis 4 denselben globalen Koordinatenursprung (Projektbasispunkt) wie das Referenzmodell des Turms 1 aufweisen, positionieren sie sich beim Import automatisch an den korrekten relativen Koordinaten.
-
-Die aggregierte Szene ist in @fig-fertigeSzene zu sehen...
-
-#figure(
-  image("assets/FertigeSzene.png", width: 100%),
-  caption: [Aufnahme der fertigen Szene mit Turm 1-4 FOUR und den umgebenden Gebäuden in Blender],
-  placement: auto
-)<fig-fertigeSzene>
-
-=== Einrichten der Sonne
-#grid(
-  columns: (1.5fr, 2fr),
-  gutter: 1cm,
-  figure(
-    image("assets/BlenderSunSettings.png", width: 100%),
-    caption: [Einstellungen für Sun Position Add-On],
-  ),
-  [
-    Für die visuelle Darstellung und Validierung des Sonnenstandes innerhalb der 3D-Umgebung wird das in Blender integrierte Add-On Sun Position@blender_sun_position verwendet. Die korrekte Ausrichtung des simulierten Sonnenlichts erfordert die Parametrierung folgender Randbedingungen:
-
-    Im Abschnitt Location werden die exakten geografischen Koordinaten des Projektstandorts definiert. Für das Gebäudeareal FOUR entsprechen diese einem Breitengrad von 50,113 und einem Längengrad von 8,675. Die Nordausrichtung des Modells (North Offset) bleibt in diesem Fall auf null Grad, da die Gebäude bereits korrekt ausgerichtet ist. Die Distanz gibt den Abstand des Sonnenobjekts vom Ursprung an und hat keine Relevanz für den Sonnenstand.
-    
-    Im Abschnitt Time wird die zeitliche Basis festgelegt. Durch die Zuweisung der lokalen Zeitzone (hier UTC+1) sowie der Eingabe eines spezifischen Datums und einer Uhrzeit berechnet der interne Algorithmus des Moduls automatisch den resultierenden Azimut- und Höhenwinkel. Es muss darauf geachtet werden, während der Sommerzeit das Feld "Dailight Savings" zu aktivieren.
-  ]
-)
-Das gekoppelte Lichtobjekt der Szene wird daraufhin in der virtuellen Umgebung exakt positioniert. Dies ermöglicht eine präzise visuelle Simulation des Schattenwurfs für jeden beliebigen Zeitpunkt im Jahresverlauf.
-
-== Zuordnung @aks Jalousieaktor zu Fenster in BIM-Modell<AKSZuordnung>
+=== Zuweisung des Anlagenkennzeichnungsschlüssels (AKS)<AKSZuordnung>
 Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden.
 Um die Gebäudeautomation zu planen wurde die Engineering-Software eConfigure von Schneider Electric eingesetzt. Die Planung war zum Zeitpunkt der Arbeit schon komplett abgeschlossen. Bei der Planung wurden Grundrisse der Etagen hinterlegt und alle Komponenten der Raumautomation verortet (siehe @fig-eConfigure). Hierbei gibt es mehrere Symbole für Jalousien, die zum einen den außenliegenden Sonnenschutz und zum anderen den innenliegenden Blendschutz beschreiben. Der Text neben den Symbolen beinhaltet den erforderlichen @aks.
 #figure(
@@ -135,14 +85,69 @@ Im nachfolgenden wird ein vorläufiger Prozess stichpunktartig beschrieben:
 )<fig-AKSumFenster>
 Da dieser prototypischer Weg sehr zeitaufwendig ist, wird im Rahmen dieser Arbeit nur ein Geschoss bearbeitet. Für die spätere Simulation wird der in @AufbereitungIFC festgelegte, temporäre @aks für die Bezeichnung der Fenster verwendet.
 
-== Festlegung der zeitlichen und räumlichen Auflösung
+
+=== Integration der urbanen Umgebungsdaten
+==== Import und Positionierung der Umgebungsdaten...<ImportUmgebungsdaten>
+
+Für die Modellierung der umgebenden, verschattenden Bebauung wird auf die offenen Geodaten der @hvbg#[]@Hessen3D zurückgegriffen. Die 3D-Gebäudemodelle für das Stadtgebiet Frankfurt am Main werden von offizieller Seite standardmäßig im Format CityGML (internationaler Standard des Open Geospatial Consortiums (OGC) zur Modellierung, Speicherung und dem Austausch semantischer 3D-Stadtmodelle@citygml_30) bereitgestellt.
+
+Da für Blender keine native Import-Schnittstelle für CityGML-Dateien existiert, ist eine vorherige Datenkonvertierung erforderlich. Die Datensätze werden hierfür in das JSON-basierte Format CityJSON (ebenfalls Datenaustauschformat für digitale 3D-Modelle von Städten und Landschaften@cityjson) mithilfe eines Tools@cityjson_conversion überführt.
+
+Der finale Import der Gebäudekörper in die 3D-Umgebung erfolgt über das Open-Source-Plugin CityJSONEditor@github_cityjsoneditor für Blender. Da die hierarchische Struktur der amtlichen Frankfurter Daten teilweise von den Standardannahmen des Plugins abwich, wurden im Rahmen dieser Arbeit gezielte Anpassungen am Python-Quellcode der Import-Erweiterung vorgenommen. Diese Fehlerbehebungen umfassen im Wesentlichen drei Aspekte:
++ *Toleranz bei fehlenden Texturen:* Es wird eine Abfrage implementiert, die den Importprozess bei Objekten ohne definierte Fassadentexturen (Appearances) nicht abbricht, sondern die reine Geometrie weiterverarbeitet.
++ *Datentyp-Konvertierung (@lod):* Die Einleseroutine wird dahingehend modifiziert, dass der im Datensatz als String vorliegende Wert für den Detailgrad (@lod) programmatisch in einen Float umgewandelt wird.
++ *Filterung geometrieloser Objekte:* Es wird eine Filterroutine integriert, die Datensätze ohne physische 3D-Geometrie (wie bspw. reine Grundstücksgrenzen oder Landnutzungsflächen) beim Import ignoriert, um Programmabbrüche zu verhindern.
+
+Im Anschluss erfolgt die räumliche Verortung des Stadtmodells in der Simulationsumgebung. Die originären CityJSON-Daten sind im globalen ETRS89/UTM-Koordinatensystem referenziert. Da der Projektbasispunkt (P1) in Blender auf (0,0,0) gesetzt ist, muss P1 von den Koordinaten der Umgebungsdaten subtrahiert werden. Die Koordinaten werden im Quellcode hinterlegt. Durch diese Nullpunktverschiebung wird das Makromodell der Umgebung präzise in das kartesische System der Software überführt. Zuletzt werden Gebäude die in zweiter und dritter Reihe zum Turm 1 stehen, ausgewählt und aus der Szene gelöscht. Gebäude, die direkt nördlich des Referenzgebäudes (Turm 1) stehen, werden ebenfalls entfernt.
+
+
+==== Import und Positionierung der Türme 2 bis 4 <ImportT24>
+Da das Gebäudeensemble FOUR zum Zeitpunkt der Datenerhebung noch nicht in den amtlichen CityGML-Datensätzen erfasst ist, werden für die Verschattungssimulation die detaillierten IFC-Fassadenmodelle der Türme 2 bis 4 herangezogen. Diese liegen in einem sehr hohen Detaillierungsgrad (@lod 500) vor. Dies ist einerseits vorteilhaft für eine hohe Präzision des Schattenwurfs, beinhaltet andererseits jedoch eine massive Menge an nicht benötigten geometrischen und semantischen Daten. Um die Dateigröße zu minimieren und den Arbeitsspeicher während der Simulation zu entlasten, wird eine systematische Reduktion der Modelle durchgeführt:
+
++ *Isolierter Import*: Die IFC-Dateien der Nachbartürme werden zunächst in separate Blender-Projekte importiert, um die Hauptdatei nicht initial zu überlasten.
++ *Geometrische Aggregation*: Sämtliche Einzelbauteile (Meshes) eines Turms werden zu einem zusammenhängenden Polygonnetz verschmolzen.
++ *Semantische Bereinigung*: Alle nicht-geometrischen Informationen, wie IFC-Hierarchien, Materialdaten und Objektattribute, werden restlos aus der Datei entfernt.
++ *Topologische Reduktion*: Zur Verringerung der Polygonanzahl wird ein algorithmischer Filter (Decimate-Modifier mit den Parametern Collapse und Planar) auf das aggregierte Modell angewendet. Dieser reduziert redundante Geometrie auf flachen Ebenen, ohne die äußere, schattenwerfende Silhouette zu verfälschen.
++ *Referenzierung*: Die optimierten Modelldateien werden abschließend über die Link-Funktion in die Simulations-Hauptszene eingebunden.
+
+Eine manuelle räumliche Transformation oder Neuausrichtung entfällt bei diesem Prozess. Da die Modelle der Türme 2 bis 4 denselben globalen Koordinatenursprung (Projektbasispunkt) wie das Referenzmodell des Turms 1 aufweisen, positionieren sie sich beim Import automatisch an den korrekten relativen Koordinaten.
+
+Die aggregierte Szene ist in @fig-fertigeSzene zu sehen...
+
+#figure(
+  image("assets/FertigeSzene.png", width: 100%),
+  caption: [Aufnahme der fertigen Szene mit Turm 1-4 FOUR und den umgebenden Gebäuden in Blender],
+  placement: auto
+)<fig-fertigeSzene>
+
+=== Definition der astronomischen Randbedingungen
+#grid(
+  columns: (1.5fr, 2fr),
+  gutter: 1cm,
+  figure(
+    image("assets/BlenderSunSettings.png", width: 100%),
+    caption: [Einstellungen für Sun Position Add-On],
+  ),
+  [
+    Für die visuelle Darstellung und Validierung des Sonnenstandes innerhalb der 3D-Umgebung wird das in Blender integrierte Add-On Sun Position@blender_sun_position verwendet. Die korrekte Ausrichtung des simulierten Sonnenlichts erfordert die Parametrierung folgender Randbedingungen:
+
+    Im Abschnitt Location werden die exakten geografischen Koordinaten des Projektstandorts definiert. Für das Gebäudeareal FOUR entsprechen diese einem Breitengrad von 50,113 und einem Längengrad von 8,675. Die Nordausrichtung des Modells (North Offset) bleibt in diesem Fall auf null Grad, da die Gebäude bereits korrekt ausgerichtet ist. Die Distanz gibt den Abstand des Sonnenobjekts vom Ursprung an und hat keine Relevanz für den Sonnenstand.
+    
+    Im Abschnitt Time wird die zeitliche Basis festgelegt. Durch die Zuweisung der lokalen Zeitzone (hier UTC+1) sowie der Eingabe eines spezifischen Datums und einer Uhrzeit berechnet der interne Algorithmus des Moduls automatisch den resultierenden Azimut- und Höhenwinkel. Es muss darauf geachtet werden, während der Sommerzeit das Feld "Dailight Savings" zu aktivieren.
+  ]
+)
+Das gekoppelte Lichtobjekt der Szene wird daraufhin in der virtuellen Umgebung exakt positioniert. Dies ermöglicht eine präzise visuelle Simulation des Schattenwurfs für jeden beliebigen Zeitpunkt im Jahresverlauf.
+
+
+== Durchführung der Verschattungssimulation
+=== Parametrisierung der zeitlichen und räumlichen Auflösung
 Basierend auf den theoretischen Vorüberlegungen aus @ZeitlicheAufloesungUmfang[Kapitel] ist eine hohe zeitliche Auflösung der Simulation zu bevorzugen. Aufgrund der hohen Komplexität des Projektes (5859 Fenster) und der damit einhergehenden langen Simulationsdauer, wird nur ein 15-Minuten-Raster festgelegt. Auf ein Kalenderjahr (Referenzjahr ohne Schaltjahr) hochgerechnet, resultiert dies in 35.040 Datenpunkten pro Fenster, die im Anschluss an die Raumautomationsstation übergeben werden müssen.
 
 Da die Sonne in Frankfurt am Main am längsten Sommertag nach 05:00 Uhr aufgeht und am längsten Tag vor 22:00 Uhr untergeht, wurde die tägliche Berechnungsschleife im Python-Skript auf den Zeitraum von 05:00 bis 22:00 Uhr limitiert.
 
 Für die räumliche Auflösung wird die Vierpunkt-Messung gewählt, da eine mittlere zeitliche Auflösung von 15 Minuten verwendet wird. Aufgrund der hohen Anzahl der Fenster, wäre eine Rastermessung zu Rechenintensiv und würde eine große Datenmenge generieren.
 
-== Simulation der Jahresverschattung<SimulationJahresverschattung>
+=== Umsetzung der Jahresverschattung<SimulationJahresverschattung>
 Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette. Es automatisiert die geometrische Verschattungsanalyse innerhalb der 3D-Umgebung und generiert Steuerungsdaten für die Gebäudeautomation. Hierfür wird ein Python-Skript ausgeführt, welches über die @ide @vs-code#[]@vscode gestartet wird. Am Anfang müssen im Konfigurationsteil des Skripts (siehe @code-konfiguration) die gewünschten Parameter eingestellt werden:
 - Speicherort und Name der generierten csv-Datei
 - Anfangsdatum und Dauer der Simulation in Tagen
@@ -196,7 +201,8 @@ Im finalen Schritt überführt das Skript die akkumulierten Statuswerte in eine 
 )<fig-flussdiagramm>
 #pagebreak()
 
-== Simulationsergebnisse
+== Auswertung und Validierung
+=== Analyse der Simulationsergebnisse
 Die Simulationsergebnisse werden im nachfolgenden an einem Auszug aus der CSV-Datei präsentiert.
 #grid(
   columns: (19em, 20.5em),
@@ -273,7 +279,7 @@ Die Simulationsergebnisse werden im nachfolgenden an einem Auszug aus der CSV-Da
   Dass die beiden Fenster zur selben Zeit abweichende Azimutwinkel aufweisen, belegt ihre leicht unterschiedliche räumliche Ausrichtung zur Sonne. Der stetig abnehmende Winkelwert spiegelt dabei den fortschreitenden Sonnenlauf wider. Eine hochdynamische Verschattungssituation zeigt sich exemplarisch um 11:45 - 12:00, als die Fenster für ein kurzes Intervall von 30 Minuten erneut verschattet werden und sich direkte Besonnung und Schatten schnell abwechseln. Zwischen 12:30 und 12:45 Uhr wechselt schließlich das Vorzeichen der Winkelwerte von positiv auf negativ. In diesem Zeitraum kreuzt die Sonne die exakte Mittelachse (Flächennormale) der jeweiligen Fenster.
   ]
 )
-== Berechnungsaufwand und Optimierung <Simulationsoptimierung>
+=== Berechnungsaufwand und Optimierung <Simulationsoptimierung>
 Für diese Arbeit wurde der 20.03.26 im 15-Minuten Takt simuliert. Dieser Tag beschreibt die frühjährliche Tag-Nacht-Gleiche (Äquinoktium) an dem die Sonne genau gleich lang über und unter dem Horizont verbleibt. Da die Hälfte des Jahres mehr und die andere Hälfte weniger Sonnenstunden aufweist, eignet sich dieser Tag für eine Hochrechnung der Simulationsdauer auf das gesamte Jahr.
 
 Die Simulation dauerte 14,4 Minuten#footnote[Die Berechnung der Jahressimulation erfolgte auf einer Workstation mit folgender Spezifikation: AMD Ryzen 5 7600X (6-Core, 4,7 GHz), 32 GB RAM, AMD Radeon RX 7800 XT, Windows 11 (64-bit), Blender Version 4.5.3], was für eine gesamte Jahresberechnung 3 Tagen und 16 Stunden entspricht. Da diese Simulation nur einmal berechnet werden muss für ein gesamtes Gebäude, liegt die Simulationsdauer im annehmbaren Bereich. Da Blender für Python-Skripte nur einen CPU-Kern benutzen kann, könnten weiter Blender-Instanzen geöffnet werden, um parallel Datumsbereiche des Jahres zu berechnen. Diese müssten dann final in eine Datei bzw. Datenbank zusammengeführt werden.
@@ -291,8 +297,8 @@ Durch Anwendung des Backface Culling konnte eine Verkürzung der Rechendauer um 
 - Mathe Skript mit Normalenoptimierung: 408s
 - ""+Winkel: 434s
 */
-== Validierung <ValidierungErgebnisse>
-=== Validierung der virtuellen Szene
+=== Visuelle und algorithmische Validierung <ValidierungErgebnisse>
+==== Validierung der virtuellen Szene
 Die Validierung der virtuellen Szene erfolgt durch einen visuellen Abgleich zwischen einem gerenderten Bild der Simulation und einer fotografischen Aufnahme des FOUR zu einem definierten Zeitpunkt. Als Referenz dient eine für die Bauüberwachung und das Marketing genutzte Webcam auf dem 137 Meter hohen Nextower am Thurn-und-Taxis-Platz, welcher sich in etwa 500 Metern Entfernung befindet. Die historischen Aufnahmen sind über die Website des Anbieters @zeitrafferFOURFrankfurt abrufbar. Für den Abgleich wurde ein wolkenarmer Tag gewählt, um durch ein Minimum an diffusem Licht klare Schattenkanten zu erhalten. Der Nextower ist im digitalen Modell integriert, um die Kameraposition exakt nachzubilden.
 
 Das Ergebnis dieses Abgleichs ist in @fig-validierung_t1 dargestellt. Es zeigt sich eine visuell sehr hohe Übereinstimmung der Schattenkanten zwischen Referenzbild und Simulation. Dies belegt die korrekte geometrische Anordnung der Szene in Blender sowie die Präzision des integrierten Sonnenmodells für den gewählten Zeitpunkt.
@@ -310,7 +316,7 @@ Das Ergebnis dieses Abgleichs ist in @fig-validierung_t1 dargestellt. Es zeigt s
 
 Eine alternative Validierungsmethode bestünde in der Installation von Helligkeitssensoren an den Fassaden des FOUR zur Erfassung realer Messwerte an wolkenlosen Tagen. Dieser Ansatz wurde aus zeitlichen Gründen im Rahmen dieser Arbeit nicht weiter verfolgt.
 
-=== Validierung der skriptbasierten Simulation
+==== Validierung der skriptbasierten Simulation
 Während die visuelle Validierung die Geometrie und das interne Sonnenmodell der Software bestätigt, erfordert das entwickelte Simulationsskript eine separate Überprüfung. Dieses Skript greift nicht auf das interne Sonnenstands-Plug-in von Blender zurück, sondern implementiert den @noaa#[]-Algorithmus zur Berechnung des Sonnenstandes.
 
 Zur Validierung des Skripts wird der Verschattungszustand für denselben Referenzzeitpunkt berechnet und in eine CSV-Datei exportiert. Ein separates Auswertungsskript visualisiert diese Daten, indem es die Fassadenelemente des FOUR basierend auf ihrem simulierten Verschattungsstatus einfärbt. Eine Rotfärbung indiziert dabei eine vollständige Verschattung des jeweiligen Fensters, definiert durch die Verdeckung aller vier Eckpunkte.

@@ -1,5 +1,5 @@
 = Theoretische Grundlagen (70% fertig)<TheoretischeGrundlagen>
-== Geometrische Grundlagen <GeometrischeGrundlagen>
+== Astronomische und Geometrische Grundlagen <GeometrischeGrundlagen>
 
 In diesem Kapitel werden die astronomischen und geometrischen Gesetzmäßigkeiten hergeleitet, die für die Berechnung des Schattenwurfs maßgeblich sind. 
 
@@ -148,10 +148,37 @@ Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung
 // *Abgrenzung für diese Arbeit:*
 // ???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in 3D-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (@Kap4[Kapitel]) auf das geometrische Raycasting. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (@Kap5[Kapitel]) diskutiert.
 
+== Digitale Gebäudemodelle und Geoinformatik
+=== Digitale Planungsmethoden (Datenformate?)... <DigitalePlanungsmethoden>
+Wenn früher vor allem Papierpläne zum Datenkommunikationsaustausch im Planungsprozess verwendet wurden, gibt es mittlerweile eine Vielzahl an digitalen Möglichkeiten. Etabliert über die letzten Jahrzehnte, haben sich vor allem 2D-Grundrissdateien, die z.B. im proprietären Austauschformat dwg zwischen Architekten und Ingenieuren geteilt wurden. Während diese Methode heutzutage noch weite Anwendung findet, greifen die auf 3D-Modellen basierenden Austauschformate weiter um sich. Bereits einfache 3D-Modelle bieten große Vorteile bei der Verständlichkeit und Dichte der übermittelnden geometrischen Informationen.
+
+Das @bim findet heutzutage weite Anwendung. Diese Methode beschreibt nicht nur den Aufbau und Inhalt eines 3D-Modells, sondern einen durchgängigen Systemprozess, der von der Vorplanung bis zum Betrieb konzipiert wurde. Es definiert Rollen für die Beteiligten und soll einen einheitlichen  Informationsfluss über alle Gewerke ermöglichen. @bim benutzt herstellerunabhängige Dateiformate, wodurch eine hohe Flexibilität bei der Auswahl der Software geboten wird. 
+
+Das eigentliche 3D-Modell ist mit semantischen Daten angereichert. Hierbei kann jedes Objekt im Modell Attribute erhalten, die Informationen über das Bauteil enthalten. 
+Hierfür wird das Austauschformat @ifc verwendet
+
+// BIM, IFC, Simulationswerkzeuge (Überblick).
+Folgende Dateiformate werden verwendet:
+.ifc
+.dwg
+.JSON
+.dxf
+.blend
+.gml
+.csv
+
+=== Koordinatenreferenzsysteme <Koordinatenreferenzsysteme>
+Die Georeferenzierung beschreibt die Zuweisung räumlicher Bezugsinformationen zu einem Datensatz. Für die dynamische Verschattungssimulation ist sie von zentraler Bedeutung, da das lokale Gebäudemodell (BIM) millimetergenau mit den Umgebungsdaten überlagert werden muss. Nur durch einen einheitlichen räumlichen Bezug lässt sich der korrekte solare Einfallswinkel auf die Fassade berechnen. In der Bauplanung und Geoinformatik wird dabei zwischen globalen geografischen und lokalen projizierten Koordinatensystemen unterschieden:
+
+- *WGS 84 (World Geodetic System 1984):* WGS 84 ist ein globales, dreidimensionales Referenzsystem, das die Erde als Ellipsoid abbildet. Es ist die Grundlage satellitengestützter Positionsbestimmung (GPS) und nutzt geografische Koordinaten (Längen- und Breitengrade). In der BIM-Methodik wird WGS 84 standardmäßig genutzt, um den globalen Referenzpunkt des Projekts innerhalb der Entität `IfcSite` zu definieren. Für die geometrische Verschattungsberechnung (Raycasting) in 3D-Engines ist es jedoch ungeeignet, da es auf Winkelmaßen basiert und die 3D-Software ein lineares Meterraster erfordert.
+
+- *Gauß-Krüger-Koordinatensystem (GK):* Dies ist ein historisch gewachsenes, kartesisches (meterbasiertes) Koordinatensystem, das primär in Deutschland für die Landesvermessung und Liegenschaftskataster verwendet wurde. Es projiziert die Erdoberfläche winkeltreu auf Zylinder und unterteilt sie in 3-Grad breite Meridianstreifen. Obwohl es in Deutschland sukzessive durch UTM abgelöst wird, ist das GK-System für die Datenanalyse weiterhin hochrelevant, da viele ältere Bebauungspläne und kommunale Umgebungsdaten (z.B. von Katasterämtern) noch in diesem Format vorliegen und vor dem Import transformiert werden müssen.
+
+- *UTM (Universal Transverse Mercator):* Das UTM-System ist der heutige internationale Standard für projizierte Koordinatensysteme. Ähnlich wie das GK-System liefert es ein ebenes, rechtwinkliges Raster mit metrischen X- und Y-Koordinaten (Rechts- und Hochwert), unterteilt die Erde jedoch in 6-Grad breite Zonen. Für die in dieser Arbeit entwickelte Simulationsumgebung ist UTM das präferierte System. Da 3D-Engines (wie Blender) zwingend ein metrisches, kartesisches Koordinatensystem erfordern, lassen sich UTM-koordinierte Umgebungsmodelle ohne Verzerrung direkt in die Raycasting-Logik überführen.
 
 
 
-== Verschattungssysteme <Verschattungssysteme>
+== Verschattungssysteme und Raumautomation <Verschattungssysteme>
 === Bauphysikalische und lichttechnische Zielgrößen... <Zielgroessen>
 Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamellenwinkel) erfüllen in der modernen Gebäudeautomation wesentliche energetische und ergonomische Funktionen. Die primären Zielgrößen einer optimalen Steuerung definieren sich wie folgt:
 
@@ -186,66 +213,12 @@ Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häu
 - cut off Winkel
 
 
-=== Jahresverschattung... <Jahresverschattung>
-/*Nutzen für Eigentümer/Mieter:
-- Reduzierte Energiekosten durch geringeren Kühl- und Heizbedarf
-- Attraktiveres Gebäude durch verbesserten Komfort
-- Erfüllung von Nachhaltigkeitszielen und Zertifizierungen
-Nutzen für Betreiber:
-- Einfachere Wartung und Steuerung durch Automatisierung
-- Längere Lebensdauer der Gebäudekomponenten durch Schutz vor UV-Strahlung
-Nutzen für Nutzer:
-- Verbesserter visueller Komfort durch reduzierte Blendung
-- Angenehmes Raumklima durch reduzierte Überhitzung
-Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel von Energieeffizienz und Nutzerkomfort.
-*/
-#let definition(title, body) = {
-  block(
-    fill: luma(240),
-    stroke: (left: 1pt + black, right: 1pt + black),
-    inset: 1em,
-    width: 100%,
-    radius: (right: 5pt),
-    [
-      #text(weight: "bold")[#title] \
-      #body
-    ]
-  )
-}
-
-#definition("Jahresverschattung")[
-  Die Jahresverschattung bezeichnet die zeitabhängige Veränderung der solaren Exposition auf der Gebäudehülle im Verlauf eines meteorologischen Jahres. Sie ist das Resultat der Interaktion zwischen dem dynamischen Sonnenstand, der Gebäudeorientierung sowie der umgebenden Bebauung und Vegetation. Im Kontext der Gebäudeautomation definiert sie die zeitlichen und räumlichen Randbedingungen, unter denen ein variabler Sonnenschutz agieren muss...
-]
-Begriff wird von WAREMA übernommen, ist allerdings nirgends richtig definiert.
-
-Die Jahresverschattungssimulation bezeichnet ein simulationsgestütztes Verfahren zur Analyse und Steuerung des solaren Energie- und Lichteintrags in ein Gebäude über den Zeitraum eines vollständigen meteorologischen Jahres. Im Gegensatz zu statischen Verschattungselementen oder reinen Echtzeit-Helligkeitsregelungen basiert sie auf der zeitabhängigen Interaktion zwischen dem astronomischen Sonnenstand, der Gebäudegeometrie sowie der umgebenden Bebauung. Ziel ist die Ermittlung optimaler Positionierungsstrategien für variable Sonnenschutzsysteme, um ein Gleichgewicht zwischen der Minimierung thermischer Lasten (sommerlicher Wärmeschutz), der Maximierung solarer Gewinne (winterlicher Heizbedarf) und der Gewährleistung des visuellen Komforts (Blendfreiheit bei maximaler Tageslichtnutzung) sicherzustellen....
-// Physikalische Prinzipien und Ziele (Energie vs. Komfort).
 
 
-== Digitale Planungsmethoden (Datenformate?)... <DigitalePlanungsmethoden>
-Wenn früher vor allem Papierpläne zum Datenkommunikationsaustausch im Planungsprozess verwendet wurden, gibt es mittlerweile eine Vielzahl an digitalen Möglichkeiten. Etabliert über die letzten Jahrzehnte, haben sich vor allem 2D-Grundrissdateien, die z.B. im proprietären Austauschformat dwg zwischen Architekten und Ingenieuren geteilt wurden. Während diese Methode heutzutage noch weite Anwendung findet, greifen die auf 3D-Modellen basierenden Austauschformate weiter um sich. Bereits einfache 3D-Modelle bieten große Vorteile bei der Verständlichkeit und Dichte der übermittelnden geometrischen Informationen. Zusätzlich ist es möglich im Rahmen eines BIM-Modells semantische Daten mit zu übermitteln. Das hierfür benutzte Austauschformat IFC bietet wichtige Funktionalitäten, um für die Verschattungssimulation relevante Daten zu  teilen.
-// BIM, IFC, Simulationswerkzeuge (Überblick).
-Folgende Dateiformate werden verwendet:
-.ifc
-.dwg
-.JSON
-.dxf
-.blend
-.gml
-.csv
-
-=== Koordinatenreferenzsysteme <Koordinatenreferenzsysteme>
-Die Georeferenzierung beschreibt die Zuweisung räumlicher Bezugsinformationen zu einem Datensatz. Für die dynamische Verschattungssimulation ist sie von zentraler Bedeutung, da das lokale Gebäudemodell (BIM) millimetergenau mit den Umgebungsdaten überlagert werden muss. Nur durch einen einheitlichen räumlichen Bezug lässt sich der korrekte solare Einfallswinkel auf die Fassade berechnen. In der Bauplanung und Geoinformatik wird dabei zwischen globalen geografischen und lokalen projizierten Koordinatensystemen unterschieden:
-
-- *WGS 84 (World Geodetic System 1984):* WGS 84 ist ein globales, dreidimensionales Referenzsystem, das die Erde als Ellipsoid abbildet. Es ist die Grundlage satellitengestützter Positionsbestimmung (GPS) und nutzt geografische Koordinaten (Längen- und Breitengrade). In der BIM-Methodik wird WGS 84 standardmäßig genutzt, um den globalen Referenzpunkt des Projekts innerhalb der Entität `IfcSite` zu definieren. Für die geometrische Verschattungsberechnung (Raycasting) in 3D-Engines ist es jedoch ungeeignet, da es auf Winkelmaßen basiert und die 3D-Software ein lineares Meterraster erfordert.
-
-- *Gauß-Krüger-Koordinatensystem (GK):* Dies ist ein historisch gewachsenes, kartesisches (meterbasiertes) Koordinatensystem, das primär in Deutschland für die Landesvermessung und Liegenschaftskataster verwendet wurde. Es projiziert die Erdoberfläche winkeltreu auf Zylinder und unterteilt sie in 3-Grad breite Meridianstreifen. Obwohl es in Deutschland sukzessive durch UTM abgelöst wird, ist das GK-System für die Datenanalyse weiterhin hochrelevant, da viele ältere Bebauungspläne und kommunale Umgebungsdaten (z.B. von Katasterämtern) noch in diesem Format vorliegen und vor dem Import transformiert werden müssen.
-
-- *UTM (Universal Transverse Mercator):* Das UTM-System ist der heutige internationale Standard für projizierte Koordinatensysteme. Ähnlich wie das GK-System liefert es ein ebenes, rechtwinkliges Raster mit metrischen X- und Y-Koordinaten (Rechts- und Hochwert), unterteilt die Erde jedoch in 6-Grad breite Zonen. Für die in dieser Arbeit entwickelte Simulationsumgebung ist UTM das präferierte System. Da 3D-Engines (wie Blender) zwingend ein metrisches, kartesisches Koordinatensystem erfordern, lassen sich UTM-koordinierte Umgebungsmodelle ohne Verzerrung direkt in die Raycasting-Logik überführen.
 
 
-== Normative Grundlagen... <NormativeGrundlagen>
-=== Grundlagen der Licht- und Wärmesteuerung <GrundlagenLichtWaermesteuerung>
+== Normative und regulatorische Rahmenbedingungen... <NormativeGrundlagen>
+=== Tageslichtversorgung und Blendschutz (DIN EN 17037) <GrundlagenLichtWaermesteuerung>
 @ra
 
 
@@ -258,10 +231,10 @@ Für den visuellen Komfort gibt es vor allem zwei Faktoren auf die Verschattungs
 "Kritische Blendungssituationen, die einen Schwellenwert DGPt überschreiten, sollten auf einen bestimmten Anteil der Bezugsnutzungsdauer fDGP,exceed beschränkt sein" S.52 17037
 
 
-=== Erfüllung der GA-Effizienzklassen EN 15232 bzw. DIN V 18599-11) 
+=== Energieeffizienz der Gebäudeautomation EN 15232 bzw. DIN V 18599-11) 
 
 
-=== VDI-Richtlinie 3813
+=== Raumautomationsfunktionen (VDI 3813)<kap-vdi3813>
 In der VDI-Richtlinie 3813 Blatt 2 werden normierte Funktionsblöcke (siehe beispielhaft @fig-FunktionsblockThermo) definiert, um komplexe @ra#[]-Funktionen herstellerneutral und einheitlich darzustellen. Hierbei werden die einzelnen Funktionsblöcke informationstechnisch miteinander verknüpft, sodass Steuersignale generiert, logisch modifiziert und in einer Kaskade weitergegeben werden können. Die programmtechnische Berechnung erfolgt meist auf Ebene der @as.
 
 ==== Funktionsblock Thermoautomatik
@@ -296,4 +269,37 @@ Die in der VDI 3813 beschriebene Automationslogik basiert auf einem strikten Kas
 // )<fig-FunktionsblockVersch>
 // 
 // 
+=== Jahresverschattung... <Jahresverschattung>
+/*Nutzen für Eigentümer/Mieter:
+- Reduzierte Energiekosten durch geringeren Kühl- und Heizbedarf
+- Attraktiveres Gebäude durch verbesserten Komfort
+- Erfüllung von Nachhaltigkeitszielen und Zertifizierungen
+Nutzen für Betreiber:
+- Einfachere Wartung und Steuerung durch Automatisierung
+- Längere Lebensdauer der Gebäudekomponenten durch Schutz vor UV-Strahlung
+Nutzen für Nutzer:
+- Verbesserter visueller Komfort durch reduzierte Blendung
+- Angenehmes Raumklima durch reduzierte Überhitzung
+Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel von Energieeffizienz und Nutzerkomfort.
+*/
+#let definition(title, body) = {
+  block(
+    fill: luma(240),
+    stroke: (left: 1pt + black, right: 1pt + black),
+    inset: 1em,
+    width: 100%,
+    radius: (right: 5pt),
+    [
+      #text(weight: "bold")[#title] \
+      #body
+    ]
+  )
+}
 
+#definition("Jahresverschattung")[
+  Die Jahresverschattung bezeichnet die zeitabhängige Veränderung der solaren Exposition auf der Gebäudehülle im Verlauf eines meteorologischen Jahres. Sie ist das Resultat der Interaktion zwischen dem dynamischen Sonnenstand, der Gebäudeorientierung sowie der umgebenden Bebauung und Vegetation. Im Kontext der Gebäudeautomation definiert sie die zeitlichen und räumlichen Randbedingungen, unter denen ein variabler Sonnenschutz agieren muss...
+]
+Begriff wird von WAREMA übernommen, ist allerdings nirgends richtig definiert.
+
+Die Jahresverschattungssimulation bezeichnet ein simulationsgestütztes Verfahren zur Analyse und Steuerung des solaren Energie- und Lichteintrags in ein Gebäude über den Zeitraum eines vollständigen meteorologischen Jahres. Im Gegensatz zu statischen Verschattungselementen oder reinen Echtzeit-Helligkeitsregelungen basiert sie auf der zeitabhängigen Interaktion zwischen dem astronomischen Sonnenstand, der Gebäudegeometrie sowie der umgebenden Bebauung. Ziel ist die Ermittlung optimaler Positionierungsstrategien für variable Sonnenschutzsysteme, um ein Gleichgewicht zwischen der Minimierung thermischer Lasten (sommerlicher Wärmeschutz), der Maximierung solarer Gewinne (winterlicher Heizbedarf) und der Gewährleistung des visuellen Komforts (Blendfreiheit bei maximaler Tageslichtnutzung) sicherzustellen....
+// Physikalische Prinzipien und Ziele (Energie vs. Komfort).

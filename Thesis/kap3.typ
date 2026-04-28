@@ -27,14 +27,14 @@ Verschattungssimulationen basierend auf 3D-Daten findet heutzutage immer mehr Ei
 
 - Allgemeine Anforderungen an die Verschattungssimulation und den workflow (präzision, automatisierbarkeit, rechendauer, systemkompatibilität)...
 
-== Auswahl der Simulationsumgebung <AuswahlSimulationsumgebung>
+== Spezifikation der Werkzeuge und Datengrundlage
+=== Auswahl der Simulationsumgebung <AuswahlSimulationsumgebung>
 In der Simulationsumgebung findet die Zusammenstellung der Szene statt. Es muss eine Software gewählt werden, die den Import verschiedener 3D-Dateiformate zulässt. Zusätzlich sollte diese Software den Sonnenstand simulieren können und eine Möglichkeit bieten Raycasts zu generieren. Schlussendlich muss es möglich sein, Skripte auszuführen, um komplexe Algorithmen auszuführen.
 Die Wahl fällt auf die kostenlose Open-Source-Software Blender@blender_org, die für die Erstellung von Animationsfilmen entwickelt wurde. Sie bietet in der jetzigen Version eine Vielzahl von Funktionalitäten, darunter auch die, zur Erfüllung der oben genannten Anforderungen. Außerdem bietet sie den Vorteil einer großen, aktiven Community, die eine Vielzahl an kostenlosen und kostenpflichtigen Plug-Ins entwickelt. Für diese Anwendung passende Alternativen standen nicht zur Auswahl.
 
 
 
-== Spezifikation der Datengrundlage<SpezifikationDatengrundlage>
-=== Analyse der BIM-Datengüte <AnalyseBIMDatenguete>
+=== Anforderungen an das BIM-Modell <AnforderungBIM>
 
 Um einen fehlerfreien und automatisierten Datenfluss von der digitalen Planung in die Simulationsumgebung zu gewährleisten, muss das zugrundeliegende BIM-Modell spezifische geometrische und semantische Anforderungen erfüllen. Eine Untersuchung typischer IFC-Exporte (Industry Foundation Classes) offenbart häufige Defizite, die für eine valide Verschattungssimulation zwingend im Vorfeld korrigiert oder durch klare Modellierungsrichtlinien im BIM-Abwicklungsplan (BAP) definiert werden müssen:
 
@@ -59,7 +59,8 @@ Um diesen Aufwand zu minimieren, sollten frühzeitig Synergieeffekte im integral
   
 
 OPTIONAL: HIER AUF CHECKLISTE IM ANHANG VERWEISEN FÜR ARCHITEKTEN
-=== Analyse externer Geodaten <AnalyseExternerGeodaten>
+=== Externe Geodaten und Georeferenzierung
+==== Analyse externer Geodaten <AnalyseExternerGeodaten>
 // Notwendigkeit und Anforderungen an Umgebungsmodelle, beispielsweise der Detaillierungsgrad (LOD) der Nachbarbebauung aus GIS- oder OpenStreetMap-Daten.
 
 Die Qualität der Daten der umgebenden Gebäude, Topografie und Vegetation bestimmt die Genauigkeit der Verschattungssimulation maßgeblich. Ungenaue Gebäudekanten oder fehlende Dachaufbauten in der Nachbarbebauung führen zwangsläufig zu fehlerhaften Schlagschatten auf der betrachteten Fassade. Meistens werden diese Datensätze in georeferenzierten Koordinatensystemen (z. B. UTM oder Gauß-Krüger) bereitgestellt, was eine Transformation in das lokale System des Gebäudemodells (BIM) erfordert.
@@ -92,15 +93,15 @@ Die Auswahl des geeigneten Datenanbieters für das Referenzprojekt erfolgt anhan
 //   - gebäude sind nur  interessant, wenn sie einen schatten auf das referenzgebäude werfen können. somit sind gebäude in zweiter und dritter reihe nicht mehr zu berücksichtigen
 // - Topologie muss nur importiert werden, wenn Berge, Hügel etc. das Gebäude verschatten könnten
 // 
-=== Auswahl der Umgebungsszene... <AuswahlUmgebungsszene>
+==== Auswahl der Umgebungsszene... <AuswahlUmgebungsszene>
 Die Auswahl der zu importierenden Umgebungsszene orientiert sich an der potenziellen Verschattungsrelevanz für das Referenzgebäude. Umliegende Bebauungen in zweiter oder dritter Reihe, deren Schattenwurf bereits durch näherstehende Objekte verdeckt wird, können von der Simulation ausgeschlossen werden. Gleiches gilt für topografische Gegebenheiten: Ein Import von digitalen Geländemodellen ist nur dann erforderlich, wenn signifikante Erhebungen das betrachtete Gebäude in der Realität verschatten könnten.
 
 Eine weitere Maßnahme zur Reduktion der Rechenlast und Datenmenge ist die Beschränkung auf relevante Himmelsrichtungen anhand der lokalen Sonnenbahn. Objekte, die sich nördlich des Referenzgebäudes befinden, können systematisch vernachlässigt werden. Die exakte Eingrenzung dieses Bereichs erfolgt über den minimalen und maximalen Sonnenazimut zum Zeitpunkt der Sommersonnenwende (21. beziehungsweise 22. Juni). Zum Beispiel für den Standort Frankfurt am Main liegt der Sonnenaufgang an diesem Tag bei einem Azimut von etwa 50° und der Sonnenuntergang bei 310°. Demzufolge kann die Umgebung im nördlichen Kreissektor zwischen 310° und 50° physikalisch zu keinem Zeitpunkt im Jahr einen direkten Schatten auf das Referenzgebäude werfen und bleibt im Modell unberücksichtigt. HIER VLT NOCH KLEINE ZEICHNUNG DAZU ODER BILD ZUR VERANSCHAULICHUNG?:::
 
 Zwar können weit entfernte Gebäude bei einer sehr tief stehenden Sonne (in den Morgen- oder Abendstunden) theoretisch einen Schattenwurf auf die Referenzfassade verursachen. Dieser Effekt ist im Kontext der Gebäudeautomation jedoch vernachlässigbar, da sich die resultierenden Schattenkanten aufgrund des flachen Einfallswinkels sehr schnell über die Fassade bewegen und somit keine relevante Tageslichtnutzung durch öffnen der Behänge erzielt werden könnte.
 
-== Georeferenzierung und Zeitbasis <GeoreferenzierungZeitbasis>
-=== Zeitliche Auflösung und Simulationsumfang <ZeitlicheAufloesungUmfang>
+== Konzeption der Systemarchitektur und Simulationslogik
+=== Räumliche und zeitliche Diskretisierung und Simulationsumfang <ZeitlicheAufloesungUmfang>
 
 ==== Zeitliche Diskretisierung:
  Die Wahl der zeitlichen Auflösung für die Verschattungsdaten hat maßgeblichen Einfluss auf das Verhältnis zwischen visuellem Komfort (Blendschutz) und der Tageslichtausbeute des Gebäudes. Da die Verschattungsinformation in der Steuerung eine binäre Freigabe (Schatten oder Sonne) darstellt, muss bei einer Reduktion der Datenauflösung zwingend eine Worst-Case-Annahme getroffen werden: Fällt innerhalb eines Simulationsintervalls auch nur für einen Bruchteil der Zeit Sonne auf das Fenster, muss der Sonnenschutz für das gesamte Intervall geschlossen werden, um temporäre Blendung auszuschließen. 
@@ -141,7 +142,7 @@ Da sich die räumlichen Abweichungen des Schattens lediglich im Zentimeterbereic
 
 Zur weiteren Reduktion von Datenmenge und Rechenzeit ließe sich die Simulation auf jeden zweiten oder dritten Tag eines Jahres beschränken. Da die geometrischen Abweichungen des Sonnenstandes zwischen aufeinanderfolgenden Tagen marginal ausfallen, stellt dies einen methodisch vertretbaren Ansatz dar.
 
-=== Räumliche Auflösung der Messpunkte <RaeumlicheAufloesung>
+==== Räumliche Auflösung der Messpunkte <RaeumlicheAufloesung>
 
 Die räumliche Abtastung der Fensterflächen bestimmt die Zuverlässigkeit der Simulation. Man muss festlegen, wie viele Testpunkte pro Fenster berechnet werden. Es werden drei verschiedene Optionen untersucht:
 
@@ -156,8 +157,8 @@ Ein feines Raster würde mehrere Punkte entlang der seitlichen Kanten des Fenste
 Der Nachteil wäre außerdem eine Vervielfachung der Rechenzeit und eine komplexere Datenstruktur.
 
 
-== Konzeption der Simulationslogik
-=== Front-Face Check
+=== Algorithmische Verfahren und Fehlervermeidung
+==== Front-Face Check
 Um die Rechenzeit des Algorithmus signifikant zu reduzieren und unnötige Raycasts zu vermeiden, wird den eigentlichen Kollisionsabfragen ein Filterverfahren vorgeschaltet. Dieser Schritt basiert auf der mathematischen Logik des aus der 3D-Computergrafik stammenden Back-Face Cullings, fungiert im physikalischen Kontext der Gebäudeanalyse jedoch als Eigenschatten-Prüfung (Front-Face Check). Das Prinzip stellt sicher, dass Fensterflächen, die auf der abgewandten Schattenseite des Gebäudes liegen, frühzeitig identifiziert und von der weiteren Berechnung ausgeschlossen werden. Die technische Umsetzung erfolgt über die Auswertung des Skalarprodukts zwischen dem Normalenvektor der Fensterfläche $vec(n)$ und dem Richtungsvektor der Solarstrahlung $vec(r)$ (Strahl vom Fenster zur Sonne). 
 Wie in @fig-normalsCheck vereinfacht dargestellt, erkennt man eine Gebäudeecke in der Draufsicht mit Fenstern an der Außenseite. Es werden Strahlen (Rays) horizontal vom Mittelpunkt des Fensters in Richtung der Sonne dargestellt.
 
@@ -172,48 +173,47 @@ Die Entscheidung, ob eine Fläche der Sonne zugewandt ist, hängt vom Winkel $al
 - *Fenster B (abgewandt)*: Da der Winkel $alpha_B$ mehr als 90° beträgt, zeigen die Vektoren in die entgegengesetzte Richtung --- der Strahl entspringt also von der Rückseite der Fensterfläche. Das Skalarprodukt ist in diesem Fall negativ, und die Geometrie wird durch das den Front-Facing check ignoriert.
 Um Fehlkalkulationen in diesem Schritt auszuschließen, muss garantiert sein, dass alle Flächennormalen im 3D-Modell konsistent nach außen gerichtet sind.
 
-=== Vermeidung von Selbstverschattung
+==== Vermeidung von Selbstverschattung
 Bei der Konzeption der auf Raycasting basierenden Simulationsarchitektur (vgl. Grundlagen in Kapitel 2.x) muss eine bekannte Problematik der 3D-Simulation berücksichtigt werden: sogenannte Self-Intersection-Fehler (Selbstverschattungen). Da Fenster in BIM- und IFC-Modellen häufig als Volumenkörper modelliert sind, kann ein direkt an der Glasfläche startender Teststrahl aufgrund von minimalen mathematischen Rundungsfehlern (Floating-Point-Ungenauigkeiten) sofort mit der Innenseite oder dem Rahmen der eigenen Geometrie kollidieren. Das Fenster würde sich algorithmisch somit selbst verschatten.
 
-Um dies zu verhindern, ohne auf rechenintensive Auswertungen der getroffenen Flächennormalen zurückgreifen zu müssen, wird in der Simulationslogik ein Start-Offset (Ray Bias) definiert. Der geometrische Ursprung des Prüfstrahls wird dabei nicht exakt auf der Glasfläche platziert, sondern entlang des Richtungsvektors virtuell um ein definiertes Maß (beispielsweise 0,3 Meter) in den Außenraum verschoben. Die eigentliche Kollisionsprüfung beginnt somit sicher außerhalb der eigenen Fenster- und Laibungsgeometrie, was die Fehlalarme eliminiert und die Robustheit der Gesamtsimulation signifikant erhöht.
+Um dies zu verhindern, ohne auf rechenintensive Auswertungen der getroffenen Flächennormalen zurückgreifen zu müssen, wird in der Simulationslogik ein Start-Offset (Ray Bias) definiert. Der geometrische Ursprung des Prüfstrahls wird dabei nicht exakt auf der Glasfläche platziert, sondern entlang des Richtungsvektors virtuell um ein definiertes Maß (beispielsweise 10cm) in den Außenraum verschoben. Die eigentliche Kollisionsprüfung beginnt somit sicher außerhalb der eigenen Fenster- und Laibungsgeometrie, was die Robustheit der Gesamtsimulation signifikant erhöht.
 
-== Definition der Systemarchitektur und Schnittstellen...<DefinitionSystemarchitektur>
+=== Systemarchitektur und Schnittstellen<DefinitionSystemarchitektur>
 
 *Vorberechnung oder dynamisch?*
 Hier geht es um die Grundsatzentscheidung: Handelt es sich um ein zustandsloses System, das einmalig einen Fahrplan (Schedule) generiert, oder um ein dynamisches System, das auf Veränderungen (beispielsweise neue Verschattungsobjekte durch Baustellen) reagieren kann. Du kannst hier begründen, warum du dich für den einen oder anderen Weg entschieden hast, bevor du in die Umsetzung gehst.
 
 - *Workflow-Design:* Hier vlt. Flow-Chart mit gesamter Prozesskette von ifc-Modell bis Integration in GA
-- Trennung von Azimut und Elevation, also kein Skalarprodukt zwischen Fensternormale und Sonnenvektor
 - Tabelle mit Elevationswinkel könnte mitgegeben oder auf AS berechnet werden(Vermeidung von Redundanz: Die Sonnenhöhe (Elevation) ist zu einem bestimmten Zeitpunkt für das gesamte Gebäude (und somit für alle ~6000 Fenster) identisch.) 
 - Status R, V, N - Azimut erklären
+  - hat auch vorteil für debugging oder nachvollziehbarkeit der daten
 - *Mapping-Konzept:* Entwicklung einer Logik zur Verknüpfung der Simulationsergebnisse mit den physischen Datenpunkten der Gebäudeautomation (beispielsweise BACnet-Objekt-IDs).
 - Auch die Frage: Auf welchem Rechner sollten die Daten gespeichert werden? Extern oder intern beim Kunden?
 
-== Definition eines Funktionsblocks für VDI 3813 Teil 2
-=== Modifizierter Funktionsblock: Simulationsbasierte Verschattungskorrektur
+== Integrationskonzepte für die Gebäudeautomation
+=== Vorschlag eines modifizierten Funktionsblock nach VDI 3813
 
-Basierend auf den in Kapitel 2 identifizierten Schwächen der klassischen Verschattungskorrektur nach VDI 3813-2, wird für die hier entwickelte Systemarchitektur ein modifizierter Funktionsblock konzipiert (siehe @fig-NeuerFunktionsblock). Da die komplexe geometrische Kollisionsprüfung (Raycasting) bereits in die vorgelagerte IT-Ebene ausgelagert wurde, reduziert sich die Komplexität auf der @as#[]-Ebene drastisch. 
+Basierend auf der Analyse der VDI 3813-2 (vgl. @kap-vdi3813) wird für die entwickelte Systemarchitektur ein modifizierter Funktionsblock konzipiert. Ziel ist es, sowohl die rechenintensive geometrische Kollisionsprüfung als auch die Verwaltung der fassadenspezifischen Ausrichtungswinkel in die vorgelagerte Simulation auszulagern. 
 
-Der modifizierte Baustein benötigt keine zyklischen Sonnenkoordinaten (Azimut und Elevation) und keine statischen Grenzwinkel mehr. Er fungiert als reiner Logikschalter und wertet folgende Schnittstellen aus:
+Standardisierte Funktionsblöcke zur Lamellennachführung verarbeiten üblicherweise den globalen Sonnenstand, der in der Automationsstation für jede Fassadenachse mit einem lokalen Offset verrechnet werden muss. Der hier konzipierte Funktionsblock empfängt stattdessen über den Dateneingang (`SIM_DATA`) einen multimodalen Datensatz, der fensterspezifische, relative Parameter enthält, und routet diese als Steuergrößen an die nachgelagerten Instanzen.
 
-- *S_AUTO (Eingang):* Empfängt den initialen Stellbefehl (Jal) der vorgelagerten Automatikfunktionen (z. B. der Thermoautomatik).
-- *SIM_SHAD (Eingang):* Ein boolesches Signal, das den aktuellen Verschattungsstatus des Fensters repräsentiert (`True` = Fremdverschattung aktiv, `False` = direkte Besonnung).
-- *PAR_PARK (Parameter):* Definiert die Position, in die die Jalousie gefahren werden soll, wenn eine Verschattung vorliegt (in der Regel Behang geöffnet zur maximalen Tageslichtnutzung).
+Die interne Steuerungslogik wertet den eintreffenden Datentyp aus und schaltet die Signale nach folgenden Kriterien:
 
-*Steuerungslogik:* Die interne Logik des Blocks ist stark vereinfacht. Weist `SIM_SHAD` den Wert `True` auf, wird ein potenzieller Schließbefehl am Eingang blockiert und stattdessen der Wert von `PAR_PARK` an den Ausgang `S_AUTO` übergeben. Meldet die Simulation hingegen, dass das Fenster besonnt ist (`SIM_SHAD` = `False`), wird das Eingangssignal `S_AUTO` unverändert an die Aktorik durchgereicht.
+- *Prioritäre Überschreibung (Zustände V, R, N):* Empfängt der Block eines der definierten alphanumerischen Zeichen für Fremdverschattung (V), Rückseiten-Ausblendung (R) oder Nacht (N), wird ein anliegender Schließbefehl der Thermoautomatik blockiert. Der Block überschreibt das Stellsignal (`S_AUTO`) mit der parametrierten Parkposition (`PAR_PARK`). Zeitgleich wird über den binären Ausgang (`B_ON = FALSE`) die nachgelagerte Lamellennachführung deaktiviert, da ohne direkte Besonnung kein aktiver Blendschutz erforderlich ist.
+- *Signalweitergabe und Nachführung (Numerischer Wert):* Registriert der Eingang einen numerischen Gleitkommawert, wird dies vom System als direkte Besonnung gewertet. Das Stellsignal (`S_AUTO`) wird in diesem Fall unverändert durchgereicht und die Blendschutz-Automatik aktiviert (`B_ON = TRUE`). Der empfangene Zahlenwert entspricht dem in der Simulation berechneten Einfallswinkel der Sonne relativ zur Fensternormale. Dieser Wert wird über den Ausgang `A_SUN_AZ` direkt an die Lamellennachführung übergeben. 
 
+*Vorteile für die Systemintegration:* Durch diese Architektur ist es nicht mehr erforderlich, die fassadenspezifischen Gebäudegeometrien in der @as zu hinterlegen. Die statische Parametrierung von Grenzwinkeln und Fassaden-Azimuten bei der Systemintegration entfällt, was die Fehleranfälligkeit verringert und den softwaretechnischen Inbetriebnahmeaufwand der Automationslösung reduziert.
 #figure(
   image("assets/FunktionsblockNeu.png", width: 60%),
-  caption: [Konzept des modifizierten Funktionsblocks für eine simulationsbasierte Verschattungskorrektur.]
+  caption: [Konzept des modifizierten Funktionsblocks für eine simulationsbasierte Verschattungskorrektur]
 )<fig-NeuerFunktionsblock>
 
-*Separation of Concerns (Trennung der Zuständigkeiten):* Aus informationstechnischer Sicht wird die zeitliche Auswertung der generierten Verschattungsdaten strikt von dieser logischen Verschattungskorrektur getrennt. Ein übergeordnetes Zeitprogramm der Automationsstation (beispielsweise ein BACnet Schedule Object) gleicht die interne Systemuhr mit dem importierten CSV-Datensatz ab und übergibt lediglich den aktuellen, binären Status an den Eingang `SIM_SHAD`. Der Funktionsblock selbst benötigt somit keine Echtzeituhr (RTC) und muss keine Daten-Arrays parsen. Dies garantiert eine ressourcenschonende und echtzeitfähige Verarbeitung innerhalb der Speicherprogrammierbaren Steuerung (SPS).
 
 
 // Aus informationstechnischer Sicht (Separation of Concerns) wird die zeitliche Auswertung der generierten Verschattungsdaten (Array-Handling) von der logischen Verschattungskorrektur getrennt. Ein übergeordnetes Zeitprogramm (beispielsweise ein BACnet Schedule Object) gleicht die interne Systemuhr mit dem importierten CSV-Datensatz ab und übergibt lediglich den aktuellen, binären Verschattungsstatus an den modifizierten Funktionsblock. Der Block selbst benötigt somit keine Echtzeituhr (RTC), was ihn hardware-schonend und echtzeitfähig macht."
 
 
-== Überlegung zur Integration in die Gebäudeautomation...
+=== Überlegung zur Integration in die Gebäudeautomation...
 - Daten könnten per MQTT oder andere Schnittstelle übergeben werden
 - Daten werden von Programmen der Raumautomation zur Jalousiensteuerung genutzt
   - Stuerung muss vorausschauend funktionieren (wie in @ZeitlicheAufloesungUmfang aufgezeigt)
