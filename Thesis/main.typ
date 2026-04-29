@@ -43,18 +43,3 @@
 #include "kap4.typ"
 #include "kap5.typ"
 
-= Arbeitsplan Masterarbeit
-== Phase 1: Struktur und theoretischer Rahmen (Tage 1-4)
-- Implementierung der besprochenen Gliederungsanpassungen in den Kapiteln 2, 3 und 4
-- Ausformulierung der textlichen Lücken in Kapitel 2 (insbesondere digitale Planungsmethoden und normativ-regulatorische Grundlagen)
-== Phase 2: Konzeption und Einleitung (Tage 5-8)
-- Transformation der Stichpunkte in Kapitel 3 (Systemarchitektur, MQTT, Schnittstellen) in einen akademischen Fließtext
-- Vollständige Ausformulierung von Kapitel 1 (Problemstellung und Zielsetzung) zur Fixierung des roten Fadens
-== Phase 3: Diskussion und Synthese (Tage 9-12)
-- Ausarbeitung von Kapitel 5 (Zusammenfassung der Ergebnisse, Grenzen des Prozesses, Ausblick)
-- Entfernung obsoleter Abschnitte wie der Marktpotenzialanalyse
-== Phase 4: Formalia und Abschluss (Tage 13-17)
-- Verfassen des Abstracts in deutscher und englischer Sprache
-- Abgleich des Inhaltsverzeichnisses mit den tatsächlichen Überschriften
-- Überprüfung der Zitationen und des Literaturverzeichnisses
-- Pufferzeit für den abschließenden Lesefluss und die Formatierung

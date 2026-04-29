@@ -11,7 +11,7 @@ Die Entwicklung und Validierung dieses Prototyps erfolgt anhand eines komplexen 
   placement: bottom
 )
 
-== Vorstellung des Referenzprojekts
+== Vorstellung des Referenzprojekts<kap-VorstellungFOUR>
 Das FOUR sind vier zusammenhängende Türme mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Gebäuden (Podesten), die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Endphase und soll im Laufe des Jahres 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am 233m hohen Büroturm T1 angewendet. Der Turm besteht pro Geschoss aus vier Mietbereichen und hat pro Segment einen außenliegenden Sonnenschutz und einen innenliegenden Blendschutz. Es werden 5859 relevante Fenster im Turm 1 gezählt. Die Türme stehen eng beieinander im Zentrum von Frankfurt zwischen verschiedenen Hochhäusern (z.B. dem Commerzbank-Tower und dem MAIN-Tower). Durch dieses eng bebaute Areal treten sehr dynamische Verschattungssituationen auf, die nur durch eine präzise Simulation der Umgebung korrekt dargestellt werden können.
 Eine architektonische Besonderheit des FOUR sind die diagonal abgeschrägten Fassadenabschnitte (@fig-FourTageslicht), die den visuellen Freiraum und die Tageslichtzufuhr verbessern sollen und die Fenster, welche in unterschiedlichen Winkel zur Fassade angeordnet sind.
 
@@ -41,6 +41,7 @@ Die Qualität des vorliegenden IFC-Modells erforderte eine gezielte Vorbearbeitu
 
 Hinsichtlich der Datenstruktur wurde festgestellt, dass die Zuordnung der Bauteile zu den jeweiligen Geschossen teilweise fehlerhaft war. So waren vertikal übereinanderliegende Fenster demselben Geschoss zugewiesen. Für den weiteren Prozessverlauf wurde diese strukturelle Ungenauigkeit ignoriert, da die Simulation auf den absoluten Koordinaten der Geometrie basiert und nicht auf der logischen Geschosshierarchie des IFC-Baums.
 
+
 Die ursprünglich vorgesehene Berechnung der geometrischen Fenstermittelpunkte wurde im Zuge der Prozessoptimierung als hinfällig eingestuft. Durch den gewählten Ansatz, die Verschattung an allen vier Eckpunkten eines Fensters zu validieren, entfällt die Notwendigkeit eines zentralen Bezugspunktes. Die Vier-Ecken-Methode bietet zudem eine höhere Granularität bei der Bewertung von Teilverschattungen.
 
 Ein wesentlicher Schritt der Aufbereitung betraf die Fensterflächen im Bereich der Balkone. Diese wurden isoliert und für die Simulation ausgeblendet. Da das IFC-Modell keine Materialeigenschaften übermittelt, würden diese Flächen durch den Simulationsalgorithmus als opake Hindernisse gewertet werden. Dies hätte zur Folge, dass dahinterliegende Fenster fälschlicherweise als verschattet markiert würden, obwohl in der Realität transparente Verglasungen vorliegen.
@@ -53,8 +54,8 @@ Zusätzlich wies das Modell geometrische Redundanzen in Form von sich überschne
   placement: none
 ) <fig-FensterÜberschneidung>
 
-Schlussendlich wird ein temporäres Anlagenkennzeichnungssystem erstellt, dass sich auf das jeweilige Geschoss und eine fortlaufende Nummer für sämtliche Fensterelemente bezieht. Zum Beispiel FL13_W034 steht für:  13. Geschoss (Floor) an der 34. Position. Dies wird mithilfe eines Skripts (@DigitaleAnlage) implementiert. Diese Maßnahme ist notwendig, da die ursprünglichen Objektbezeichnungen keine Informationen über die räumliche Zuordnung enthalten. Hierfür müssen mithilfe einer Filterlogik, alle relevanten Fensterobjekte vorselektiert werden. Glasscheiben für die Balkonbrüstung und sehr kleine Fensterflächen haben keine Jalousie und werden somit nicht berücksichtigt.
-Ein Ansatz, um den finalen @aks des Jalousieaktors dem Fenster zuzuordnen, wird in @AKSZuordnung aufgezeigt.
+
+Schlussendlich wird ein temporäres Anlagenkennzeichnungssystem erstellt, dass sich auf das jeweilige Geschoss und eine fortlaufende Nummer für sämtliche Fensterelemente bezieht. Zum Beispiel FL13_W034 steht für:  13. Geschoss (Floor) an der 34. Position. Dies wird mithilfe eines Skripts (@DigitaleAnlage) implementiert. Diese Maßnahme ist notwendig, da die ursprünglichen Objektbezeichnungen keine Informationen über die räumliche Zuordnung enthalten. Hierfür müssen mithilfe einer Filterlogik, alle relevanten Fensterobjekte vorselektiert werden. Glasscheiben für die Balkonbrüstung und sehr kleine Fensterflächen haben keine Jalousie und werden somit nicht berücksichtigt. Die Auswahl der Fenster konnte nicht anhand der @ifc#[]-Klasse IfcWindow erfolgen, da die Fensterobjekte an der abgeschrägten Fassadenseite (siehe @kap-VorstellungFOUR) fälschlicherweise der Klasse IFCBuildingElementProxy zugeordnet sind. Stattdessen musste die Filterung der Objekte über den Objektnamen erfolgen. 
 
 === Zuweisung des Anlagenkennzeichnungsschlüssels (AKS)<AKSZuordnung>
 Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden.
@@ -112,11 +113,13 @@ Da das Gebäudeensemble FOUR zum Zeitpunkt der Datenerhebung noch nicht in den a
 
 Eine manuelle räumliche Transformation oder Neuausrichtung entfällt bei diesem Prozess. Da die Modelle der Türme 2 bis 4 denselben globalen Koordinatenursprung (Projektbasispunkt) wie das Referenzmodell des Turms 1 aufweisen, positionieren sie sich beim Import automatisch an den korrekten relativen Koordinaten.
 
-Die aggregierte Szene ist in @fig-fertigeSzene zu sehen...
+Es ist anzumerken, dass die @ifc#[]-Modell keine oder nur generische Materialien für die Fassade hinterlegt haben. Es fehlen also die richtigen Materialeigenschaften (z.B. Reflexionsgrade, Rauheit), um eine komplexe Raytracing-Simulation mit Spiegelungen durchzuführen. 
+
+Die aggregierte Szene ist in @fig-fertigeSzene zu sehen. Man erkennt die vier FOUR in der Mitte mit den umliegenden Gebäuden. Bei dem Podest unter Turm 3 und 4 fehlt die Fassade. Hier handelt es sich um eine Unzulänglichkeit des @ifc#[]-Modells, welches aber keinen Einfluss auf die Simulation hat.
 
 #figure(
   image("assets/FertigeSzene.png", width: 100%),
-  caption: [Aufnahme der fertigen Szene mit Turm 1-4 FOUR und den umgebenden Gebäuden in Blender],
+  caption: [Aufnahme der fertigen Szenemit Turm 1-4 FOUR und den umgebenden Gebäuden in Blender],
   placement: auto
 )<fig-fertigeSzene>
 

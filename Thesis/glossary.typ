@@ -54,6 +54,11 @@
   ),
   (
     key: "lod",
+    short: "LOD",
+    long: "Level of Development"
+  ),
+  (
+    key: "lodet",
     short: "LoD",
     long: "Level of Detail"
   ),
@@ -98,6 +103,16 @@
     long: "Industry Foundation Classes"
   ),
   (
+    key:"ocg",
+    short: "OCG",
+    long: "Open Geospatial Consortium"
+  ),
+  (
+    key:"utm",
+    short: "UTM",
+    long: "Universal Transverse Mercator"
+  ),
+  (
     key:"as",
     short: "AS",
     long: "Automationsstation"
@@ -106,7 +121,17 @@
     key:"as",
     short: "AS",
     long: "Automationsstation"
-  ),
+  ), 
+  (
+    key:"as",
+    short: "AS",
+    long: "Automationsstation"
+  ), 
+  (
+    key:"as",
+    short: "AS",
+    long: "Automationsstation"
+  ), 
   (
     key:"as",
     short: "AS",

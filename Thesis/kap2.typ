@@ -1,3 +1,4 @@
+#import "template/lib.typ": *
 = Theoretische Grundlagen (70% fertig)<TheoretischeGrundlagen>
 == Astronomische und Geometrische Grundlagen <GeometrischeGrundlagen>
 
@@ -149,32 +150,91 @@ Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung
 // ???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in 3D-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (@Kap4[Kapitel]) auf das geometrische Raycasting. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (@Kap5[Kapitel]) diskutiert.
 
 == Digitale Gebäudemodelle und Geoinformatik
-=== Digitale Planungsmethoden (Datenformate?)... <DigitalePlanungsmethoden>
-Wenn früher vor allem Papierpläne zum Datenkommunikationsaustausch im Planungsprozess verwendet wurden, gibt es mittlerweile eine Vielzahl an digitalen Möglichkeiten. Etabliert über die letzten Jahrzehnte, haben sich vor allem 2D-Grundrissdateien, die z.B. im proprietären Austauschformat dwg zwischen Architekten und Ingenieuren geteilt wurden. Während diese Methode heutzutage noch weite Anwendung findet, greifen die auf 3D-Modellen basierenden Austauschformate weiter um sich. Bereits einfache 3D-Modelle bieten große Vorteile bei der Verständlichkeit und Dichte der übermittelnden geometrischen Informationen.
+=== Building Information Modeling und Austauschformate <kap-bim>
 
-Das @bim findet heutzutage weite Anwendung. Diese Methode beschreibt nicht nur den Aufbau und Inhalt eines 3D-Modells, sondern einen durchgängigen Systemprozess, der von der Vorplanung bis zum Betrieb konzipiert wurde. Es definiert Rollen für die Beteiligten und soll einen einheitlichen  Informationsfluss über alle Gewerke ermöglichen. @bim benutzt herstellerunabhängige Dateiformate, wodurch eine hohe Flexibilität bei der Auswahl der Software geboten wird. 
+Der Datenaustausch im Bauwesen hat sich von analogen Plänen hin zu digitalen Methoden entwickelt. Während 2D-Grundrissdateien in Formaten wie DWG oder DXF weiterhin Anwendung finden, werden sie zunehmend durch objektbasierte 3D-Modelle abgelöst. Diese bieten eine höhere Dichte an geometrischen Informationen und erleichtern das räumliche Verständnis komplexer Strukturen.
 
-Das eigentliche 3D-Modell ist mit semantischen Daten angereichert. Hierbei kann jedes Objekt im Modell Attribute erhalten, die Informationen über das Bauteil enthalten. 
-Hierfür wird das Austauschformat @ifc verwendet
+Building Information Modeling (@bim) beschreibt einen durchgängigen, prozessorientierten Ansatz von der Planung bis zum Betrieb. BIM strukturiert die gewerkeübergreifende Zusammenarbeit und standardisiert den Informationsfluss. Der OpenBIM-Ansatz setzt hierbei auf herstellerneutrale Dateiformate, um Interoperabilität und Flexibilität bei der Softwareauswahl zu gewährleisten.
+
+Das objektorientierte Austauschformat @ifc (Industry Foundation Classes) ermöglicht die Anreicherung der Geometrie mit semantischen Attributen. Innerhalb der entwickelten Prozesskette dient diese Struktur dazu, simulationsrelevante Bauteile automatisiert zu identifizieren. Während die Klasse IfcSite die Georeferenzierung ermöglicht, definieren Klassen wie IfcWindow die betrachteten Fensterflächen. Maßgeblich für die Simulationsgüte ist ein adäquater Detaillierungsgrad (@lod), um Eigenverschattungen durch Laibungen oder Auskragungen im Raycasting-Verfahren präzise abzubilden.
+
+Für die Abbildung des urbanen Kontextes dient das Format CityGML als internationaler Standard für semantische Stadtmodelle. In Ergänzung zur hohen Detailtiefe des IFC-Gebäudemodells liefert CityGML die notwendigen Umgebungsdaten zur Detektion von Fremdverschattung. Das effizientere Austauschformat CityJSON findet ebenfalls Anwendung. Im makroskopischen Bereich bildet das Level of Detail 2 (Dachmodell) den optimalen Kompromiss, um Verschattungsfehler durch vereinfachte Blockmodelle zu vermeiden.
 
 // BIM, IFC, Simulationswerkzeuge (Überblick).
-Folgende Dateiformate werden verwendet:
-.ifc
-.dwg
-.JSON
-.dxf
-.blend
-.gml
-.csv
+// Folgende Dateiformate werden verwendet:
+// .ifc
+// .dwg
+// .JSON
+// .dxf
+// .blend
+// .gml
+// .csv
 
-=== Koordinatenreferenzsysteme <Koordinatenreferenzsysteme>
-Die Georeferenzierung beschreibt die Zuweisung räumlicher Bezugsinformationen zu einem Datensatz. Für die dynamische Verschattungssimulation ist sie von zentraler Bedeutung, da das lokale Gebäudemodell (BIM) millimetergenau mit den Umgebungsdaten überlagert werden muss. Nur durch einen einheitlichen räumlichen Bezug lässt sich der korrekte solare Einfallswinkel auf die Fassade berechnen. In der Bauplanung und Geoinformatik wird dabei zwischen globalen geografischen und lokalen projizierten Koordinatensystemen unterschieden:
+=== Spezifikation der Modellierungstiefe (LOD / LoD)
 
-- *WGS 84 (World Geodetic System 1984):* WGS 84 ist ein globales, dreidimensionales Referenzsystem, das die Erde als Ellipsoid abbildet. Es ist die Grundlage satellitengestützter Positionsbestimmung (GPS) und nutzt geografische Koordinaten (Längen- und Breitengrade). In der BIM-Methodik wird WGS 84 standardmäßig genutzt, um den globalen Referenzpunkt des Projekts innerhalb der Entität `IfcSite` zu definieren. Für die geometrische Verschattungsberechnung (Raycasting) in 3D-Engines ist es jedoch ungeeignet, da es auf Winkelmaßen basiert und die 3D-Software ein lineares Meterraster erfordert.
+Für die Validität einer Verschattungssimulation ist die Definition der Modellierungstiefe entscheidend. Dabei muss begrifflich zwischen dem gebäudezentrierten Ansatz des Building Information Modeling und dem stadtmodellzentrierten Ansatz der Geoinformatik unterschieden werden. Zur besseren Abgrenzung wird im Folgenden der Level of Development mit LOD und der Level of Detail mit LoD abgekürzt.
 
-- *Gauß-Krüger-Koordinatensystem (GK):* Dies ist ein historisch gewachsenes, kartesisches (meterbasiertes) Koordinatensystem, das primär in Deutschland für die Landesvermessung und Liegenschaftskataster verwendet wurde. Es projiziert die Erdoberfläche winkeltreu auf Zylinder und unterteilt sie in 3-Grad breite Meridianstreifen. Obwohl es in Deutschland sukzessive durch UTM abgelöst wird, ist das GK-System für die Datenanalyse weiterhin hochrelevant, da viele ältere Bebauungspläne und kommunale Umgebungsdaten (z.B. von Katasterämtern) noch in diesem Format vorliegen und vor dem Import transformiert werden müssen.
+In der BIM-Methodik beschreibt der @lod sowohl den geometrischen Detaillierungsgrad (Level of Geometry) als auch den semantischen Informationsgehalt (Level of Information). Die Skala reicht üblicherweise von einer konzeptionellen Darstellung (@lod 100) bis hin zum dokumentierten As-Built-Zustand (@lod 500). Für die Untersuchung der Gebäudeautomation und insbesondere der Eigenverschattung ist ein @lod von mindestens 300 oder 350 erforderlich. Erst ab dieser Stufe sind Bauteile wie Fensterlaibungen, Stürze oder Fassadenrücksprünge geometrisch so exakt verortet, dass sie in einer Simulation als relevante Verschattungsobjekte fungieren können.
 
-- *UTM (Universal Transverse Mercator):* Das UTM-System ist der heutige internationale Standard für projizierte Koordinatensysteme. Ähnlich wie das GK-System liefert es ein ebenes, rechtwinkliges Raster mit metrischen X- und Y-Koordinaten (Rechts- und Hochwert), unterteilt die Erde jedoch in 6-Grad breite Zonen. Für die in dieser Arbeit entwickelte Simulationsumgebung ist UTM das präferierte System. Da 3D-Engines (wie Blender) zwingend ein metrisches, kartesisches Koordinatensystem erfordern, lassen sich UTM-koordinierte Umgebungsmodelle ohne Verzerrung direkt in die Raycasting-Logik überführen.
+In der Geoinformatik und speziell im Kontext von CityGML wird der Begriff #gls("lodet", long: true) verwendet, um die Komplexität der äußeren Gebäudehülle im urbanen Raum zu definieren. Gemäß dem Standard des @ocg werden hierbei maßgeblich folgende Stufen unterschieden:
+
+- @lodet#[]0 (Grundriss-/Geländemodell): Das Gebäude wird lediglich als zweidimensionaler Grundriss oder Dachumriss dargestellt. Da keine echte vertikale Volumenausdehnung vorhanden ist, ist dieser Detailgrad für eine dreidimensionale Verschattungssimulation ungeeignet.
+- @lodet#[]1 (Blockmodell): Das Gebäude wird als einfacher Kubus mit Flachdach dargestellt, was einer Extrusion der Grundfläche entspricht. Diese Abstraktion ist für weit entfernte Verschattungsobjekte ausreichend, führt jedoch im Nahbereich zu Fehlern, da die tatsächliche Dachform ignoriert wird.
+- @lodet#[]2 (Dachmodell): Das Modell beinhaltet standardisierte Dachformen und grobe Dachaufbauten. Für die Verschattungssimulation stellt @lod#[]2 oft den optimalen Kompromiss aus geometrischer Genauigkeit und Dateigröße dar @Hessen3D.
+- @lodet#[]3 (3D Mesh): Hier werden detaillierte Gebäudehüllen mit Auskragungen, Fensterlaibungen und Texturen modelliert. @lod#[]3 bietet eine sehr hohe Genauigkeit für die Simulation der Umgebungsverschattung, hat jedoch aufgrund der hohen Polygonanzahl einen negativen Einfluss auf die Rechenleistung.
+
+#figure(
+  image("assets/LOD1-3.png", width: 100%),
+  caption: [Darstellung der CityGML-#gls("lodet", long: true) 0 bis 3 @ogcCityGeography]
+)<fig-lod>
+
+Während der BIM-@lod den Fokus auf die interne Intelligenz und die präzise Konstruktion des betrachteten Objekts legt, dient der CityGML-@lodet der effizienten Repräsentation der Umgebungssilhouette. Für eine durchgängige Prozesskette müssen beide Welten so miteinander verknüpft werden, dass das hochdetaillierte @bim#[]-Modell präzise in das Stadtmodell eingebettet werden kann.
+
+=== Koordinatenreferenzsysteme<Koordinatenreferenzsysteme>
+
+Die Georeferenzierung beschreibt die Zuweisung räumlicher Bezugsinformationen zu einem Datensatz. Für die dynamische Verschattungssimulation ist sie von zentraler Bedeutung, da das lokale Gebäudemodell (BIM) millimetergenau mit den Umgebungsdaten überlagert werden muss. Nur durch einen einheitlichen räumlichen Bezug lässt sich der korrekte solare Einfallswinkel auf die Fassade berechnen. In der Bauplanung und Geoinformatik wird dabei zwischen dem geodätischen Bezugssystem (dem Referenzrahmen) und dem Koordinatensystem (der Kartenprojektion) unterschieden.
+
+==== Geodätische Bezugssysteme (WGS 84 und ETRS89)
+Ein Bezugssystem definiert das mathematische Modell der Erdform, meist in Form eines Rotationsellipsoids. Das World Geodetic System 1984 (WGS 84) ist ein globales System und dient unter anderem als Grundlage für die satellitengestützte Positionsbestimmung (GPS). Für Projekte innerhalb Europas wird stattdessen das European Terrestrial Reference System 1989 (ETRS89) verwendet. Im Gegensatz zum globalen WGS 84 ist ETRS89 fest mit der eurasischen Kontinentalplatte verbunden. Dies verhindert, dass sich Koordinaten durch die Kontinentaldrift gegenüber dem Boden verändern. In der BIM-Methodik werden diese Systeme genutzt, um den globalen Referenzpunkt innerhalb der Entität IfcSite zu definieren. 
+
+==== Kartenprojektionen (Gauß-Krüger und UTM):
+Eine Projektion stellt die mathematische Rechenvorschrift dar, um die Koordinaten eines gekrümmten geodätischen Bezugssystems auf eine zweidimensionale, ebene Fläche zu übertragen. Das Gauß-Krüger-Koordinatensystem (GK) ist ein historisch gewachsenes deutsches System, das klassischerweise auf dem Bessel-Ellipsoid basiert, jedoch auch mit dem modernen ETRS89 kombiniert werden kann. Es unterteilt das Gebiet in 3 Grad breite Meridianstreifen (siehe @fig-koordinatensysteme links). Das Universal Transverse Mercator System (UTM) bildet den heutigen internationalen Standard für projizierte Koordinaten. Ein wesentlicher Vorteil des UTM-Systems ist seine Flexibilität gegenüber dem zugrunde liegenden Referenzrahmen; es kann sowohl auf dem globalen WGS 84 als auch auf dem für Europa stabilen ETRS89 aufsetzen. Durch die Aufteilung der Erde in 6 Grad breite Zonen (siehe @fig-koordinatensysteme rechts) bietet UTM eine weltweit einheitliche und verzerrungsarme Darstellung. Zur Veranschaulichung sind in @tab:koordinaten_formate die entsprechenden Koordinaten des Referenzstandorts FOUR in Frankfurt am Main für die verschiedenen Systeme zusammenfassend gegenübergestellt.
+#figure(
+  grid(
+    columns: (1fr, 1fr),
+    gutter: 1em,
+    align: top,
+    image("assets/GaußKrüger.png", width: 100%),
+    image("assets/UTM.png", width: 100%)
+  ),
+  caption: [Vergleich der Meridianstreifen von Gauß-Krüger (links) und UTM (rechts) @computerworks_gis_gk_utm],
+  placement: auto
+) <fig-koordinatensysteme>
+
+
+#figure(
+  table(
+    columns: (auto, 1fr),
+    align: left,
+    inset: (y: 6pt, x: 8pt),
+    stroke: (x, y) => (
+      left: none,
+      right: none,
+      top: if y > 0 { 0.5pt } else { none },
+      bottom: none,
+    ),
+    [*Format*], [*Koordinatenwert*],
+    [Dezimalgrad], [N 50.1126° / E 8.6747°],
+    [Grad Minuten], [N 50° 6.756' / E 8° 40.482'],
+    [Grad Minuten Sekunden], [N 50° 6' 45.36'' / E 8° 40' 28.92''],
+    [Gauß Krüger], [GK3 R 3476770 H 5552976],
+    [UTM], [32U E 476703 N 5551194]
+  ),
+  caption: [Gegenüberstellung geografischer und projizierter Koordinaten für das Referenzprojekt FOUR@koordinaten_umrechner],
+  placement: auto
+) <tab:koordinaten_formate>
+
+
 
 
 
@@ -198,7 +258,7 @@ Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamelle
 - *Fremdschutz:* - gegen einbrecher, gegen hagelschaden an fenstern
 
 
-- *Selbstschutz:* Für den Fall eines Extremwetterereignisses muss ein Schutz für die Jalousie vorgesehen werden. Dies kann über eine Steuerung funktionieren, die die Windgeschwindigkeit von einer Wetterstation auf dem Dach oder durch den Zugriff auf einen Online-Wetterservice erhält.
+- *Selbstschutz:* Für den Fall eines Extremwetterereignisses muss ein Schutz vor Beschädigung für die Jalousie vorgesehen werden. Dies kann über eine Steuerung funktionieren, die die Windgeschwindigkeit von einer Wetterstation auf dem Dach oder durch den Zugriff auf einen Online-Wetterservice erhält.
 
 - *Privatsphäre:* Zuletzt bieten steuerbare Behänge durch die Unterbrechung der Sicht nach Innen einen Beitrag zur Privatsphäre der anwesenden Personen.
 
@@ -235,18 +295,19 @@ Für den visuellen Komfort gibt es vor allem zwei Faktoren auf die Verschattungs
 
 
 === Raumautomationsfunktionen (VDI 3813)<kap-vdi3813>
-In der VDI-Richtlinie 3813 Blatt 2 werden normierte Funktionsblöcke (siehe beispielhaft @fig-FunktionsblockThermo) definiert, um komplexe @ra#[]-Funktionen herstellerneutral und einheitlich darzustellen. Hierbei werden die einzelnen Funktionsblöcke informationstechnisch miteinander verknüpft, sodass Steuersignale generiert, logisch modifiziert und in einer Kaskade weitergegeben werden können. Die programmtechnische Berechnung erfolgt meist auf Ebene der @as.
+In der VDI-Richtlinie 3813 Blatt 2 werden normierte Funktionsblöcke definiert, um komplexe @ra#[]-Funktionen herstellerneutral und einheitlich darzustellen. Hierbei werden die einzelnen Funktionsblöcke informationstechnisch miteinander verknüpft, sodass Steuersignale generiert, logisch modifiziert und in einer Kaskade weitergegeben werden können. Die programmtechnische Berechnung erfolgt meist auf Ebene der @as.
 
 ==== Funktionsblock Thermoautomatik
 Die in @Zielgroessen definierten Ziele des sommerlichen und winterlichen Wärmeschutzes werden durch den Funktionsblock der Thermoautomatik abgebildet. Dieser Funktionsblock wertet Parameter wie die Raum- und Außentemperatur aus. Im Winterfall soll er garantieren, dass in unbelegten Räumen der solare Wärmeeintrag durch geöffnete Behänge maximiert wird, um die Heizlast zu senken. Im Sommerfall hingegen erzwingt der Block das Schließen des Sonnenschutzes bei zu hoher Raumtemperatur, um den solaren Energieeintrag und damit die Kühllast zu minimieren. 
 
-#figure(
-  image("assets/FunktionsblockThermoautomatik3813.png", width: 50%),
-  caption: [Funktionsblock für die Thermoautomatik@vdi3813-2.]
-)<fig-FunktionsblockThermo>
-
 ==== Funktionsblock Verschattungskorrektur
-Gemäß VDI 3813-2 dient dieser Funktionsblock als logischer Filter, der intern berechnet, „ob ein Fenster oder eine Gruppe von Fenstern [...] temporär durch umliegende Bebauung oder eigene Gebäudeteile verschattet werden“. Im Signalfluss empfängt der Block über den Eingang #emph("S_AUTO") den initialen Stellbefehl der vorgelagerten Automatikfunktionen. Konventionell gleicht der Algorithmus den aktuellen Sonnenstand (Azimut und Elevation) mit den im Parameter #emph("PAR_SHAD") hinterlegten statischen Verschattungsgrenzen ab. Detektiert die Logik eine Verschattung, wird der Schließbefehl blockiert und stattdessen eine definierte Parkposition an den Ausgang übergeben. 
+Gemäß VDI 3813-2 dient dieser Funktionsblock (siehe @fig-FunktionsblockThermo) als logischer Filter, der intern berechnet, „ob ein Fenster oder eine Gruppe von Fenstern [...] temporär durch umliegende Bebauung oder eigene Gebäudeteile verschattet werden“. Im Signalfluss empfängt der Block über den Eingang #emph("S_AUTO") den initialen Stellbefehl der vorgelagerten Automatikfunktionen. Konventionell gleicht der Algorithmus den aktuellen Sonnenstand (Azimut und Elevation) mit den im Parameter #emph("PAR_SHAD") hinterlegten statischen Verschattungsgrenzen ab. Detektiert die Logik eine Verschattung, wird der Schließbefehl blockiert und stattdessen eine definierte Parkposition an den Ausgang übergeben. 
+
+#figure(
+  image("assets/FunktionsblockVerschattungAlt.png", width: 50%),
+  caption: [Funktionsblock für die Verschattungskorrektur@vdi3813-2.],
+  placement: auto
+)<fig-FunktionsblockThermo>
 
 Da die in dieser Arbeit entwickelte 3D-Simulation den Verschattungsstatus jedoch bereits prozessorausgelagert (extern) und hochauflösend ermittelt, wird die interne Winkelkalkulation dieses normierten Blocks obsolet. Die Simulation ersetzt somit nicht nur den statischen Parameter #emph("PAR_SHAD"), sondern macht deutlich, dass die Architektur des gesamten Funktionsblocks im Kontext einer datengetriebenen, simulationsbasierten Gebäudeautomation konzeptionell neu gedacht werden muss.
 

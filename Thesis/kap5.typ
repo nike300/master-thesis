@@ -29,6 +29,8 @@ Zusammenfassend transformiert der entwickelte Workflow die Jahresverschattung vo
 == Grenzen des entwickelten Prozesses...
 - es ist immer noch wenig automatisiert, da jedes Projekt unterschiedlich ist (Topografie Ja/Nein, Gute Umgebungsdaten vorhanden Ja/Nein etc.)
 - umgebungsdaten und ifc-modelle liegen in unterschiedlicher qualität vor
+- blendungen durch spiegelung werden nicht detektiert 
+- um diesen prozess durchzuführen, müssen kompetenzen in blender vorhanden sein
 
 == Ausblick...
 - Raytracing probieren - Um spiegelungen mit zu berücksichtigen

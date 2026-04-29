@@ -1,14 +1,9 @@
 = Anforderungsanalyse und Konzeption des Integrationsprozesses (80% fertig)<Kap3>
 == Analyse der Ausgangssituation und Zieldefinition...<AnalyseAusgangssituation>
 
-In der aktuellen Praxis der Gebäudeautomation weisen konventionelle Verschattungsstrategien signifikante Defizite auf. Die Berücksichtigung von Fremdverschattung durch umliegende Bebauung oder Topografie erfolgt oftmals über manuelle und fehleranfällige Prozesse. Dabei werden statische Verschattungsdaten für einzelne Fenster, Fenstergruppen oder ganze Fassadenabschnitte händisch in die Steuerungssysteme eingetragen.
+In der aktuellen Praxis der Gebäudeautomation weist die konventionelle Einbindung von Verschattungsdaten signifikante Defizite auf. Die Berücksichtigung von Fremdverschattung durch umliegende Bebauung oder Topografie erfolgt oftmals über manuelle und fehleranfällige Prozesse. Dabei werden statische Verschattungsdaten in Form von Grenzwinkeln für einzelne Fenster, Fenstergruppen oder ganze Fassadenabschnitte händisch in die Steuerungslogik BMS-Software der Jalousiesteuerung hinterlegt (siehe @fig-jalousiesteuerung). Diese Winkel werden in der Praxis oft ungefähr eingestellt und durch Trial and Error angepasst.
 
-
-
-Diese spezifischen Winkel werden anschließend als statische Parameter in der Software der Jalousiesteuerung hinterlegt (siehe @fig-jalousiesteuerung). Diese Winkel werden in der Praxis oft ungefähr eingestellt und durch Trial and Error angepasst.
-
-
-Im operativen Betrieb berechnet das Automationssystem fortlaufend den aktuellen Sonnenstand und gleicht diesen mit den definierten Grenzwinkeln ab. Auf Basis dieses Abgleichs entscheidet die Logik, ob der entsprechende Punkt zum gegebenen Zeitpunkt verschattet ist oder direkter Sonneneinstrahlung ausgesetzt ist.
+Im operativen Betrieb berechnet die @as fortlaufend den aktuellen Sonnenstand und gleicht diesen mit den definierten Grenzwinkeln ab. Auf Basis dieses Abgleichs entscheidet die Logik, ob der entsprechende Punkt zum gegebenen Zeitpunkt verschattet ist oder direkter Sonneneinstrahlung ausgesetzt sein kann (in Abhängigkeit des Wetters).
 
 #figure(
   image("assets/JalousiesteuerungAlt.png", width: 80%),
@@ -20,8 +15,7 @@ Dieser Ansatz zwingt die Systemintegration jedoch zu Worst-Case-Annahmen. Da ein
 
 Für Gebäude mit einfacher architektonischer Geometrie und einer weitläufigen, wenig verbauten Umgebung bietet diese winkelbasierte Methode eine funktionale und passable Lösung. Sobald jedoch großvolumige Bauwerke mit komplexen Fassadenstrukturen in dichten urbanen Kontexten betrachtet werden, stößt dieser Ansatz an seine technischen Grenzen und erfordert eine dreidimensionale Betrachtungsweise.
 
-Verschattungssimulationen basierend auf 3D-Daten findet heutzutage immer mehr Einzug in die Gebäudeautomation. Es gibt Hersteller, die diese bereits als Dienstleistung anbieten (z.B. WAREMA, Sauter). 
-
+Verschattungssimulationen basierend auf 3D-Daten findet heutzutage immer mehr Einzug in die Gebäudeautomation. Es gibt Hersteller, die diese bereits als Dienstleistung anbieten (z.B. WAREMA, Sauter). ---
 
 
 
@@ -69,15 +63,7 @@ Die Auswahl des geeigneten Datenanbieters für das Referenzprojekt erfolgt anhan
 
 - *Verfügbarkeit und Abdeckung:* Zunächst muss geprüft werden, welcher Anbieter Daten für den spezifischen Standort in der erforderlichen Dichte bereitstellt. Während globale Anbieter oft flächendeckende, aber detailarme Daten liefern, bieten kommunale Geoportale (z. B. Katasterämter) oft präzisere Datensätze an. Zu beachten sind hierbei lizenzrechtliche und technische Einschränkungen: So sind beispielsweise die photogrammetrischen 3D-Tiles der Google Maps Platform in der EU derzeit nur eingeschränkt für Simulationszwecke nutzbar @GoogleTilesAdjustments.
 
--------LOD Abschnitt sollte wahrscheinlich in Kapitel2 ---------
-- *Level of Detail (@lod):* Der Detaillierungsgrad der Gebäudegeometrie ist ein wichtiger Parameter für die Simulation. Gemäß dem Standard der Open Geospatial Consortium (OGC) für CityGML unterscheidet man:
-  - *@lod#[]1 (Blockmodell):* Das Gebäude wird als einfacher Kubus mit Flachdach dargestellt (Extrusion der Grundfläche). Dies ist für weit entfernte Verschattungsobjekte ausreichend, führt aber im Nahbereich zu Fehlern, da die tatsächliche Dachform ignoriert wird.
-  - *@lod#[]2 (Dachmodell):* Das Modell beinhaltet standardisierte Dachformen und grobe Dachaufbauten. Für die Verschattungssimulation stellt @lod#[]2 oft den optimalen Kompromiss aus Genauigkeit und Dateigröße dar @Hessen3D.
-  - *@lod#[]3 (3D Mesh)* Detaillierte Gebäudehüllen werden mit Auskragungen, Fensterlaibungen und Texturen modelliert. @lod#[]3 bietet eine sehr hohe Genauigkeit, die jedoch einen negativen Einfluss auf die spätere Rechenleistung hat.  
-#figure(
-  image("assets/LOD1-3.png", width: 80%),
-  caption: [@lod#[] 1-3 @ogcCityGeography]
-)<fig-lod>
+- *Level of Detail:*...
 
 - *Datenformat und Interoperabilität:* Für den Import in die Simulationsumgebung (Blender) ist das Format entscheidend.
   - _Semantische Formate:_ *CityGML* oder *CityJSON* enthalten neben der Geometrie auch Attribute (Baujahr, Nutzung). Sie müssen jedoch oft erst geparst (konvertiert) werden.
