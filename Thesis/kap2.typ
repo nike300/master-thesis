@@ -235,62 +235,59 @@ Eine Projektion stellt die mathematische Rechenvorschrift dar, um die Koordinate
 ) <tab:koordinaten_formate>
 
 
-
-
-
 == Verschattungssysteme und Raumautomation <Verschattungssysteme>
-=== Bauphysikalische und lichttechnische Zielgrößen... <Zielgroessen>
-Dynamische Sonnenschutzsysteme mit zwei Freiheitsgraden (Behanghöhe und Lamellenwinkel) erfüllen in der modernen Gebäudeautomation wesentliche energetische und ergonomische Funktionen. Die primären Zielgrößen einer optimalen Steuerung definieren sich wie folgt:
+=== Systematik steuerbarer Sonnenschutzsysteme
 
-- *Sommerlicher Wärmeschutz:* Ziel ist die Minimierung des solaren Energieeintrags in das Gebäude, um die anfallende Kühllast und den damit verbundenen Energieverbrauch der Klimatisierung effektiv zu senken. Intelligente Sonnenschutzsysteme können die benötigte Kühlenergie um 30% reduzieren@hutchins2015shading[S. 12].
+In der Gebäudeautomation werden Sonnenschutzsysteme primär nach der Anzahl ihrer mechanischen Freiheitsgrade klassifiziert. Diese technische Einteilung bestimmt maßgeblich die Flexibilität der Steuerung sowie das Potenzial zur Tageslichtnutzung.
 
-- *Winterlicher Wärmeschutz:* Im Heizfall ist die durch transparente Hüllflächen in das Gebäude gelangende Solarstrahlung zu maximieren, um die Heizlast und den primärenergetischen Aufwand zu reduzieren. Gleichzeitig kann der Transmissionswärmefluss von innen nach außen minimiert werden, durch das Herunterfahren von Behängen.
+Systeme mit einem Freiheitsgrad umfassen vorwiegend Rollläden und textile Screens, welche als vertikal geführte Stoffbahnen fungieren. Die einzige verfügbare Steuergröße bei diesen Systemen ist die prozentuale Behanghöhe. Da sie lediglich vertikal auf- und abgefahren werden können, bieten sie nur ein sehr begrenztes Potenzial zur Steuerung der Tageslichtqualität im Rauminneren. Sie finden vorwiegend im Wohnungsbau Anwendung.
 
-- *Visueller Komfort:* Hierbei steht die Vermeidung von ungewollter Direkt- und Reflexblendung an Arbeitsplätzen im Vordergrund. Gleichzeitig soll durch eine präzise Lamellennachführung die Sichtverbindung nach außen gemäß DIN EN 14501 weitestgehend erhalten bleiben, was den visuellen Komfort maßgeblich erhöht.
+Systeme mit zwei Freiheitsgraden, insbesondere außenliegende Raffstores beziehungsweise Jalousien, bilden hingegen den Standard im modernen Büro- und Verwaltungsbau. Diese Anlagen verfügen über die beiden Steuergrößen Behanghöhe und Lamellenwinkel. Die Möglichkeit, die Neigung der einzelnen Lamellen anzupassen, ist die technologische Grundvoraussetzung für eine präzise Lichtlenkung. Aus diesem Grund fokussiert sich die vorliegende Arbeit exklusiv auf die Simulation und Steuerung dieser zweidimensional verstellbaren Jalousiesysteme.
 
-- *Thermischer Komfort:* Der thermische Komfort wird maßgeblich durch die operative Raumtemperatur $theta_"op"$ bestimmt, welche sich aus dem Mittelwert von Lufttemperatur und der mittleren Strahlungstemperatur der Umgebung zusammensetzt. Sonnenschutzeinrichtungen leisten hier einen wichtigen Beitrag die direkte Bestrahlung der Person und somit Überhitzung der Person im Sommer zu vermeiden. 
-// Der thermische Komfort wird maßgeblich durch die operative Raumtemperatur $theta_"op"$ bestimmt, welche durch eine gezielte Regulierung des solaren Wärmeeintrags begrenzt werden muss. Sonnenschutzeinrichtungen steuern diese Dynamik gemäß DIN EN 14501, indem sie die direkte Bestrahlung von Personen verhindern und den Gesamtenergiedurchlassgrad ($g_"tot"$) sowie sekundäre Wärmeabgaben des Behanges optimieren.
+Die physische Bewegung des Sonnenschutzes erfolgt in der Regel über integrierte Elektromotoren. Die Ansteuerung dieser Aktoren geschieht entweder dezentral über raumspezifische Controller oder zentralisiert über eine übergeordnete Automationsstation. 
 
-- *Tageslichtversorgung:* Diese Zielgröße maximiert die relative Nutzungszeit des natürlichen Lichts, um den Einsatz von Kunstlicht zu minimieren @din5034-1. Dynamische Verschattung kann den jährlichen Energieverbrauch der Beleuchtung in den Räumen um 14-42% reduzieren@fernandes2021potential. Eine hohe Tageslichtautonomie wirkt sich zudem nachweislich positiv auf den circadianen Rhythmus sowie die psychische und physische Gesundheit der Gebäudenutzer aus @dgnb1.4.
+Ein zentraler steuerungstechnischer Mechanismus bei Jalousien ist die Einstellung des sogenannten Cut-off-Winkels. Hierbei wird der maximal geöffnete Neigungswinkel der Lamellen berechnet, bei dem direkte Einstrahlung der Sonne blockiert wird. Hierbei kann gleichzeitig das direkte Sonnenlicht an die Decke reflektiert werden (siehe...). Außerdem verbleibt ein maximaler Spalt zwischen den Lamellen, um den Eintritt von diffusem Himmelslicht in die Raumtiefe zu ermöglichen. Dies stellt eine ideale Balance zwischen Blendschutz und Tageslichtautonomie dar.
 
-- *Reduktion von Lichtverschmutzung:* Durch das automatisierte Schließen der Behänge in den Nacht- oder frühen Morgenstunden wird verhindert, dass künstliches Licht störend in die Umgebung abstrahlt. Dies schützt umliegende Ökosysteme und natürliche Biorhythmen von Mensch und Natur @lichtverschmutzung.
+Um diesen Zustand aufrechtzuerhalten, wird in der Raumautomation das Prinzip der automatischen Lamellennachführung angewendet. Dabei passt die Steuerung den Cut-off-Winkel im Tagesverlauf kontinuierlich an den sich ändernden Sonnenstand an. Für eine exakte Nachführung benötigt die Automationsstation Echtzeitdaten über den solaren Azimut- und Höhenwinkel. Der Höhenwinkel ist konstant für den Standort, wobei der Azimutwinkel von der Ausrichtung der Fensterfläche abhängt.
 
-- *Fremdschutz:* - gegen einbrecher, gegen hagelschaden an fenstern
+#figure(
+  image("assets/CutOffWinkel.png"),
+  caption: [erer],
+  placement: auto
+)
 
+=== Bauphysikalische und lichttechnische Zielgrößen <kap-Zielgroessen>
 
-- *Selbstschutz:* Für den Fall eines Extremwetterereignisses muss ein Schutz vor Beschädigung für die Jalousie vorgesehen werden. Dies kann über eine Steuerung funktionieren, die die Windgeschwindigkeit von einer Wetterstation auf dem Dach oder durch den Zugriff auf einen Online-Wetterservice erhält.
+Dynamische Sonnenschutzsysteme erfüllen in der modernen Gebäudeautomation wesentliche energetische und ergonomische Funktionen. Die primären Zielgrößen einer optimalen Steuerung definieren sich wie folgt:
 
-- *Privatsphäre:* Zuletzt bieten steuerbare Behänge durch die Unterbrechung der Sicht nach Innen einen Beitrag zur Privatsphäre der anwesenden Personen.
+- Sommerlicher Wärmeschutz: Ziel ist die Minimierung des solaren Energieeintrags in das Gebäude, um die anfallende Kühllast und den damit verbundenen Energieverbrauch der Klimatisierung effektiv zu senken. Intelligente Sonnenschutzsysteme können die benötigte Kühlenergie um 30% reduzieren@hutchins2015shading[S. 12].
 
-Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häufig in einem direkten Zielkonflikt zueinander (beispielsweise konkurriert ein maximaler Blendschutz direkt mit einer hohen Tageslichtautonomie). Die Steuerung der Raumautomation muss daher definieren, in welcher Kaskade diese Funktionen priorisiert werden.
+- Winterlicher Wärmeschutz: Im Heizfall ist die durch transparente Hüllflächen in das Gebäude gelangende Solarstrahlung zu maximieren, um die Heizlast und den primärenergetischen Aufwand zu verringern. Zeitgleich minimieren geschlossene Behänge während der Nachtstunden den Transmissionswärmeverlust von innen nach außen.
 
-=== Klassifizierung steuerbarer Sonnenschutzsysteme (umbenennen in Begriffserläuterung oder so?)... <KlassifizierungSteuerbarerSonnenschutzsysteme>
-- Systeme mit einem Freiheitsgrad (z. B. Rollläden, Screens): Variable Position $h$ (0-100%).
-- Systeme mit zwei Freiheitsgraden (z. B. Raffstore/Jalousien): Variablen Position $h$ und Lamellenwinkel $lambda$.
-- Relevanz für die Automation: Je komplexer das System, desto wichtiger ist die präzise Simulation des Winkels.
-- behanghöhe
-- automatische Lamellennachführung
-- cut off Winkel
+- Visueller Komfort: Hierbei steht die Vermeidung von ungewollter Direkt- und Reflexblendung an Arbeitsplätzen im Vordergrund. Durch eine präzise Lamellennachführung soll die Sichtverbindung nach außen gemäß DIN EN 14501 weitestgehend erhalten bleiben, was den visuellen Komfort maßgeblich erhöht.
 
+- Thermischer Komfort: Dieser wird wesentlich durch die operative Raumtemperatur $theta_"op"$ bestimmt, welche sich als Mittelwert aus der lokalen Lufttemperatur und der mittleren Strahlungstemperatur der Umfassungsflächen zusammensetzt. Sonnenschutzeinrichtungen leisten hier einen entscheidenden Beitrag, indem sie die direkte Bestrahlung von Personen blockieren und somit eine lokale Überhitzung im Sommer unterbinden.
 
+- Tageslichtversorgung: Diese Zielgröße maximiert die relative Nutzungszeit des natürlichen Lichts, um den Einsatz von Kunstlicht zu minimieren@din5034-1. Dynamische Verschattung kann den jährlichen Energieverbrauch der Beleuchtung in den Räumen um 14-42% reduzieren@fernandes2021potential. Eine hohe Tageslichtautonomie wirkt sich zudem nachweislich positiv auf den circadianen Rhythmus sowie die psychische und physische Gesundheit der Gebäudenutzer aus@dgnb1.4.
 
+- Reduktion von Lichtverschmutzung: Durch das automatisierte Schließen der Behänge in den Nacht- oder frühen Morgenstunden wird verhindert, dass künstliches Licht störend in die Umgebung abstrahlt. Dies schützt umliegende Ökosysteme und natürliche Biorhythmen von Mensch und Natur@lichtverschmutzung.
 
+- Anlagenschutz (Selbstschutz): Zum Schutz vor mechanischer Zerstörung bei Extremwetterereignissen (wie Sturm oder Frost) muss die Anlage in eine sichere Position gefahren werden. Dies erfordert die kontinuierliche Auswertung externer Sensordaten, beispielsweise über eine lokale Dachwetterstation. Zudem verlängert eine gedämpfte, intervallbasierte Steuerung die Lebensdauer der verschleißanfälligen Elektroantriebe.
 
+- Objektschutz (Fremdschutz): Bei Hagelschlag können geschlossene Metallbehänge die Fensterverglasung vor Schäden bewahren. Weiterhin erschweren geschlossene Anlagen außerhalb der Nutzungszeiten unbefugtes Eindringen in das Gebäude und leisten somit einen Beitrag zum mechanischen Einbruchschutz.
+
+- Privatsphäre: Zuletzt bieten steuerbare Behänge durch die Unterbrechung der Sichtachse von außen nach innen einen essenziellen Beitrag zur Wahrung der Privatsphäre der Gebäudenutzer.
+
+Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häufig in direkter Konkurrenz zueinander. So erfordert ein maximaler sommerlicher Wärmeschutz das Schließen des Behanges, was wiederum der Maximierung der Tageslichtautonomie widerspricht. Die Programmierung der Raumautomation muss folglich definieren, in welcher Hierarchie diese Funktionen priorisiert werden.
 
 == Normative und regulatorische Rahmenbedingungen... <NormativeGrundlagen>
-=== Tageslichtversorgung und Blendschutz (DIN EN 17037) <GrundlagenLichtWaermesteuerung>
-@ra
+=== Tageslichtversorgung und Blendschutz (DIN EN 17037) <kap-17037>
 
+Die europäische Norm DIN EN 17037 definiert die methodischen Grundlagen für die Tageslichtplanung in Gebäuden. Sie formuliert Kriterien, von denen die Tageslichtversorgung, die Sichtverbindung nach außen sowie der Blendschutz direkten Einfluss auf die automatisierte Steuerung von Sonnenschutzsystemen haben@dinen17037.
 
-Ein Grundziel der Verschattung ist der Blendschutz, der in der DIN EN 17037 @dinen17037 behandelt wird.
-Nutzen:
-- Aussicht
-- Blendschutz 
-Für den visuellen Komfort gibt es vor allem zwei Faktoren auf die Verschattungseinrichtungen Einfluss nehmen können: Der Blendschutz soll das Auftreten von einer zu hohen Leuchtdichte verhindern, da diese sonst
+Ein wesentliches Ziel der Norm ist die Sicherstellung einer ausreichenden Beleuchtungsstärke durch natürliches Licht im Rauminneren. Die zugehörige Messgröße ist die Tageslichtautonomie. Sie beschreibt den prozentualen Anteil der Nutzungszeit, in dem das geforderte Beleuchtungsniveau ausschließlich durch Tageslicht erreicht wird. Dem gegenüber steht die zwingende Anforderung des Blendschutzes, der durch die Begrenzung von kritischen Leuchtdichten und Kontrasten sichergestellt wird. Die Norm nutzt hierfür die Daylight Glare Probability zur Bewertung der Blendungswahrscheinlichkeit und definiert Schwellenwerte, die nur für einen sehr begrenzten Anteil der jährlichen Nutzungsdauer überschritten werden dürfen. Darüber hinaus fordert die Richtlinie den weitestgehenden Erhalt der Sichtverbindung nach außen, was bei der Steuerung von Jalousien durch die Nutzung des Cut-off-Winkels unterstützt wird.
 
-"Kritische Blendungssituationen, die einen Schwellenwert DGPt überschreiten, sollten auf einen bestimmten Anteil der Bezugsnutzungsdauer fDGP,exceed beschränkt sein" S.52 17037
-
-
+Zur Überprüfung dieser Kriterien bietet die DIN EN 17037 grundsätzlich vereinfachte, statische Berechnungsverfahren an, die ohne komplexe Softwarelösungen anwendbar sind. Diese konventionellen Methoden basieren jedoch auf pauschalen geometrischen Verschattungswinkeln. In dicht bebauten urbanen Kontexten und bei der Nutzung dynamischer Sonnenschutzsysteme führen diese vereinfachten Ansätze zu stark konservativen Worst-Case-Annahmen, die eine optimale Tageslichtnutzung oftmals verhindern. Um die strengen Grenzwerte für den Blendschutz im gesamten Jahresverlauf exakt nachzuweisen und parallel die Tageslichtautonomie zu maximieren, ist der Einsatz von dynamischen, computergestützten 3D-Simulationen in der modernen Gebäudeplanung de facto unerlässlich.
 === Energieeffizienz der Gebäudeautomation EN 15232 bzw. DIN V 18599-11) 
 
 
@@ -298,7 +295,7 @@ Für den visuellen Komfort gibt es vor allem zwei Faktoren auf die Verschattungs
 In der VDI-Richtlinie 3813 Blatt 2 werden normierte Funktionsblöcke definiert, um komplexe @ra#[]-Funktionen herstellerneutral und einheitlich darzustellen. Hierbei werden die einzelnen Funktionsblöcke informationstechnisch miteinander verknüpft, sodass Steuersignale generiert, logisch modifiziert und in einer Kaskade weitergegeben werden können. Die programmtechnische Berechnung erfolgt meist auf Ebene der @as.
 
 ==== Funktionsblock Thermoautomatik
-Die in @Zielgroessen definierten Ziele des sommerlichen und winterlichen Wärmeschutzes werden durch den Funktionsblock der Thermoautomatik abgebildet. Dieser Funktionsblock wertet Parameter wie die Raum- und Außentemperatur aus. Im Winterfall soll er garantieren, dass in unbelegten Räumen der solare Wärmeeintrag durch geöffnete Behänge maximiert wird, um die Heizlast zu senken. Im Sommerfall hingegen erzwingt der Block das Schließen des Sonnenschutzes bei zu hoher Raumtemperatur, um den solaren Energieeintrag und damit die Kühllast zu minimieren. 
+Die in @kap-Zielgroessen definierten Ziele des sommerlichen und winterlichen Wärmeschutzes werden durch den Funktionsblock der Thermoautomatik abgebildet. Dieser Funktionsblock wertet Parameter wie die Raum- und Außentemperatur aus. Im Winterfall soll er garantieren, dass in unbelegten Räumen der solare Wärmeeintrag durch geöffnete Behänge maximiert wird, um die Heizlast zu senken. Im Sommerfall hingegen erzwingt der Block das Schließen des Sonnenschutzes bei zu hoher Raumtemperatur, um den solaren Energieeintrag und damit die Kühllast zu minimieren. 
 
 ==== Funktionsblock Verschattungskorrektur
 Gemäß VDI 3813-2 dient dieser Funktionsblock (siehe @fig-FunktionsblockThermo) als logischer Filter, der intern berechnet, „ob ein Fenster oder eine Gruppe von Fenstern [...] temporär durch umliegende Bebauung oder eigene Gebäudeteile verschattet werden“. Im Signalfluss empfängt der Block über den Eingang #emph("S_AUTO") den initialen Stellbefehl der vorgelagerten Automatikfunktionen. Konventionell gleicht der Algorithmus den aktuellen Sonnenstand (Azimut und Elevation) mit den im Parameter #emph("PAR_SHAD") hinterlegten statischen Verschattungsgrenzen ab. Detektiert die Logik eine Verschattung, wird der Schließbefehl blockiert und stattdessen eine definierte Parkposition an den Ausgang übergeben. 

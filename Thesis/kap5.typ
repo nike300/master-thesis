@@ -31,8 +31,10 @@ Zusammenfassend transformiert der entwickelte Workflow die Jahresverschattung vo
 - umgebungsdaten und ifc-modelle liegen in unterschiedlicher qualität vor
 - blendungen durch spiegelung werden nicht detektiert 
 - um diesen prozess durchzuführen, müssen kompetenzen in blender vorhanden sein
+- es ist immer noch aufwendig. da architekten bereits simulationen machen für 17037, marketing etc. wäre es vlt. auch möglich den architekten mit der vorleistung zur bereitstellung dieser daten zu beauftragen.
 
 == Ausblick...
 - Raytracing probieren - Um spiegelungen mit zu berücksichtigen
   - Da der Rechenaufwand um ein vielfaches höher ist, müsste hier die wahrscheinlich parallel zum Betrieb laufen und es wird immer nur der nächste Tag berechnet
 - Man könnte eine Exceltabelle entwickeln, die die vorliegenden IFC-Daten bewertet und daraus einen zusätzlichen Arbeitsaufwand berechnet. Dies könnte für die Angebotserstellung als Entscheidungsgrundlage herangezogen werden.
+
