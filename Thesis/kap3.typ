@@ -1,50 +1,45 @@
-= Anforderungsanalyse und Konzeption des Integrationsprozesses (80% fertig)<Kap3>
-== Analyse der Ausgangssituation und Zieldefinition...<AnalyseAusgangssituation>
+= 3 Anforderungsanalyse und Konzeption des Integrationsprozesses <Kap3>
+== 3.1 Analyse der Ausgangssituation und Zieldefinition <AnalyseAusgangssituation>
 
-In der aktuellen Praxis der Gebäudeautomation weist die konventionelle Einbindung von Verschattungsdaten signifikante Defizite auf. Die Berücksichtigung von Fremdverschattung durch umliegende Bebauung oder Topografie erfolgt oftmals über manuelle und fehleranfällige Prozesse. Dabei werden statische Verschattungsdaten in Form von Grenzwinkeln für einzelne Fenster, Fenstergruppen oder ganze Fassadenabschnitte händisch in die Steuerungslogik BMS-Software der Jalousiesteuerung hinterlegt (siehe @fig-jalousiesteuerung). Diese Winkel werden in der Praxis oft ungefähr eingestellt und durch Trial and Error angepasst.
+In der aktuellen Praxis der Gebäudeautomation weist die konventionelle Einbindung von Verschattungsdaten signifikante Defizite auf. Die Berücksichtigung von Fremdverschattung durch umliegende Bebauung oder Topografie erfolgt oftmals über manuelle und fehleranfällige Prozesse. Dabei werden statische Verschattungsdaten in Form von Grenzwinkeln für einzelne Fenster, Fenstergruppen oder ganze Fassadenabschnitte händisch in der Jalousiesteuerung der BMS-Software hinterlegt (siehe @fig-jalousiesteuerung). Diese Winkel werden in der Praxis oftmals nur approximativ eingestellt und durch empirische Anpassungen im Nachhinein korrigiert.
 
-Im operativen Betrieb berechnet die @as fortlaufend den aktuellen Sonnenstand und gleicht diesen mit den definierten Grenzwinkeln ab. Auf Basis dieses Abgleichs entscheidet die Logik, ob der entsprechende Punkt zum gegebenen Zeitpunkt verschattet ist oder direkter Sonneneinstrahlung ausgesetzt sein kann (in Abhängigkeit des Wetters).
+Im operativen Betrieb berechnet die @as fortlaufend den aktuellen Sonnenstand und gleicht diesen mit den definierten Grenzwinkeln ab. Auf Basis dieses Abgleichs entscheidet die Logik, ob der entsprechende Punkt zum gegebenen Zeitpunkt verschattet ist oder direkter Sonneneinstrahlung ausgesetzt sein kann.
 
 #figure(
   image("assets/JalousiesteuerungAlt.png", width: 80%),
-  caption: [Screenshot der Parametereingabe für eine konventionelle, winkelbasierte Jalousiesteuerung in der @ebo#[]@se_ebo.],
+  caption: [Screenshot der Parametereingabe für eine konventionelle, winkelbasierte Jalousiesteuerung in der @ebo #[]@se_ebo.],
   placement: auto
 ) <fig-jalousiesteuerung>
 
 Dieser Ansatz zwingt die Systemintegration jedoch zu Worst-Case-Annahmen. Da ein einzelner Referenzpunkt in der Regel stellvertretend für größere Fassadenbereiche genutzt wird, muss der Sonnenschutz geschlossen werden, sobald auch nur ein Teilbereich der Zone potenziell besonnt ist. Eine hohe räumliche Genauigkeit und damit eine optimale Tageslichtnutzung ist mit dieser statischen Zonenbildung kaum realisierbar.
 
-Für Gebäude mit einfacher architektonischer Geometrie und einer weitläufigen, wenig verbauten Umgebung bietet diese winkelbasierte Methode eine funktionale und passable Lösung. Sobald jedoch großvolumige Bauwerke mit komplexen Fassadenstrukturen in dichten urbanen Kontexten betrachtet werden, stößt dieser Ansatz an seine technischen Grenzen und erfordert eine dreidimensionale Betrachtungsweise.
+Für Gebäude mit einfacher architektonischer Geometrie und einer weitläufigen, wenig verbauten Umgebung bietet diese winkelbasierte Methode eine funktionale und ausreichende Lösung. Sobald jedoch Bauwerke mit komplexen Fassadenstrukturen in dichten urbanen Kontexten betrachtet werden, stößt dieser Ansatz an seine technischen Grenzen und erfordert eine dreidimensionale Betrachtungsweise.
 
-Verschattungssimulationen basierend auf 3D-Daten findet heutzutage immer mehr Einzug in die Gebäudeautomation. Es gibt Hersteller, die diese bereits als Dienstleistung anbieten (z.B. WAREMA, Sauter). ---
+Verschattungssimulationen basierend auf 3D-Daten finden heutzutage zunehmend Einzug in die Gebäudeautomation. Erste Hersteller, wie beispielsweise Warema oder Sauter, bieten die Berechnung der Jahresverschattung bereits als Dienstleistung an. Aufgrund ihres Mehrwerts für die Tageslichtautonomie und Energieeffizienz wird die Integration derartiger Daten in zukünftigen Bauprojekten vermehrt gefordert werden.
 
-
-
-- Allgemeine Anforderungen an die Verschattungssimulation und den workflow (präzision, automatisierbarkeit, rechendauer, systemkompatibilität)...
+Ziel dieses Kapitels ist es, einen methodischen Ansatz aufzuzeigen, wie unter dem ausschließlichen Einsatz von Open-Source-Software und frei verfügbaren Datensätzen eine präzise Verschattungssimulation realisiert werden kann. Hierfür wird im Folgenden zunächst die Auswahl einer geeigneten Simulationsumgebung begründet. Anschließend erfolgt die Spezifikation der notwendigen Datengrundlage, bestehend aus der @bim#[]-Datengüte und externen Geodaten. Darauf aufbauend werden die räumlichen und zeitlichen Auflösungen festgelegt sowie die informationstechnische Konzeption der Simulationslogik definiert. Den Abschluss bildet der Entwurf der Systemarchitektur, in welcher die generierten Daten über einen modifizierten Funktionsblock nach VDI 3813 in die Gebäudeautomation integriert werden.
 
 == Spezifikation der Werkzeuge und Datengrundlage
 === Auswahl der Simulationsumgebung <AuswahlSimulationsumgebung>
 In der Simulationsumgebung findet die Zusammenstellung der Szene statt. Es muss eine Software gewählt werden, die den Import verschiedener 3D-Dateiformate zulässt. Zusätzlich sollte diese Software den Sonnenstand simulieren können und eine Möglichkeit bieten Raycasts zu generieren. Schlussendlich muss es möglich sein, Skripte auszuführen, um komplexe Algorithmen auszuführen.
-Die Wahl fällt auf die kostenlose Open-Source-Software Blender@blender_org, die für die Erstellung von Animationsfilmen entwickelt wurde. Sie bietet in der jetzigen Version eine Vielzahl von Funktionalitäten, darunter auch die, zur Erfüllung der oben genannten Anforderungen. Außerdem bietet sie den Vorteil einer großen, aktiven Community, die eine Vielzahl an kostenlosen und kostenpflichtigen Plug-Ins entwickelt. Für diese Anwendung passende Alternativen standen nicht zur Auswahl.
+Die Wahl fällt auf die kostenlose Open-Source-Software Blender, die für die Erstellung von Animationsfilmen entwickelt wurde@blender_org. Sie bietet in der jetzigen Version eine Vielzahl von Funktionalitäten, darunter auch die, zur Erfüllung der oben genannten Anforderungen. Außerdem bietet sie den Vorteil einer großen, aktiven Community, die eine Vielzahl an kostenlosen und kostenpflichtigen Plug-Ins entwickelt. Für diese Anwendung passende Alternativen standen nicht zur Auswahl.
 
+=== Anforderungen an das @bim#[]-Modell <AnforderungBIM>
+Um einen fehlerfreien und automatisierten Datenfluss von der digitalen Planung in die Simulationsumgebung zu gewährleisten, muss das zugrundeliegende @bim#[]-Modell spezifische geometrische und semantische Anforderungen erfüllen. Eine Untersuchung typischer @ifc#[]-Exporte offenbart häufige Defizite, die für eine valide Verschattungssimulation zwingend im Vorfeld korrigiert oder durch klare Modellierungsrichtlinien im @bim#[]-Abwicklungsplan (BAP) definiert werden müssen:
 
+*Semantische Klassifizierung (@ifc#[]-Entitäten):* Die Zielflächen müssen zwingend als `IfcWindow` oder `IfcCurtainWall` deklariert sein, damit das Python-Skript sie automatisiert extrahieren kann. Eine häufige Fehlerquelle bei CAD-Exporten (z. B. aus Autodesk Revit) ist die Fehlklassifizierung von schrägen Fenstern oder Dachflächenfenstern als generische Bauteile (oft `IfcBuildingElementProxy` oder `IfcRoof`), wodurch sie von der Simulationslogik nicht als Sensorflächen erkannt werden.
 
-=== Anforderungen an das BIM-Modell <AnforderungBIM>
+*Detaillierungsgrad (@lod):* Für eine aussagekräftige Simulation der Gebäudehülle ist ein minimaler geometrischer Detaillierungsgrad zwingend erforderlich.  Um den kritischen Effekt der Eigenverschattung (beispielsweise durch tiefe Fensterlaibungen, Stürze oder auskragende Fassadenelemente) physikalisch korrekt per Raycasting berechnen zu können, müssen die entsprechenden Bauteile mindestens im @lod 300 vorliegen.
 
-Um einen fehlerfreien und automatisierten Datenfluss von der digitalen Planung in die Simulationsumgebung zu gewährleisten, muss das zugrundeliegende BIM-Modell spezifische geometrische und semantische Anforderungen erfüllen. Eine Untersuchung typischer IFC-Exporte (Industry Foundation Classes) offenbart häufige Defizite, die für eine valide Verschattungssimulation zwingend im Vorfeld korrigiert oder durch klare Modellierungsrichtlinien im BIM-Abwicklungsplan (BAP) definiert werden müssen:
+*Datenreduktion:* Um die Dateigröße und die Berechnungszeiten beim Import in die 3D-Engine (Blender) zu minimieren, muss das @ifc#[]-Modell um nicht-relevante Architekturdetails bereinigt werden. Für die geometrische Verschattungssimulation sind ausschließlich die Elemente der thermischen Gebäudehülle (Fassaden, Fenster) sowie potenziell eigenverschattende Bauteile (Balkone, Erker, Laibungen) erforderlich. Innenwände oder Inventar sind vor allem bei großen Gebäuden zwingend auszuschließen. Meist liegen diese Modelle als Fassadenteilmodelle vor.
 
-- *Semantische Klassifizierung (IFC-Entitäten):* Die Zielflächen müssen zwingend als `IfcWindow` oder `IfcCurtainWall` deklariert sein, damit das Python-Skript sie automatisiert extrahieren kann. Eine häufige Fehlerquelle bei CAD-Exporten (z. B. aus Autodesk Revit) ist die Fehlklassifizierung von schrägen Fenstern oder Dachflächenfenstern als generische Bauteile (oft `IfcBuildingElementProxy` oder `IfcRoof`), wodurch sie von der Simulationslogik nicht als Sensorflächen erkannt werden.
+*Geometrische Ausrichtung (Face Normals):* Für eine performante und fehlerfreie Raycasting-Berechnung ist die konsistente Ausrichtung der Flächennormalen (Face Normals) der Fenster-Meshes entscheidend. Die Normalenvektoren der Fenster müssen nach außen zeigen. Ist dies nicht der Fall, kann die in 3D-Engines übliche Performance-Optimierung des _Backface Culling_ (siehe Kapitel 4, wo ich das backwards culling beschreibe) nicht angewandt werden.
 
-- *Detaillierungsgrad (@lod):* Für eine aussagekräftige Simulation der Gebäudehülle ist ein minimaler geometrischer Detaillierungsgrad zwingend erforderlich.  Um den kritischen Effekt der Eigenverschattung (beispielsweise durch tiefe Fensterlaibungen, Stürze oder auskragende Fassadenelemente) physikalisch korrekt per Raycasting berechnen zu können, müssen die entsprechenden Bauteile mindestens im @lod 300 vorliegen.
+*Georeferenzierung und Ausrichtung:* Eine zentimetergenaue Überlagerung des Gebäudemodells mit den externen GIS-Umgebungsdaten (siehe Kapitel 4.3....) erfordert eine exakte Verortung. Das Gebäude muss auf der korrekten absoluten Z-Höhe (z. B. Höhe über NHN) modelliert und geografisch nach dem Wahren Norden ausgerichtet sein. Hierfür müssen die exakten Koordinaten des Projekt-Referenzpunktes unter der Entität `IfcSite` in einem globalen Referenzsystem (z. B. WGS84) hinterlegt vorliegen @buildingsmart_ifcsite.
 
-- *Datenreduktion:* Um die Dateigröße und die Berechnungszeiten beim Import in die 3D-Engine (Blender) zu minimieren, muss das IFC-Modell um nicht-relevante Architekturdetails bereinigt werden. Für die geometrische Verschattungssimulation sind ausschließlich die Elemente der thermischen Gebäudehülle (Fassaden, Fenster) sowie potenziell eigenverschattende Bauteile (Balkone, Erker, Laibungen) erforderlich. Innenwände oder Inventar sind vor allem bei großen Gebäuden zwingend auszuschließen. Meist liegen diese Modelle als Fassadenteilmodelle vor.
+*Räumliche Zuordnung (Spatial Containment):* Für die spätere Übersichtlichkeit im Modell sollten die Fensterelemente im @ifc#[]-Strukturbaum dem jeweiligen Geschoss (`IfcBuildingStorey`) korrekt zugeordnet sein.
 
-- *Geometrische Ausrichtung (Face Normals):* Für eine performante und fehlerfreie Raycasting-Berechnung ist die konsistente Ausrichtung der Flächennormalen (Face Normals) der Fenster-Meshes entscheidend. Die Normalenvektoren der Fenster müssen nach außen zeigen. Ist dies nicht der Fall, kann die in 3D-Engines übliche Performance-Optimierung des _Backface Culling_ (siehe Kapitel 4, wo ich das backwards culling beschreibe) nicht angewandt werden.
-
-- *Georeferenzierung und Ausrichtung:* Eine zentimetergenaue Überlagerung des Gebäudemodells mit den externen GIS-Umgebungsdaten (siehe Kapitel 4.3....) erfordert eine exakte Verortung. Das Gebäude muss auf der korrekten absoluten Z-Höhe (z. B. Höhe über NHN) modelliert und geografisch nach dem Wahren Norden ausgerichtet sein. Hierfür müssen die exakten Koordinaten des Projekt-Referenzpunktes unter der Entität `IfcSite` in einem globalen Referenzsystem (z. B. WGS84) hinterlegt vorliegen @buildingsmart_ifcsite.
-
-- *Räumliche Zuordnung (Spatial Containment):* Für die spätere Übersichtlichkeit im Modell sollten die Fensterelemente im IFC-Strukturbaum dem jeweiligen Geschoss (`IfcBuildingStorey`) korrekt zugeordnet sein.
-
-- *Anlagenkennzeichnungsschlüssel*: Um die berechneten Verschattungsdaten nach der Simulation fehlerfrei an die operative Steuerungsebene zu übergeben, muss jedes Fensterobjekt zwingend mit einem @aks versehen sein (beispielsweise im IFC-Attribut `Name` oder `Tag`). Das Anlagenkennzeichnungssystem sollte konsequent nach dem hierarchischen Schalenmodell der VDI 3814-1 aufgebaut sein, um das direkte Mapping in der Automationsstation zu ermöglichen @vdi3814-1. Dabei sollten die Fenster ihrem jeweiligen Raumsegment zugeordnet werden.
+*Anlagenkennzeichnungsschlüssel*: Um die berechneten Verschattungsdaten nach der Simulation fehlerfrei an die operative Steuerungsebene zu übergeben, muss jedes Fensterobjekt zwingend mit einem @aks versehen sein (beispielsweise im @ifc#[]-Attribut `Name` oder `Tag`). Das Anlagenkennzeichnungssystem sollte konsequent nach dem hierarchischen Schalenmodell der VDI 3814-1 aufgebaut sein, um das direkte Mapping in der Automationsstation zu ermöglichen @vdi3814-1. Dabei sollten die Fenster ihrem jeweiligen Raumsegment zugeordnet werden.
 
 
 In der Planungspraxis werden diese strukturellen und semantischen Anforderungen an die IFC-Datenqualität oftmals nicht vollumfänglich erfüllt. Dies erzwingt in der Konsequenz eine manuelle und ressourcenintensive Vorverarbeitung des Gebäudemodells vor dem eigentlichen Simulationsstart.
@@ -57,7 +52,7 @@ OPTIONAL: HIER AUF CHECKLISTE IM ANHANG VERWEISEN FÜR ARCHITEKTEN
 ==== Analyse externer Geodaten <AnalyseExternerGeodaten>
 // Notwendigkeit und Anforderungen an Umgebungsmodelle, beispielsweise der Detaillierungsgrad (LOD) der Nachbarbebauung aus GIS- oder OpenStreetMap-Daten.
 
-Die Qualität der Daten der umgebenden Gebäude, Topografie und Vegetation bestimmt die Genauigkeit der Verschattungssimulation maßgeblich. Ungenaue Gebäudekanten oder fehlende Dachaufbauten in der Nachbarbebauung führen zwangsläufig zu fehlerhaften Schlagschatten auf der betrachteten Fassade. Meistens werden diese Datensätze in georeferenzierten Koordinatensystemen (z. B. UTM oder Gauß-Krüger) bereitgestellt, was eine Transformation in das lokale System des Gebäudemodells (BIM) erfordert.
+Die Qualität der Daten der umgebenden Gebäude, Topografie und Vegetation bestimmt die Genauigkeit der Verschattungssimulation maßgeblich. Ungenaue Gebäudekanten oder fehlende Dachaufbauten in der Nachbarbebauung führen zwangsläufig zu fehlerhaften Schlagschatten auf der betrachteten Fassade. Meistens werden diese Datensätze in georeferenzierten Koordinatensystemen (z. B. UTM oder Gauß-Krüger) bereitgestellt, was eine Transformation in das lokale System des Gebäudemodells (@bim#[]) erfordert.
 
 Die Auswahl des geeigneten Datenanbieters für das Referenzprojekt erfolgt anhand folgender Kriterien:
 
@@ -160,7 +155,7 @@ Die Entscheidung, ob eine Fläche der Sonne zugewandt ist, hängt vom Winkel $al
 Um Fehlkalkulationen in diesem Schritt auszuschließen, muss garantiert sein, dass alle Flächennormalen im 3D-Modell konsistent nach außen gerichtet sind.
 
 ==== Vermeidung von Selbstverschattung
-Bei der Konzeption der auf Raycasting basierenden Simulationsarchitektur (vgl. Grundlagen in Kapitel 2.x) muss eine bekannte Problematik der 3D-Simulation berücksichtigt werden: sogenannte Self-Intersection-Fehler (Selbstverschattungen). Da Fenster in BIM- und IFC-Modellen häufig als Volumenkörper modelliert sind, kann ein direkt an der Glasfläche startender Teststrahl aufgrund von minimalen mathematischen Rundungsfehlern (Floating-Point-Ungenauigkeiten) sofort mit der Innenseite oder dem Rahmen der eigenen Geometrie kollidieren. Das Fenster würde sich algorithmisch somit selbst verschatten.
+Bei der Konzeption der auf Raycasting basierenden Simulationsarchitektur (vgl. Grundlagen in Kapitel 2.x) muss eine bekannte Problematik der 3D-Simulation berücksichtigt werden: sogenannte Self-Intersection-Fehler (Selbstverschattungen). Da Fenster in @bim#[]- und @ifc#[]-Modellen häufig als Volumenkörper modelliert sind, kann ein direkt an der Glasfläche startender Teststrahl aufgrund von minimalen mathematischen Rundungsfehlern (Floating-Point-Ungenauigkeiten) sofort mit der Innenseite oder dem Rahmen der eigenen Geometrie kollidieren. Das Fenster würde sich algorithmisch somit selbst verschatten.
 
 Um dies zu verhindern, ohne auf rechenintensive Auswertungen der getroffenen Flächennormalen zurückgreifen zu müssen, wird in der Simulationslogik ein Start-Offset (Ray Bias) definiert. Der geometrische Ursprung des Prüfstrahls wird dabei nicht exakt auf der Glasfläche platziert, sondern entlang des Richtungsvektors virtuell um ein definiertes Maß (beispielsweise 10cm) in den Außenraum verschoben. Die eigentliche Kollisionsprüfung beginnt somit sicher außerhalb der eigenen Fenster- und Laibungsgeometrie, was die Robustheit der Gesamtsimulation signifikant erhöht.
 
@@ -169,7 +164,7 @@ Um dies zu verhindern, ohne auf rechenintensive Auswertungen der getroffenen Fl�
 *Vorberechnung oder dynamisch?*
 Hier geht es um die Grundsatzentscheidung: Handelt es sich um ein zustandsloses System, das einmalig einen Fahrplan (Schedule) generiert, oder um ein dynamisches System, das auf Veränderungen (beispielsweise neue Verschattungsobjekte durch Baustellen) reagieren kann. Du kannst hier begründen, warum du dich für den einen oder anderen Weg entschieden hast, bevor du in die Umsetzung gehst.
 
-- *Workflow-Design:* Hier vlt. Flow-Chart mit gesamter Prozesskette von ifc-Modell bis Integration in GA
+- *Workflow-Design:* Hier vlt. Flow-Chart mit gesamter Prozesskette von @ifc#[]-Modell bis Integration in GA
 - Tabelle mit Elevationswinkel könnte mitgegeben oder auf AS berechnet werden(Vermeidung von Redundanz: Die Sonnenhöhe (Elevation) ist zu einem bestimmten Zeitpunkt für das gesamte Gebäude (und somit für alle ~6000 Fenster) identisch.) 
 - Status R, V, N - Azimut erklären
   - hat auch vorteil für debugging oder nachvollziehbarkeit der daten
@@ -208,3 +203,4 @@ Die interne Steuerungslogik wertet den eintreffenden Datentyp aus und schaltet d
 - Der Datenoutput mit N, R, V und Azimutwinkel  ermöglicht maximale Flexibilität um verschiedene Steuerung zu ermöglichen
 - Cut-Off-Angle kann definiert werden mit Höhenwinkel
 - Mit Azimut können sehr flache einfallende Sonnenstrahlen toleriert werden, wenn z.B. Säulen zwischen den Fenstern aufgestellt sind
+- Negative Seiten von Beschattung: laute fahrbewegungen, visuell störend durch sich bewegende (auch bei Änderung Winkel lamelle) behänge und durch starkes abdunkeln während fahrbewegungen. 

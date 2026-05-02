@@ -42,3 +42,19 @@
 #include "kap3.typ"
 #include "kap4.typ"
 #include "kap5.typ"
+
+= Arbeitsplan Masterarbeit (Verbleibende Phasen)
+
+== Phase 2: Konzeption und Einleitung (03. Mai bis 07. Mai)
+- Transformation der Stichpunkte in Kapitel 3 (Systemarchitektur, MQTT, Schnittstellen) in einen akademischen Fließtext.
+- Vollständige Ausformulierung von Kapitel 1 (Problemstellung und Zielsetzung) zur Fixierung des roten Fadens.
+
+== Phase 3: Diskussion und Synthese (08. Mai bis 11. Mai)
+- Ausarbeitung von Kapitel 5 (Zusammenfassung der Ergebnisse, Grenzen des Prozesses, Ausblick).
+- Entfernung obsoleter Abschnitte, wie der Marktpotenzialanalyse.
+
+== Phase 4: Formalia und Abschluss (12. Mai bis 17. Mai)
+- Verfassen des Abstracts in deutscher und englischer Sprache.
+- Abgleich des Inhaltsverzeichnisses mit den tatsächlichen Überschriften.
+- Überprüfung der Zitationen und des Literaturverzeichnisses.
+- Pufferzeit für den abschließenden Lesefluss und die typografische Formatierung.

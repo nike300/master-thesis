@@ -3,7 +3,7 @@
 - obwohl das ifc-modell viele fehler hatte wurden alle probleme behoben
 - simulation dauert 3 tage 16 stunden für ein sehr großes und kompliziertes projekt für das four. für üblichere kleiner projekt wird simulationsdauer ein bruchteil davon sein.
 - ergebnisse wurden erfolgreich validiert
-- es muss schon früh im BIM-Abwicklungsplan (BAP) anforderungen an BIM-Modell gestellt werden
+- es muss schon früh im @bim#[]-Abwicklungsplan (BAP) anforderungen an @bim#[]-Modell gestellt werden
 - Es wurden XX Open Source-Software, -Plug-ins und -Datenquellen verwendet im Verlauf der Arbeit (siehe @OpenSourceListe).
 == Marktanalyse und wirtschaftliches Potenzial
 === Marktbeschreibung und Marktgröße
@@ -13,7 +13,7 @@ Gebäudeeigentümer profitieren von einem erhöhten Gebäudewert durch höhere N
 === Marktanalyse: Abgrenzung zu Wettbewerbslösungen
 Um das wirtschaftliche und technische Potenzial des entwickelten Workflows einzuordnen, wird ein Vergleich mit dem aktuellen Status Quo am Markt angestellt. Etablierte Sonnenschutzhersteller (wie beispielsweise WAREMA) bieten die Berechnung der Jahresverschattung derzeit primär als kostenpflichtige Dienstleistung an. Die Analyse der Angebotstexte@warema_jahresverschattung_basispreis offenbart dabei signifikante prozessuale Defizite, die durch den in dieser Arbeit vorgestellten Open-Source-Ansatz gelöst werden:
 
-- *Medienbrüche und manuelle Datenaufbereitung:* Kommerzielle Dienstleister fordern häufig proprietäre CAD-Formate (wie Revit oder DWG) mit strikten Dateigrößenlimits (z. B. 250 MB). Zudem muss der Fachplaner das Modell manuell bereinigen (Entfernung von Innenwänden und Inventar), bevor es übermittelt wird. Der entwickelte IFC-basierte Workflow liest die relevanten Entitäten (`IfcWindow`, `IfcCurtainWall`) hingegen automatisiert und standardisiert aus dem OpenBIM-Modell aus und ist nicht auf eine Dateigröße begrenzt.
+- *Medienbrüche und manuelle Datenaufbereitung:* Kommerzielle Dienstleister fordern häufig proprietäre CAD-Formate (wie Revit oder DWG) mit strikten Dateigrößenlimits (z. B. 250 MB). Zudem muss der Fachplaner das Modell manuell bereinigen (Entfernung von Innenwänden und Inventar), bevor es übermittelt wird. Der entwickelte IFC-basierte Workflow liest die relevanten Entitäten (`IfcWindow`, `IfcCurtainWall`) hingegen automatisiert und standardisiert aus dem Open@bim#[]-Modell aus und ist nicht auf eine Dateigröße begrenzt.
 
 - *Integration von Umgebungsdaten:* Umgebungsdaten müssen bei konventionellen Dienstleistern manuell im 3D-Modell erstellt werden. Fehlen in den übermittelten CAD-Plänen detaillierte Höhenangaben zur Nachbarbebauung, müssen diese kostenpflichtig nachvermessen werden. Der hier vorgestellte Prozess integriert stattdessen frei verfügbare CityGML-Daten direkt in die Blender-Umgebung.
 
@@ -27,13 +27,16 @@ Zusammenfassend transformiert der entwickelte Workflow die Jahresverschattung vo
 === Marktpotenzialanalyse (entfällt)
 
 == Grenzen des entwickelten Prozesses...
+
 - es ist immer noch wenig automatisiert, da jedes Projekt unterschiedlich ist (Topografie Ja/Nein, Gute Umgebungsdaten vorhanden Ja/Nein etc.)
 - umgebungsdaten und ifc-modelle liegen in unterschiedlicher qualität vor
 - blendungen durch spiegelung werden nicht detektiert 
+- Problem dass Licht auch durch transparente Gebäudekanten gehen kann
 - um diesen prozess durchzuführen, müssen kompetenzen in blender vorhanden sein
 - es ist immer noch aufwendig. da architekten bereits simulationen machen für 17037, marketing etc. wäre es vlt. auch möglich den architekten mit der vorleistung zur bereitstellung dieser daten zu beauftragen.
 
 == Ausblick...
+- Topographie berücksichtigen
 - Raytracing probieren - Um spiegelungen mit zu berücksichtigen
   - Da der Rechenaufwand um ein vielfaches höher ist, müsste hier die wahrscheinlich parallel zum Betrieb laufen und es wird immer nur der nächste Tag berechnet
 - Man könnte eine Exceltabelle entwickeln, die die vorliegenden IFC-Daten bewertet und daraus einen zusätzlichen Arbeitsaufwand berechnet. Dies könnte für die Angebotserstellung als Entscheidungsgrundlage herangezogen werden.

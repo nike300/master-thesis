@@ -116,7 +116,9 @@
     let el = it.element
     if el != none and el.func() == figure and el.kind == image {
       // Hier wird definiert, dass im Text "Abb." statt "Abbildung" steht
-      [Abb. #numbering(el.numbering, ..counter(figure).at(el.location()))]
+      // [Abb. #numbering(el.numbering, ..counter(figure).at(el.location()))]
+      let specific-counter = counter(figure.where(kind: el.kind))
+      [Abb. #numbering(el.numbering, ..specific-counter.at(el.location()))]
     } else {
       it
     }

@@ -1,5 +1,5 @@
 #import "template/lib.typ": *
-= Theoretische Grundlagen (70% fertig)<TheoretischeGrundlagen>
+= Theoretische Grundlagen<TheoretischeGrundlagen>
 == Astronomische und Geometrische Grundlagen <GeometrischeGrundlagen>
 
 In diesem Kapitel werden die astronomischen und geometrischen Gesetzmäßigkeiten hergeleitet, die für die Berechnung des Schattenwurfs maßgeblich sind. 
@@ -136,15 +136,11 @@ Das Raycasting (Strahlenverfolgung) ist ein grundlegendes Verfahren der 3D-Compu
 
 Anders als in der physikalischen Realität, in der Lichtstrahlen von der Lichtquelle emittiert werden, arbeitet das hier angewandte Verfahren aus Gründen der Recheneffizienz invers (Backward Raytracing). Ausgehend von den zu untersuchenden Empfängerflächen – in der Verschattungssimulation den Messpunkten der Fenster – wird ein linearer Prüfstrahl (Ray) generiert. Dieser Strahl wird exakt entlang des berechneten Sonnenrichtungsvektors $vec(r)$ in den Raum projiziert. Die zugrundeliegende Engine berechnet anschließend mathematisch, ob dieser Strahl auf seinem Weg eine andere Polygonfläche (Mesh) schneidet. Registriert der Algorithmus eine Kollision mit einer Objektgeometrie (Intersection), bevor der Strahl die theoretische Distanz zur Lichtquelle erreicht, gilt der ausgehende Fensterpunkt als durch ein Hindernis verschattet. Hat der Strahl hingegen freie Bahn, wird direkte Besonnung protokolliert.
 
-==== Raytracing und Reflexionen... <RaytracingReflexionen>
-Während das Raycasting primär die binäre Sichtbarkeit (Schatten/Sonne) prüft, erweitert das Raytracing dieses Prinzip um die rekursive Verfolgung von Lichtstrahlen nach deren ersten Interaktion mit einer Oberfläche@tuwien_raytracing.
-Dies ist relevant für die Simulation von:
-- *Spiegelungen:* Zusätzlicher Energieeintrag durch reflektierende Glasfassaden gegenüberliegender Gebäude.
-- *Diffuse Streuung:* Aufhellung von Räumen durch helle Umgebungsflächen.
+=== Raytracing und Reflexionen <RaytracingReflexionen>
 
-Für die Gebäudeautomation stellt echtes Raytracing jedoch eine Herausforderung dar:
-1.  *Rechenaufwand:* Die Komplexität steigt mit der Anzahl der "Bounces" (Lichtsprünge) exponentiell an.
-2.  *Datenqualität:* Für eine "korrekte Berechnung sind physikalische Materialparameter (Reflexionsgrad, Rauheit) im gesamten 3D-Modell notwendig, die in der Praxis oft fehlen (siehe Kapitel ???).
+Während das zuvor beschriebene Raycasting-Verfahren primär die binäre Sichtbarkeit zwischen einem Messpunkt und der Lichtquelle prüft, erweitert das Raytracing dieses Prinzip um die rekursive Verfolgung von Lichtstrahlen nach deren erster Interaktion mit einer Oberfläche @tuwien_raytracing. Diese Methode ermöglicht die physikalisch korrekte Simulation komplexer optischer Phänomene im städtischen Kontext. Dazu zählen insbesondere Spiegelungen, die zu zusätzlichen Blendereignissen durch reflektierende Glasfassaden gegenüberliegender Gebäude führen können. Ebenso lässt sich die diffuse Streuung abbilden, welche eine Aufhellung von Innenräumen durch helle Umgebungsflächen bewirkt.
+
+Für den operativen Einsatz stellt Raytracing jedoch eine Herausforderung dar. Zum einen steigt der erforderliche Rechenaufwand mit der Anzahl der simulierten Lichtsprünge exponentiell an, was der Anforderung an die verwendete Hardware signifikant erhöht. Zum anderen scheitert die Umsetzung in der Praxis an der unzureichenden Datengrundlage. Für eine valide Berechnung müssen im gesamten 3D-Modell präzise Materialparameter wie Reflexionsgrad und Oberflächenrauheit hinterlegt sein. Wie die spätere Analyse der Gebäudemodelle in Kapitel @Datenaufbereitung zeigt, fehlen diese spezifischen semantischen Informationen in IFC-Modellen und Städtemodellen in der Regel vollständig. Aus diesem Grund beschränkt sich die in dieser Arbeit entwickelte Prozesskette auf das binäre Raycasting zur Schattenermittlung.
 
 // *Abgrenzung für diese Arbeit:*
 // ???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in 3D-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (@Kap4[Kapitel]) auf das geometrische Raycasting. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (@Kap5[Kapitel]) diskutiert.
@@ -280,7 +276,7 @@ Dynamische Sonnenschutzsysteme erfüllen in der modernen Gebäudeautomation wese
 
 Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häufig in direkter Konkurrenz zueinander. So erfordert ein maximaler sommerlicher Wärmeschutz das Schließen des Behanges, was wiederum der Maximierung der Tageslichtautonomie widerspricht. Die Programmierung der Raumautomation muss folglich definieren, in welcher Hierarchie diese Funktionen priorisiert werden.
 
-== Normative und regulatorische Rahmenbedingungen... <NormativeGrundlagen>
+== Normative und regulatorische Rahmenbedingungen<NormativeGrundlagen>
 === Tageslichtversorgung und Blendschutz (DIN EN 17037) <kap-17037>
 Die DIN EN 17037 ist der zentrale europäische Standard für die Tageslichtplanung in Gebäuden. Sie definiert vier wesentliche Bewertungskriterien: die Tageslichtversorgung, die Sichtverbindung nach außen, die Besonnung sowie den Blendschutz. Ziel der Norm ist es, ein angemessenes Niveau an natürlichem Licht im Rauminneren sicherzustellen und den visuellen Komfort der Nutzer zu gewährleisten. 
 
@@ -293,9 +289,13 @@ Intelligente, automatisierte Jalousiesysteme bilden die technische Lösung diese
 === Energieeffizienz der Gebäudeautomation
 Die primäre Motivation für die Implementierung komplexer Raumautomationsfunktionen liegt in der Optimierung der Gebäudeenergieeffizienz. Den europäischen regulatorischen Rahmen hierfür bildet die Norm EN 15232, welche Automationssysteme in die Effizienzklassen A bis D unterteilt. Um die höchste Klasse A zu erreichen, fordert diese Norm den Einsatz von Raumautomationssystemen, die den Sonnenschutz in Abhängigkeit der solaren Einstrahlung steuern. Konkret wird dabei jedoch lediglich eine binäre Aktivierung des Sonnenschutzes bei Überschreitung eines globalen Grenzwertes von 130 Watt pro Quadratmeter verlangt@dinen15232_1_2017[S.69], was messtechnisch über ein Pyranometer erfasst werden kann.
 
-Eine deutlich höhere Anforderung stellt die nationale Normenreihe DIN V 18599. Der Teil 11 dieser Norm, welcher den Einfluss der Gebäudeautomation auf den Energiebedarf bewertet, fordert für den höchsten Automatisierungsgrad A explizit einen automatisch betriebenen Sonnenschutz mit integrierter Lamellennachführung@din18599-1[S. 46]. Der Einsatz einer solchen kontinuierlichen Nachführung der Jalousien wirkt sich gemäß DIN V 18599 Teil 4 direkt positiv auf den Tageslichtversorgungsfaktor des Gebäudes aus. Für die steuerungstechnische Umsetzung einer derartigen Nachführung sind präzise Echtzeitdaten über den lokalen Sonnenstand eine zwingende Grundvoraussetzung. Insbesondere in dicht bebauten urbanen Kontexten lässt sich die Tageslichtversorgung durch die Integration hochauflösender Verschattungsdaten weiter steigern: Detektiert das System eine temporäre Fremdverschattung der Fassade, können die Behänge gezielt geöffnet werden. Dies ermöglicht eine maximale Ausnutzung des diffusen Sonnenlichts.
+Eine deutlich höhere Anforderung stellt die nationale Normenreihe DIN V 18599. Der Teil 11 dieser Norm, welcher den Einfluss der Gebäudeautomation auf den Energiebedarf bewertet, fordert für den höchsten Automatisierungsgrad A explizit einen automatisch betriebenen Sonnenschutz mit integrierter Lamellennachführung (siehe @fig-18599Ausschnit). Der Einsatz einer solchen kontinuierlichen Nachführung der Jalousien wirkt sich gemäß DIN V 18599 Teil 4 direkt positiv auf den Tageslichtversorgungsfaktor des Gebäudes aus. Für die steuerungstechnische Umsetzung einer derartigen Nachführung sind präzise Daten über den lokalen Sonnenstand eine zwingende Grundvoraussetzung. Insbesondere in dicht bebauten urbanen Gebieten lässt sich die Tageslichtversorgung durch die Integration hochauflösender Verschattungsdaten weiter steigern: Detektiert das System eine temporäre Fremdverschattung der Fassade, können die Behänge/Lamellen gezielt geöffnet werden. Dies ermöglicht eine maximale Ausnutzung des diffusen Sonnenlichts.
+#figure(
+  image("assets/18599Ausschnitt.png"),
+  caption: [@din18599-1[S. 46]]
+)<fig-18599Ausschnit>
 
-Die methodischen Verfahren zur Berechnung des resultierenden Energiebedarfs für Heizung und Kühlung werden international in der Norm EN ISO 52016-1 definiert. Diese berücksichtigt explizit den solaren Energieeintrag durch transparente Gebäudehüllen sowie dessen Reduktion durch Sonnenschutzsysteme. Obwohl die vorliegende Arbeit nicht auf die Durchführung einer thermischen Gebäudesimulation abzielt, verdeutlicht die Norm die bauphysikalische Relevanz des entwickelten Workflows: Nur wenn die zeitlich und räumlich variierende Fremdverschattung auf der Fassade präzise ermittelt wird, kann der resultierende Energieeintrag akkurat berechnet werden.
+Die methodischen Verfahren zur Berechnung des resultierenden Energiebedarfs für Heizung und Kühlung werden international in der Norm EN ISO 52016-1 definiert. Diese berücksichtigt explizit den solaren Energieeintrag durch transparente Gebäudehüllen sowie dessen Reduktion durch Sonnenschutzsysteme. Obwohl die vorliegende Arbeit nicht auf die Durchführung einer thermischen Gebäudesimulation abzielt, verdeutlicht die Norm die bauphysikalische Relevanz des entwickelten Prozesses: Nur wenn die variierende Fremdverschattung auf der Fassade präzise ermittelt wird, kann der resultierende Energieeintrag akkurat berechnet werden.
 
 === Raumautomationsfunktionen (VDI 3813)<kap-vdi3813>
 In der VDI-Richtlinie 3813 Blatt 2 werden normierte Funktionsblöcke definiert, um komplexe @ra#[]-Funktionen herstellerneutral und einheitlich darzustellen. Hierbei werden die einzelnen Funktionsblöcke informationstechnisch miteinander verknüpft, sodass Steuersignale generiert, logisch modifiziert und in einer Kaskade weitergegeben werden können. Die programmtechnische Berechnung erfolgt meist auf Ebene der @as.
@@ -333,8 +333,9 @@ Die in der VDI 3813 beschriebene Automationslogik basiert auf einem strikten Kas
 // )<fig-FunktionsblockVersch>
 // 
 // 
+/*
 === Jahresverschattung... <Jahresverschattung>
-/*Nutzen für Eigentümer/Mieter:
+Nutzen für Eigentümer/Mieter:
 - Reduzierte Energiekosten durch geringeren Kühl- und Heizbedarf
 - Attraktiveres Gebäude durch verbesserten Komfort
 - Erfüllung von Nachhaltigkeitszielen und Zertifizierungen
@@ -345,7 +346,7 @@ Nutzen für Nutzer:
 - Verbesserter visueller Komfort durch reduzierte Blendung
 - Angenehmes Raumklima durch reduzierte Überhitzung
 Die Rolle von Verschattungssystemen in der Gebäudeautomation. Das Zusammenspiel von Energieeffizienz und Nutzerkomfort.
-*/
+
 #let definition(title, body) = {
   block(
     fill: luma(240),
@@ -367,3 +368,4 @@ Begriff wird von WAREMA übernommen, ist allerdings nirgends richtig definiert.
 
 Die Jahresverschattungssimulation bezeichnet ein simulationsgestütztes Verfahren zur Analyse und Steuerung des solaren Energie- und Lichteintrags in ein Gebäude über den Zeitraum eines vollständigen meteorologischen Jahres. Im Gegensatz zu statischen Verschattungselementen oder reinen Echtzeit-Helligkeitsregelungen basiert sie auf der zeitabhängigen Interaktion zwischen dem astronomischen Sonnenstand, der Gebäudegeometrie sowie der umgebenden Bebauung. Ziel ist die Ermittlung optimaler Positionierungsstrategien für variable Sonnenschutzsysteme, um ein Gleichgewicht zwischen der Minimierung thermischer Lasten (sommerlicher Wärmeschutz), der Maximierung solarer Gewinne (winterlicher Heizbedarf) und der Gewährleistung des visuellen Komforts (Blendfreiheit bei maximaler Tageslichtnutzung) sicherzustellen....
 // Physikalische Prinzipien und Ziele (Energie vs. Komfort).
+*/
