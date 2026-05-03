@@ -113,9 +113,9 @@
     long: "Universal Transverse Mercator"
   ),
   (
-    key:"as",
-    short: "AS",
-    long: "Automationsstation"
+    key:"bap",
+    short: "BAP",
+    long: "BIM-Abwicklungsplan"
   ),
   (
     key:"as",
