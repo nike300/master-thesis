@@ -82,9 +82,9 @@ Zwar können weit entfernte Gebäude bei einer sehr tief stehenden Sonne (in den
 
 == Konzeption der Systemarchitektur und Simulationslogik
 === Räumliche und zeitliche Diskretisierung und Simulationsumfang <ZeitlicheAufloesungUmfang>
-
 ==== Zeitliche Diskretisierung:
- Die Wahl der zeitlichen Auflösung für die Verschattungsdaten hat maßgeblichen Einfluss auf das Verhältnis zwischen visuellem Komfort (Blendschutz) und der Tageslichtausbeute des Gebäudes. Da die Verschattungsinformation in der Steuerung eine binäre Freigabe (Schatten oder Sonne) darstellt, muss bei einer Reduktion der Datenauflösung zwingend eine Worst-Case-Annahme getroffen werden: Fällt innerhalb eines Simulationsintervalls auch nur für einen Bruchteil der Zeit Sonne auf das Fenster, muss der Sonnenschutz für das gesamte Intervall geschlossen werden, um temporäre Blendung auszuschließen. 
+ Die Wahl der zeitlichen Auflösung für die Verschattungsdaten hat maßgeblichen Einfluss auf das Verhältnis zwischen visuellem Komfort (Blendschutz) und der Tageslichtausbeute des Gebäudes. 
+ Im nachfolgenden wird untersucht, wie sich verschiedene zeitliche Auflösungen auf die Jalousiesteuerung auswirken würden. Generell muss die Steuerung vorausschauend agieren, um eine potentielle Besonnung zu verhindern. 
 
 #figure(
   image("assets/AuflösungZeitstrahl.svg" ),
@@ -99,9 +99,9 @@ Zwar können weit entfernte Gebäude bei einer sehr tief stehenden Sonne (in den
 
 Dadurch wird garantiert, dass der Nutzer zu keinem Zeitpunkt einer Blendung ausgesetzt ist. Am beispielhaften Zeitstrahl verlässt der Schatten das Fenster um 10:23 Uhr. Bei einer groben stündlichen Diskretisierung hält die Steuerung den Behang jedoch schon ab 10:00 Uhr geschlossen, was zu 23 Minuten Verlust an natürlichem Tageslicht führt. Besonders gravierend wirkt sich diese zu grobe Abtastung bei schnellen, iterativen Verschattungsänderungen aus (beispielsweise in Großstädten mit dichter Hochhausbebauung). 
 
-#block(inset: 8pt, fill: luma(240))[
-Eine höhere Auflösung ermöglicht eine bessere Tageslichtautonomie...
-]
+// #block(inset: 8pt, fill: luma(240))[
+// Eine höhere Auflösung ermöglicht eine bessere Tageslichtautonomie...
+// ]
 
 Im Gegensatz dazu ermöglicht eine feine Auflösung von 5 Minuten, die Behänge sehr nah am realen Schattenverlauf des Fensters zu führen. Sie bildet den realen Schattenverlauf exakt ab und erfasst auch kurze Sonneneinstrahlungen durch Lücken in der Nachbarbebauung. Werden diese schnellen Wechsel jedoch direkt als Fahrbefehle an die Motoren weitergegeben, sinkt der Nutzerkomfort erheblich. Eine sich ständig bewegende Jalousie lenkt visuell und akustisch ab und erhöht den Verschleiß der Motoren deutlich.
 
@@ -193,13 +193,29 @@ Die interne Steuerungslogik wertet den eintreffenden Datentyp aus und schaltet d
 // Aus informationstechnischer Sicht (Separation of Concerns) wird die zeitliche Auswertung der generierten Verschattungsdaten (Array-Handling) von der logischen Verschattungskorrektur getrennt. Ein übergeordnetes Zeitprogramm (beispielsweise ein BACnet Schedule Object) gleicht die interne Systemuhr mit dem importierten CSV-Datensatz ab und übergibt lediglich den aktuellen, binären Verschattungsstatus an den modifizierten Funktionsblock. Der Block selbst benötigt somit keine Echtzeituhr (RTC), was ihn hardware-schonend und echtzeitfähig macht."
 
 
-=== Überlegung zur Integration in die Gebäudeautomation...
-- Daten könnten per MQTT oder andere Schnittstelle übergeben werden
-- Daten werden von Programmen der Raumautomation zur Jalousiensteuerung genutzt
+Hier ist der Entwurf für das Kapitel zur Integration in die Gebäudeautomation. Die stichpunktartigen Überlegungen wurden in eine strukturierte, technische Argumentationskette überführt, die gut in das Konzept einer Masterarbeit passt.
+
+Hier ist der Typst-Code für den Abschnitt:
+
+
+=== Überlegung zur Integration in die Gebäudeautomation <IntegrationGebaeudeautomation>
+
+Die generierte Outputtabelle der Verschattungssimulation wird wahlweise auf einem lokalen Server innerhalb der Gebäudeinfrastruktur oder auf einem externen Server abgelegt. Von diesem zentralen Speicherort aus erfolgt die Datenübertragung an die Automationsstationen über etablierte Kommunikationsprotokolle wie MQTT oder vergleichbare standardisierte Schnittstellen.
+
+Bei der Systemintegration ist die Definition der Übertragungsintervalle maßgeblich. Um die Rechenressourcen der Automationsstationen zu schonen und die Bandbreite des Netzwerks nicht zu überlasten, empfiehlt sich eine asynchrone Datenübertragung. Ein praxisnaher Ansatz besteht darin, die aggregierten Verschattungsdaten für den jeweils folgenden Tag während der nächtlichen Schwachlastzeiten sequenziell zu verteilen. Dies verhindert Netz- und Busüberlastungen während des regulären operativen Gebäudebetriebs.
+
+Nach erfolgreicher Übermittlung und temporärer Speicherung in der Automationsstation werden die Daten von den Programmen der Raumautomation verarbeitet. Sie dienen dort als direkte Eingangsgröße für die präzise und automatisierte Steuerung der Jalousieaktorik.
+
+
+
+
+
   - Stuerung muss vorausschauend funktionieren (wie in @ZeitlicheAufloesungUmfang aufgezeigt)
-- Die Steuerung funktioniert nur in Kombination mit einer Wetterstation auf dem Dach
+- Die Steuerung funktioniert nur in Kombination mit einer Wetterstation auf dem Dach, da der Behang bei starker bewölkung offen bleiben kann
   - Man müsste dort die direkte und indirekte strahlung messung können
-- Der Datenoutput mit N, R, V und Azimutwinkel  ermöglicht maximale Flexibilität um verschiedene Steuerung zu ermöglichen
-- Cut-Off-Angle kann definiert werden mit Höhenwinkel
+- Der Datenoutput mit N, R, V und Azimutwinkel  ermöglicht maximalen Kontext für die  Steuerung und ermöglicht hohe Flexibilität
+
+- Cut-Off-Angle kann definiert werden mit Höhenwinkel. Dieser Winkel kann aus seperater Datenquelle stammen
 - Mit Azimut können sehr flache einfallende Sonnenstrahlen toleriert werden, wenn z.B. Säulen zwischen den Fenstern aufgestellt sind
-- Negative Seiten von Beschattung: laute fahrbewegungen, visuell störend durch sich bewegende (auch bei Änderung Winkel lamelle) behänge und durch starkes abdunkeln während fahrbewegungen. 
+- Negative Seiten von Jalousien: laute fahrbewegungen, visuell störend durch sich bewegende (auch bei Änderung Winkel lamelle) behänge und durch starkes abdunkeln während fahrbewegungen. 
+//  - beispiel von echtzeit tradern, die keine Jalousiebewegungen tolerieren und somit nur morgens
