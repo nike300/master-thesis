@@ -247,8 +247,8 @@ Ein zentraler steuerungstechnischer Mechanismus bei Jalousien ist die Einstellun
 Um diesen Zustand aufrechtzuerhalten, wird in der Raumautomation das Prinzip der automatischen Lamellennachführung angewendet. Dabei passt die Steuerung den Cut-off-Winkel im Tagesverlauf kontinuierlich an den sich ändernden Sonnenstand an. Für eine exakte Nachführung benötigt die Automationsstation Echtzeitdaten über den solaren Azimut- und Höhenwinkel. Der Höhenwinkel ist konstant für den Standort, wobei der Azimutwinkel von der Ausrichtung der Fensterfläche abhängt.
 
 #figure(
-  image("assets/CutOffWinkel.png"),
-  caption: [erer],
+  image("assets/CutOffWinkel.pdf", width: 70%),
+  caption: [Darstellung von Jalousien mit eingestelltem Cut-Off-Angle und reflektierten Sonnenstrahlen],
   placement: auto
 )<fig-cutoff>
 
