@@ -171,32 +171,6 @@ Hier geht es um die Grundsatzentscheidung: Handelt es sich um ein zustandsloses 
 - Auch die Frage: Auf welchem Rechner sollten die Daten gespeichert werden? Extern oder intern beim Kunden?
 
 == Integrationskonzepte für die Gebäudeautomation
-=== Vorschlag eines modifizierten Funktionsblock nach VDI 3813
-
-Basierend auf der Analyse der VDI 3813-2 (vgl. @kap-vdi3813) wird für die entwickelte Systemarchitektur ein modifizierter Funktionsblock konzipiert. Ziel ist es, sowohl die rechenintensive geometrische Kollisionsprüfung als auch die Verwaltung der fassadenspezifischen Ausrichtungswinkel in die vorgelagerte Simulation auszulagern. 
-
-Standardisierte Funktionsblöcke zur Lamellennachführung verarbeiten üblicherweise den globalen Sonnenstand, der in der Automationsstation für jede Fassadenachse mit einem lokalen Offset verrechnet werden muss. Der hier konzipierte Funktionsblock empfängt stattdessen über den Dateneingang (`SIM_DATA`) einen multimodalen Datensatz, der fensterspezifische, relative Parameter enthält, und routet diese als Steuergrößen an die nachgelagerten Instanzen.
-
-Die interne Steuerungslogik wertet den eintreffenden Datentyp aus und schaltet die Signale nach folgenden Kriterien:
-
-- *Prioritäre Überschreibung (Zustände V, R, N):* Empfängt der Block eines der definierten alphanumerischen Zeichen für Fremdverschattung (V), Rückseiten-Ausblendung (R) oder Nacht (N), wird ein anliegender Schließbefehl der Thermoautomatik blockiert. Der Block überschreibt das Stellsignal (`S_AUTO`) mit der parametrierten Parkposition (`PAR_PARK`). Zeitgleich wird über den binären Ausgang (`B_ON = FALSE`) die nachgelagerte Lamellennachführung deaktiviert, da ohne direkte Besonnung kein aktiver Blendschutz erforderlich ist.
-- *Signalweitergabe und Nachführung (Numerischer Wert):* Registriert der Eingang einen numerischen Gleitkommawert, wird dies vom System als direkte Besonnung gewertet. Das Stellsignal (`S_AUTO`) wird in diesem Fall unverändert durchgereicht und die Blendschutz-Automatik aktiviert (`B_ON = TRUE`). Der empfangene Zahlenwert entspricht dem in der Simulation berechneten Einfallswinkel der Sonne relativ zur Fensternormale. Dieser Wert wird über den Ausgang `A_SUN_AZ` direkt an die Lamellennachführung übergeben. 
-
-*Vorteile für die Systemintegration:* Durch diese Architektur ist es nicht mehr erforderlich, die fassadenspezifischen Gebäudegeometrien in der @as zu hinterlegen. Die statische Parametrierung von Grenzwinkeln und Fassaden-Azimuten bei der Systemintegration entfällt, was die Fehleranfälligkeit verringert und den softwaretechnischen Inbetriebnahmeaufwand der Automationslösung reduziert.
-#figure(
-  image("assets/FunktionsblockNeu.png", width: 60%),
-  caption: [Konzept des modifizierten Funktionsblocks für eine simulationsbasierte Verschattungskorrektur]
-)<fig-NeuerFunktionsblock>
-
-
-
-// Aus informationstechnischer Sicht (Separation of Concerns) wird die zeitliche Auswertung der generierten Verschattungsdaten (Array-Handling) von der logischen Verschattungskorrektur getrennt. Ein übergeordnetes Zeitprogramm (beispielsweise ein BACnet Schedule Object) gleicht die interne Systemuhr mit dem importierten CSV-Datensatz ab und übergibt lediglich den aktuellen, binären Verschattungsstatus an den modifizierten Funktionsblock. Der Block selbst benötigt somit keine Echtzeituhr (RTC), was ihn hardware-schonend und echtzeitfähig macht."
-
-
-Hier ist der Entwurf für das Kapitel zur Integration in die Gebäudeautomation. Die stichpunktartigen Überlegungen wurden in eine strukturierte, technische Argumentationskette überführt, die gut in das Konzept einer Masterarbeit passt.
-
-Hier ist der Typst-Code für den Abschnitt:
-
 
 === Überlegung zur Integration in die Gebäudeautomation <IntegrationGebaeudeautomation>
 
@@ -205,17 +179,39 @@ Die generierte Outputtabelle der Verschattungssimulation wird wahlweise auf eine
 Bei der Systemintegration ist die Definition der Übertragungsintervalle maßgeblich. Um die Rechenressourcen der Automationsstationen zu schonen und die Bandbreite des Netzwerks nicht zu überlasten, empfiehlt sich eine asynchrone Datenübertragung. Ein praxisnaher Ansatz besteht darin, die aggregierten Verschattungsdaten für den jeweils folgenden Tag während der nächtlichen Schwachlastzeiten sequenziell zu verteilen. Dies verhindert Netz- und Busüberlastungen während des regulären operativen Gebäudebetriebs.
 
 Nach erfolgreicher Übermittlung und temporärer Speicherung in der Automationsstation werden die Daten von den Programmen der Raumautomation verarbeitet. Sie dienen dort als direkte Eingangsgröße für die präzise und automatisierte Steuerung der Jalousieaktorik.
+=== Vorschlag eines modifizierten Funktionsblock nach VDI 3813...
+
+Basierend auf der Analyse der VDI 3813-2 (vgl. @kap-vdi3813) wird für die entwickelte Systemarchitektur ein modifizierter Funktionsblock konzipiert (siehe @fig-NeuerFunktionsblock). Dieser wird im Gegensatz zur Richtlinie, dem Funktionsblock der Lamellennachführung vorangestellt. Ziel ist es, sowohl die rechenintensive geometrische Kollisionsprüfung als auch die Verwaltung der fassadenspezifischen Ausrichtungswinkel in die Simulation auszulagern. 
+
+#figure(
+  image("assets/FunktionsblockNeu.png", width: 60%),
+  caption: [Konzept des modifizierten Funktionsblocks für eine simulationsbasierte Verschattungskorrektur],
+  placement: bottom
+)<fig-NeuerFunktionsblock>
+
+Der standardisierte Funktionsblock zur Verschattungskorrektur verarbeitet den globalen Sonnenstand, der in der Automationsstation für jede Fassadenseite mit einem lokalen Offset (Azimut) verrechnet werden muss. 
+Der hier konzipierte Funktionsblock empfängt stattdessen über den Dateneingang (`SIM_DATA`) einen Datensatz, der fensterspezifische Parameter enthält, und routet diese als Steuergrößen an die nachgelagerten Instanzen.
+
+Die interne Steuerungslogik wertet den eintreffenden Datentyp aus und schaltet die Signale:
+
+- *Zustände V, R, N:* (*...Hier muss ich genauer aufschlüsseln, was wann, wie passiert*) Empfängt der Block eines der definierten Strings für Fremdverschattung (V), Rückseiten-Ausblendung (R) oder Nacht (N), wird ein anliegender Schließbefehl der Thermoautomatik blockiert. Der Block überschreibt das Stellsignal (`S_AUTO`) mit der parametrierten Parkposition (`PAR_PARK`). Zeitgleich wird über den binären Ausgang (`B_ON = FALSE`) die nachgelagerte Lamellennachführung deaktiviert, da ohne direkte Besonnung kein aktiver Blendschutz erforderlich ist. Dies integriert und vereinfach ebenfalls die Funktion der Dämmerungsautomatik.
+
+- *Sonnenazimut:* Registriert der Eingang einen numerischen Gleitkommawert, wird dies vom System als direkte Besonnung gewertet. Das Stellsignal (`S_AUTO`) wird in diesem Fall unverändert durchgereicht und die Blendschutz-Automatik aktiviert (`B_ON = TRUE`). Der empfangene Zahlenwert entspricht dem in der Simulation berechneten Einfallswinkel der Sonne relativ zur Fensternormale. Dieser Wert wird über den Ausgang `A_SUN_AZ` direkt an die Lamellennachführung übergeben.
+
+Generell muss die Steuerung vorausschauend arbeiten, d.h. die Daten für den nächsten Zeitabschnitt geladen werden, um Blendungen, die vor dem nächsten berechnetet Zeitpunkt anfangen, abzufangen (wie bereits in @ZeitlicheAufloesungUmfang aufgezeigt). Der für die Lamellennachführung benötigte Höhenwinkel (`A_SUN_EL`) kann von einer intelligenten Wetterstation oder einer externen Datenquelle bereitgestellt werden.  
+
+Der Vorteile für die Systemintegration ist, dass durch diese Architektur es nicht mehr erforderlich ist, die fenster- oder fassadenspezifischen Gebäudegeometrien in der @as zu hinterlegen. Die statische Parametrierung von Grenzwinkeln bei der Systemintegration entfällt, was die Fehleranfälligkeit verringert und den Inbetriebnahmeaufwand der Automationslösung reduziert.
 
 
 
 
 
-  - Stuerung muss vorausschauend funktionieren (wie in @ZeitlicheAufloesungUmfang aufgezeigt)
-- Die Steuerung funktioniert nur in Kombination mit einer Wetterstation auf dem Dach, da der Behang bei starker bewölkung offen bleiben kann
-  - Man müsste dort die direkte und indirekte strahlung messung können
-- Der Datenoutput mit N, R, V und Azimutwinkel  ermöglicht maximalen Kontext für die  Steuerung und ermöglicht hohe Flexibilität
+// Aus informationstechnischer Sicht (Separation of Concerns) wird die zeitliche Auswertung der generierten Verschattungsdaten (Array-Handling) von der logischen Verschattungskorrektur getrennt. Ein übergeordnetes Zeitprogramm (beispielsweise ein BACnet Schedule Object) gleicht die interne Systemuhr mit dem importierten CSV-Datensatz ab und übergibt lediglich den aktuellen, binären Verschattungsstatus an den modifizierten Funktionsblock. Der Block selbst benötigt somit keine Echtzeituhr (RTC), was ihn hardware-schonend und echtzeitfähig macht."
 
-- Cut-Off-Angle kann definiert werden mit Höhenwinkel. Dieser Winkel kann aus seperater Datenquelle stammen
-- Mit Azimut können sehr flache einfallende Sonnenstrahlen toleriert werden, wenn z.B. Säulen zwischen den Fenstern aufgestellt sind
-- Negative Seiten von Jalousien: laute fahrbewegungen, visuell störend durch sich bewegende (auch bei Änderung Winkel lamelle) behänge und durch starkes abdunkeln während fahrbewegungen. 
+// - Die Steuerung funktioniert nur in Kombination mit einer Wetterstation auf dem Dach, da der Behang bei starker bewölkung offen bleiben kann
+//  - Man müsste dort die direkte und indirekte strahlung messung können
+// - Der Datenoutput mit N, R, V und Azimutwinkel  ermöglicht maximalen Kontext für die  Steuerung und ermöglicht hohe Flexibilität
+
+// - Mit Azimut können sehr flache einfallende Sonnenstrahlen toleriert werden, wenn z.B. Säulen zwischen den Fenstern aufgestellt sind -> auch wenn säulen da sind, würden diese vielleicht sehr stark angeleuchtet und könnten unangenehm sein
+//- Negative Seiten von Jalousien: laute fahrbewegungen, visuell störend durch sich bewegende (auch bei Änderung Winkel lamelle) behänge und durch starkes abdunkeln während fahrbewegungen. 
 //  - beispiel von echtzeit tradern, die keine Jalousiebewegungen tolerieren und somit nur morgens

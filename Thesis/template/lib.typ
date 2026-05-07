@@ -25,6 +25,7 @@
   show-table-of-contents: true,
   show-abstract: true,
   abstract: none,
+  abstract-en: none,
   appendix: none,
   confidentiality-statement-content: none,
   declaration-of-authorship-content: none,
@@ -213,10 +214,18 @@
 
   // ---------- Abstract ---------------------------------------
 
-  if (show-abstract and abstract != none) {
-    heading(level: 1, numbering: none, outlined: false, ABSTRACT.at(language))
-    text(abstract)
-    pagebreak()
+  if (show-abstract) {
+    if (abstract != none) {
+      heading(level: 1, numbering: none, outlined: false, ABSTRACT.at(language))
+      text(abstract)
+      pagebreak()
+    }
+    
+    if (abstract-en != none) {
+      heading(level: 1, numbering: none, outlined: false, "Abstract")
+      text(abstract-en)
+      pagebreak()
+    }
   }
 
   // ---------- ToC (Outline) ---------------------------------------

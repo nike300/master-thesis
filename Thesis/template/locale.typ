@@ -108,7 +108,7 @@ The content of this thesis may not be made available, either in its entirety or 
 )
 
 #let ABSTRACT = (
-  "de": "Zusammenfassung",
+  "de": "Abstract",
   "en": "Abstract",
 )
 

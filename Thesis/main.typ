@@ -33,7 +33,10 @@
   supervisor: (ref: "Prof. Dr.-Ing. Martin Höttecke", co-ref: "Matthias Meier"),
   university: "FH Münster - University of Applied Sciences",
   university-short: "fh_m",
-  appendix: include "anhang.typ"
+  appendix: include "anhang.typ",
+  show-abstract: true,
+  abstract: [sfsdfsdf],
+  abstract-en: [resr]
 )
 
 // Chapter Includes
