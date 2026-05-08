@@ -2,7 +2,7 @@
 == Problemstellung
 
 
-Die Integration dynamischer Verschattungssimulationen in die Gebäudeautomation gewinnt aufgrund steigender Energiekosten und wachsender Ansprüche an den thermischen sowie visuellen Nutzerkomfort zunehmend an Bedeutung. Eine hocheffiziente Verschattungssteuerung erfordert präzise Daten über den lokalen Schattenwurf, um die Tageslichtautonomie von Gebäuden zu maximieren und gleichzeitig Kühllasten sowie Blendeffekte systematisch zu minimieren.
+Die Integration dynamischer Verschattungssimulationen in die Gebäudeautomation gewinnt aufgrund steigender Energiekosten und wachsender Ansprüche an den thermischen sowie visuellen Nutzerkomfort zunehmend an Bedeutung. Da die künstliche Beleuchtung in reinen Bürogebäuden bis zu 50 Prozent der Stromkosten ausmacht @michelau_effiziente_beleuchtung, ist eine maximale Ausnutzung des Tageslichts geboten. Eine hocheffiziente Verschattungssteuerung erfordert daher präzise Daten über den lokalen Schattenwurf. Nur so lässt sich die Tageslichtautonomie von Gebäuden maximieren, während gleichzeitig Kühllasten und Blendeffekte systematisch minimiert werden.
 
 In der aktuellen Praxis der Gebäudeautomation stellt jedoch die informationstechnische und planungsseitige Umsetzung solcher Systeme eine erhebliche Herausforderung dar. Die konventionelle Parametrierung von Sonnenschutzsteuerungen erfolgt in der Regel noch über die manuelle Eingabe statischer Grenzwinkel in die Automationsstation. Dieser Ansatz erfordert Worst-Case-Annahmen und führt in komplexen urbanen Umgebungen *unweigerlich zu systembedingten Fehlentscheidungen der Automatik*, da die reale Fremdverschattung durch Nachbargebäude oder Topografie nur unzureichend abgebildet wird.
 
