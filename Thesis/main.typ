@@ -11,6 +11,11 @@
 )
 #show raw.where(block: true): set text(size: 8pt)
 
+#show "z. B.": [z.~B.]
+#show "u. a.": [u.~a.]
+#show "d. h.": [d.~h.]
+#show "i. d. R.": [i.~d.~R.]
+
 #show: clean-hda.with(
   title: "Entwicklung einer durchgängigen Prozesskette zur Integration dynamischer Verschattungssimulationen in die Gebäudeautomation",
   subtitle: "Softwaregestützte Umsetzung und Validierung eines Workflows vom BIM-Modell bis zur operativen Steuerung.",
@@ -57,7 +62,7 @@
 - Entfernung obsoleter Abschnitte, wie der Marktpotenzialanalyse.
 
 == Phase 4: Formalia und Abschluss (12. Mai bis 17. Mai)
+- Rechtschreibprüfung von Kapitel 5
 - Verfassen des Abstracts in deutscher und englischer Sprache.
-- Abgleich des Inhaltsverzeichnisses mit den tatsächlichen Überschriften.
 - Überprüfung der Zitationen und des Literaturverzeichnisses.
 - Pufferzeit für den abschließenden Lesefluss und die typografische Formatierung.

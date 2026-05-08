@@ -103,8 +103,8 @@
     long: "Industry Foundation Classes"
   ),
   (
-    key:"ocg",
-    short: "OCG",
+    key:"ogc",
+    short: "OGC",
     long: "Open Geospatial Consortium"
   ),
   (

@@ -1,10 +1,22 @@
 = Diskussion und Fazit (30% fertig)<Kap5>
-== Zusammenfassung der Ergebnisse...
-- obwohl das ifc-modell viele fehler hatte wurden alle probleme behoben
-- simulation dauert 3 tage 16 stunden für ein sehr großes und kompliziertes projekt für das four. für üblichere kleiner projekt wird simulationsdauer ein bruchteil davon sein.
-- ergebnisse wurden erfolgreich validiert
-- es muss schon früh im @bim#[]-Abwicklungsplan (BAP) anforderungen an @bim#[]-Modell gestellt werden
-- Es wurden XX Open Source-Software, -Plug-ins und -Datenquellen verwendet im Verlauf der Arbeit (siehe @OpenSourceListe).
+== Zusammenfassung der Ergebnisse
+=== Zusammenfassung der Ergebnisse
+
+Die vorliegende Arbeit demonstriert erfolgreich die Konzeption und praktische Umsetzung eines durchgängigen Workflows zur Integration dreidimensionaler Verschattungssimulationen in die moderne Gebäudeautomation. Obwohl das zugrunde liegende IFC-Modell des Referenzprojektes FOUR anfänglich signifikante geometrische und semantische Defizite aufwies, konnten diese durch strukturierte Aufbereitungsschritte vollständig behoben werden, sodass eine fehlerfreie Durchführung der Simulation gewährleistet wurde. Aus diesem Prozess lässt sich die maßgebliche Erkenntnis ableiten, dass spezifische Anforderungen an die Modellqualität zwingend frühzeitig im @bim#[]-Abwicklungsplan (BAP) verankert werden müssen, um zeitintensive Nachbearbeitungen in der Systemintegration zu vermeiden.
+
+Ein zentrales Ergebnis der Arbeit ist zudem der Nachweis, dass hochkomplexe Verschattungssimulationen im dichten urbanen Kontext nicht den Einsatz teurer, proprietärer Softwarelizenzen erfordern. Insgesamt kamen im Verlauf des entwickelten Workflows 16 verschiedene Open-Source-Softwarelösungen, Plug-ins und frei verfügbare Datenquellen zum Einsatz (siehe @OpenSourceListe). Für das architektonisch äußerst anspruchsvolle Projekt FOUR beanspruchte die vollständige Berechnung eine Rechenzeit von drei Tagen und 16 Stunden. Dies stellt für eine einmalige Simulation einen absolut annehmbaren und praktikablen Bereich dar. Für konventionelle Bauprojekte mit geringerer Fassadenkomplexität, Fensteranzahl und verschattenden Gebäuden wird sich die Simulationsdauer auf einen Bruchteil dieser Zeit reduzieren.
+
+Die generierten Simulationsergebnisse wurden abschließend erfolgreich validiert und zeichnen sich durch eine neuartige Datenstruktur aus. Durch den differenzierten Output, welcher anstelle eines rein binären Signals die Zustände N (Nacht), R (Rückseitenverschattung), V (Fremdverschattung) sowie bei direkter Besonnung den numerischen Azimutwinkel ausgibt, wird der Systemintegration eine maximale operative Flexibilität eingeräumt. Um diese Daten steuerungstechnisch effizient verarbeiten zu können, wurde ein neuer Funktionsblock konzipiert, der die traditionelle Automationslogik ablöst. Das Zusammenspiel aus hochauflösender Simulation und angepasster Steuerungsarchitektur befähigt die Gebäudeautomation letztlich dazu, den komplexen normativen Spagat zwischen der Maximierung der Tageslichtversorgung, der Gewährleistung des strikten Blendschutzes und der Optimierung der Energieeffizienz gemäß den aktuellen Richtlinien nachweislich zu erfüllen.
+// - obwohl das ifc-modell viele fehler hatte wurden alle probleme behoben und die simulation konnte erfolgreich durchgeführt werden
+// - der differenzierte Output (N, R, V, Azimut) ist sehr hilfreich für die systemintegration, da sie maximale Flexibilität bietet
+// - der entwickelte workflow erfüllt normen zur tageslichtversorgung/blendschutz und energieeffizienz 
+// - simulation dauert 3 tage 16 stunden (annehmbarer Bereich) für ein sehr großes und kompliziertes projekt für das four. für üblichere kleiner projekt wird simulationsdauer ein bruchteil davon sein.
+// - ergebnisse wurden erfolgreich validiert
+// - es muss schon früh im @bim#[]-Abwicklungsplan (BAP) anforderungen an @bim#[]-Modell gestellt werden, um komplizierte aufbereitung zu vermeiden
+// - Es wurden 12 Open Source-Software, -Plug-ins und -Datenquellen verwendet im Verlauf der Arbeit (siehe @OpenSourceListe).
+//   - beweist, dass hochkomplexe Verschattungssimulationen nicht zwingend teure, proprietäre Softwarelizenzen erfordern
+// - es wurde ein neuer funktionsblock beschrieben, der für die verarbeitung der Ergebnisdaten aus verschattungssimulationen konzipiert ist
+// 
 == Marktanalyse und wirtschaftliches Potenzial
 === Marktbeschreibung und Marktgröße
 Ein großes Interesse an intelligenten Verschattungslösungen existiert vor allem für große, prestigeträchtige Immobilien, wie Hochhäuser in zentraler Lage. Alleine in der Stadt Frankfurt sollen bis 2040 14 Hochhäuser (Gebäude über 60m) errichtet werden@frankfurt_hep_2024_anhang2. Der Markt für umgebungsabhängige Verschattungssimulationen beschränkt sich nicht nur auf Hochhäuser. Generell profitieren Zweckgebäude mit zentraler GA und großen Fensterflächen hiervon. Vermehrt wird in Ausschreibungen eine intelligente Verschattung gefordert.

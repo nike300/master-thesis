@@ -50,7 +50,7 @@ Das erste Kapitel dient der Einführung in die Thematik. Es skizziert die Proble
 
 Im zweiten Kapitel werden die theoretischen Grundlagen erarbeitet. Der Fokus liegt dabei auf der Sonnenbahnmechanik und der Geometrie der Verschattung. Ergänzend werden steuerbare Sonnenschutzsysteme klassifiziert sowie die relevanten normativen Rahmenbedingungen und digitalen Planungsmethoden im BIM-Kontext dargelegt.
 
-Das dritte Kapitel befasst sich mit der Anforderungsanalyse und der methodischen Konzeption des Integrationsprozesses. Hier werden die Auswahl der Simulationsumgebung begründet, die notwendige Güte der Eingangsdaten spezifiziert und die zugrundeliegende Systemarchitektur für den Datentransfer definiert.
+Das dritte Kapitel befasst sich mit der Anforderungsanalyse und der methodischen Konzeption des Integrationsprozesses. Hier wird die Auswahl der Simulationsumgebung begründet, die notwendige Güte der Eingangsdaten spezifiziert und die zugrunde liegende Systemarchitektur für den Datentransfer definiert.
 
 Die softwaretechnische Implementierung und die Validierung des Proof of Concept werden im vierten Kapitel dokumentiert. Am Beispiel des Referenzprojekts FOUR in Frankfurt am Main wird der gesamte Workflow von der Datenaufbereitung bis zur Durchführung der raycastingbasierten Simulation beschrieben und die Genauigkeit der Ergebnisse verifiziert.
 
