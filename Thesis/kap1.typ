@@ -42,7 +42,9 @@ Darauf aufbauend erfolgt die Entwicklung und softwaretechnische Implementierung 
 
 Den Abschluss bildet die konzeptionelle Integration der Simulationsergebnisse in die normative Logik der Gebäudeautomation. Hierfür wird ein modifizierter Funktionsblock für die Verschattungskorrektur in Anlehnung an die Richtlinie VDI 3813 entwickelt. Dieser Entwurf soll demonstrieren, wie die konventionelle, rein winkelbasierte Regelungslogik der Raumautomation durch eine datengetriebene Architektur effizient ersetzt werden kann.
 
-=== Aufbau der Arbeit <AufbauArbeit>
+
+
+== Aufbau der Arbeit <AufbauArbeit>
 
 Die vorliegende Arbeit gliedert sich in sechs Kapitel, die den Entwicklungsprozess systematisch von der theoretischen Fundierung bis zur praktischen Integration abbilden. 
 

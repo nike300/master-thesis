@@ -48,7 +48,7 @@ Um diesen Aufwand zu minimieren, sollten frühzeitig Synergieeffekte im integral
 
 // OPTIONAL: HIER AUF CHECKLISTE IM ANHANG VERWEISEN FÜR ARCHITEKTEN
 
-=== Externe Geodaten und Georeferenzierung
+=== Externe Geodaten und Georeferenzierung<kap-externeDaten>
 ==== Analyse externer Geodaten <AnalyseExternerGeodaten>
 Die Datenqualität der umgebenden Gebäude, Topografie und Vegetation bestimmt die Genauigkeit der Verschattungssimulation maßgeblich. Ungenaue Gebäudekanten oder fehlende Dachaufbauten in der Nachbarbebauung führen zwangsläufig zu fehlerhaften Schattenwürfen auf der betrachteten Fassade. Meistens werden diese Datensätze in georeferenzierten Koordinatensystemen (z. B. UTM oder Gauß-Krüger) bereitgestellt, was eine Transformation in das lokale System des Gebäudemodells (@bim#[]) erfordert.
 Die Auswahl des geeigneten Datenanbieters für das Referenzprojekt erfolgt anhand folgender Kriterien:
@@ -70,7 +70,7 @@ Basierend auf den zuvor genannten Kriterien erfolgt die Auswahl des geeigneten D
 // - Gebäude, die nördlich des Referenzgebäudes liegen, müssen theoretisch nicht in der Simulation berücksichtigt werden. Um den genauen Bereich herauszufinden, muss der minimale und maximale Azimut der Sonne während der Sommersonnenwende (21./22. Juni) ermittelt werden. In Frankfurt am Main geht die Sonne mit einem Azimut von 50° auf und mit 310° unter. Somit kann die Umgebung in einem Azimut von 310°-50° zum Referenzgebäude nie einen direkt Schatten auf dieses werfen und somit vernachlässigt werden.
 //   - bei sehr tiefliegender sonne werfen auch weit entferne gebäude schatten, dies ist allerdings vernachlässigbar, da die schattenkanten sich auch schnell bewegen
 //   - gebäude sind nur  interessant, wenn sie einen schatten auf das referenzgebäude werfen können. somit sind gebäude in zweiter und dritter reihe nicht mehr zu berücksichtigen
-// - Topologie muss nur importiert werden, wenn Berge, Hügel etc. das Gebäude verschatten könnten
+// - Topographie muss nur importiert werden, wenn Berge, Hügel etc. das Gebäude verschatten könnten
 // 
 ==== Auswahl der Umgebungsszene <AuswahlUmgebungsszene>
 Die Auswahl der zu importierenden Umgebungsszene orientiert sich an der potenziellen Verschattungsrelevanz für das Referenzgebäude. Umliegende Bebauungen in zweiter oder dritter Reihe, deren Schattenwurf bereits durch näherstehende Objekte verdeckt wird, können vor der Simulation entfernt werden. Gleiches gilt für topografische Gegebenheiten: Ein Import von digitalen Geländemodellen ist nur dann erforderlich, wenn signifikante Erhebungen das betrachtete Gebäude in der Realität verschatten könnten.
@@ -82,7 +82,7 @@ Zwar können weit entfernte Gebäude bei einer sehr tief stehenden Sonne (in den
 
 == Konzeption der Systemarchitektur und Simulationslogik
 === Räumliche und zeitliche Diskretisierung und Simulationsumfang <ZeitlicheAufloesungUmfang>
-==== Zeitliche Diskretisierung:
+==== Zeitliche Diskretisierung
  Die Wahl der zeitlichen Auflösung für die Verschattungsdaten hat maßgeblichen Einfluss auf das Verhältnis zwischen visuellem Komfort (Blendschutz) und der Tageslichtausbeute des Gebäudes. 
  Im Folgenden wird untersucht, wie sich verschiedene zeitliche Auflösungen auf die Jalousiesteuerung auswirken würden. Generell muss die Steuerung vorausschauend agieren, um eine potenzielle Besonnung zu verhindern. 
 
@@ -109,8 +109,8 @@ Um diesen Konflikt zu lösen, muss die Steuerung die präzisen Umgebungsdaten vo
 
 Eine hohe Datenauflösung bleibt somit das konzeptionelle Optimum. Voraussetzung ist lediglich, dass die technische Infrastruktur die großen Datenmengen verarbeiten kann und die Steuerungsprogrammierung ständige Fahrbewegungen zuverlässig dämpft.
 
-==== Zeitlicher Simulationsumfang:
-Für die Konzeption der Simulation stellt sich zudem die Frage, wie viele Kalenderjahre berechnet werden müssen, um den realen Sonnenverlauf hinreichend abzubilden. Der Umlauf der Erde um die Sonne unterliegt zwar langperiodischen Schwankungen (Milanković-Zyklen @dwdMilanZyklen), diese sind für die Lebensdauer eines Gebäudes jedoch nicht relevant. Der berechnete Sonnenverlauf kann für den Betrachtungszeitraum als statisch angesehen werden. 
+==== Zeitlicher Simulationsumfang...
+Für die Konzeption der Simulation stellt sich zudem die Frage, wie viele Kalenderjahre berechnet werden müssen, um den realen Sonnenverlauf hinreichend abzubilden. Der Umlauf der Erde um die Sonne unterliegt zwar langperiodischen Schwankungen (Milanković-Zyklen~@dwdMilanZyklen), diese sind für die Lebensdauer eines Gebäudes jedoch nicht relevant. Der berechnete Sonnenverlauf kann für den Betrachtungszeitraum als statisch angesehen werden. 
 
 Da das kalendarische Jahr vom astronomischen Sonnenjahr (365,24 Tage) abweicht @astr04eduSonnenjahr, wird diese Differenz alle vier Jahre durch ein Schaltjahr korrigiert. Die hieraus resultierende zeitliche Verschiebung des Sonnenstandes am selben Kalendertag ist für einen simulierten Schattenwurf in @fig-schaltjahr beispielhaft dargestellt. 
 #figure(
@@ -122,6 +122,7 @@ Da sich die räumlichen Abweichungen des Schattens lediglich im Zentimeterbereic
 
 Zur weiteren Reduktion von Datenmenge und Rechenzeit ließe sich die Simulation auf jeden zweiten oder dritten Tag eines Jahres beschränken. Da die geometrischen Abweichungen des Sonnenstandes zwischen aufeinanderfolgenden Tagen marginal ausfallen, stellt dies einen methodisch vertretbaren Ansatz dar.
 
+... hier noch wöchentliche Daten untersuchen
 ==== Räumliche Auflösung der Messpunkte <RaeumlicheAufloesung>
 
 Die räumliche Abtastung der Fensterflächen bestimmt die Zuverlässigkeit der Simulation. Man muss festlegen, wie viele Testpunkte pro Fenster berechnet werden. Es werden drei verschiedene Optionen untersucht:
@@ -158,35 +159,73 @@ Bei der Konzeption der auf Raycasting basierenden Simulationsarchitektur (vgl. G
 
 Um dies zu verhindern, ohne auf rechenintensive Auswertungen der getroffenen Flächennormalen zurückgreifen zu müssen, wird in der Simulationslogik ein Start-Offset (Ray Bias) definiert. Der geometrische Ursprung des Prüfstrahls wird dabei nicht exakt auf der Glasfläche platziert, sondern entlang des Richtungsvektors virtuell um ein definiertes Maß (beispielsweise 10cm) in den Außenraum verschoben. Die eigentliche Kollisionsprüfung beginnt somit sicher außerhalb der eigenen Fenster- und Laibungsgeometrie, was die Robustheit der Simulation erhöht.
 
-=== Systemarchitektur und Schnittstellen<DefinitionSystemarchitektur>
+=== Systemarchitektur und Schnittstellen <DefinitionSystemarchitektur>
 
-*Vorberechnung oder dynamisch?*
-Hier geht es um die Grundsatzentscheidung: Handelt es sich um ein zustandsloses System, das einmalig einen Fahrplan (Schedule) generiert, oder um ein dynamisches System, das auf Veränderungen (beispielsweise neue Verschattungsobjekte durch Baustellen) reagieren kann. Du kannst hier begründen, warum du dich für den einen oder anderen Weg entschieden hast, bevor du in die Umsetzung gehst.
+Die informationstechnische Konzeption der Systemarchitektur definiert maßgeblich, wie die generierten Simulationsdaten effizient und fehlerfrei in die reale Gebäudeautomation überführt werden. Bei dem hier entwickelten Workflow handelt es sich um ein System, welches die Verschattungssituation im Vorfeld einmalig für ein vollständiges Kalenderjahr berechnet und als statische Daten bereitstellt. Die Wahl dieser Systemarchitektur begründet sich durch die konsequente Entkopplung der Simulationsumgebung von der operativen Datenverarbeitung. Dieser modulare Aufbau ermöglicht es, die Ergebnisse in einem einfachen Datenformat (wie CSV) bereitzustellen, wodurch eine Installation der Simulationssoftware und deren Abhängigkeiten auf dem Projektserver entfällt. Darüber hinaus wird durch diesen Ansatz die Betriebssicherheit gesteigert: Der Rückgriff auf statische, im Vorfeld validierte Datensätze ist gegenüber einer dynamischen Echtzeitsimulation deutlich weniger fehleranfällig und vermeidet Risiken durch potenzielle Softwareinstabilitäten während der Programmlaufzeit.
 
-- *Workflow-Design:* Hier vlt. Flow-Chart mit gesamter Prozesskette von @ifc#[]-Modell bis Integration in GA
-- Tabelle mit Elevationswinkel könnte mitgegeben oder auf AS berechnet werden(Vermeidung von Redundanz: Die Sonnenhöhe (Elevation) ist zu einem bestimmten Zeitpunkt für das gesamte Gebäude (und somit für alle ~6000 Fenster) identisch.) 
-- Status R, V, N - Azimut erklären
-  - hat auch vorteil für debugging oder nachvollziehbarkeit der daten
-- *Mapping-Konzept:* Entwicklung einer Logik zur Verknüpfung der Simulationsergebnisse mit den physischen Datenpunkten der Gebäudeautomation (beispielsweise BACnet-Objekt-IDs).
-- Auch die Frage: Auf welchem Rechner sollten die Daten gespeichert werden? Extern oder intern beim Kunden?
+Da die benachbarten Gebäude in der Regel statisch sind, stellt die Vorabberechnung in der Praxis keinen Nachteil dar. Sollte es dennoch zu baulichen Veränderungen in der Umgebung kommen, gibt es zwei Fälle die eintreten können: Entsteht ein neues Nachbargebäude, welches im vorliegenden Datensatz noch nicht erfasst ist, geht die Steuerung fälschlicherweise weiterhin von direkter Besonnung aus und schließt die Behänge. Dies führt zwar zu einer suboptimalen Tageslichtausbeute, der kritische Blendschutz für die Nutzer bleibt jedoch vollständig gewahrt. Eine Herausforderung stellt lediglich der umgekehrte Fall dar: Entfällt ein schattenspendendes Gebäude (beispielsweise durch Abriss), würde die Anlage den Behang öffnen und eine starke Blendung bei klarem Himmel zulassen. In einem solchen Szenario muss der Datensatz durch eine erneute Simulation zwingend aktualisiert werden.
+
+Um die zu übertragenden Datenmengen und die Bus-Auslastung zu minimieren, wird eine strikte Trennung zwischen globalen und lokalen Daten vorgenommen. Die Sonnenhöhe (Elevationswinkel) ist zu einem spezifischen Zeitpunkt für das gesamte Gebäude und somit für alle Fenster identisch. Um redundante Daten zu vermeiden, wird die Elevation nicht pro Fenster in der Simulationsdatei gespeichert. Stattdessen kann dieser globale Wert entweder zyklisch von einer zentralen Dachwetterstation empfangen oder durch einen standardisierten Algorithmus direkt auf der Automationsstation berechnet werden.
+
+Der fensterspezifische Datensatz beschränkt sich somit auf den diskreten Verschattungszustand beziehungsweise den horizontalen Einfallswinkel der Sonne. Die Ausgabe differenziert dabei zwischen folgenden Zuständen:
+
+- *R (Rückseitenverschattung):* Die Sonne befindet sich hinter der Fassadenebene des Fensters.
+- *V (Verschattung durch Fremdobjekte):* Die Sonne wird durch umliegende Gebäude oder Topografie blockiert.
+- *N (Nacht):* Die Sonne befindet sich unterhalb des Horizonts.
+- *Azimutwinkel:* Numerischer Wert bei direkter Besonnung in -90° bis +90°.
+
+
+Der übergebene Azimutwinkel beschreibt den relativen horizontalen Einfallswinkel der Sonnenstrahlen auf die Fensternormale. Da die Berechnungen auf dem mathematischen Einheitskreis basieren, werden Winkel gegen den Uhrzeigersinn positiv und im Uhrzeigersinn negativ abgebildet. In @fig-fensterazimut wird exemplarisch ein Fenster mit Süd-Ost-Ausrichtung und den resultierenden Azimutwinkeln bei verschiedenen Sonnenständen dargestellt. Ein Winkel von 0° bedeutet dabei, dass die Sonne frontal vor dem Fenster steht, der horizontale Lichteinfall also orthogonal zur Fassadenebene erfolgt.
+
+Die differenzierte Ausgabe dieser Zustände bietet eine hohe Flexibilität für die Steuerungslogik und erleichtert der Systemintegration bei der Inbetriebnahme die Fehleranalyse sowie die Nachvollziehbarkeit des Anlagenverhaltens.
+
+Hinsichtlich der Datenspeicherung und Verteilung stellt sich die Frage der Hardwareallokation. Da die Automationsstationen der Feldebene in der Regel nur über begrenzte Speicherkapazitäten verfügen, ist es nicht praktikabel, die Jahresdatensätze von tausenden Fenstern lokal zu hinterlegen. Es bietet sich stattdessen an, die vollständigen CSV--Dateien zentral auf dem Server der @mbe zu speichern. Die @mbe kann die aktuellen Zustände zyklisch (beispielsweise im 5-Minuten-Takt) auslesen und die jeweils relevanten Datenpunkte über standardisierte Protokolle wie BACnet oder MQTT an die zuständigen Raumautomationsstationen übertragen.
+
+#figure(
+  image("assets/Fensterazimut.pdf", width: 70%),
+  caption: [Angabe des Fensterazimutwinkels für beispielhaftes Fenster mit Süd-Ost-Ausrichtung],
+  placement: auto
+) <fig-fensterazimut>
+
+// === Systemarchitektur und Schnittstellen<DefinitionSystemarchitektur>
+// - die Simulation wird einmalig für ein ganzes Jahr durchgeführt, da... 
+// - Handelt es sich um ein zustandsloses System, das einmalig einen Fahrplan (Schedule) generiert, oder um ein dynamisches System, das auf Veränderungen (beispielsweise neue Verschattungsobjekte durch Baustellen) reagieren kann.
+//   - nicht kritisch, wenn neues gebäude dazukommt, da der wichtige blendschutz weiterhin gegeben ist
+//   - wenn allerdings ein gebäude entfällt und die steuerung die Behänge öffnet, weil sie denkt, dass das fenster verschattet ist, kommt es zu einer blendung bei klarem himmel
+// - Tabelle mit Elevationswinkel könnte mitgegeben oder auf AS oder wetterstation berechnet werden(Vermeidung von Redundanz: Die Sonnenhöhe (Elevation) ist zu einem bestimmten Zeitpunkt für das gesamte Gebäude (und somit für alle 6000 Fenster) identisch.) 
+// - Status R, V, N - Azimut erklären
+//   - R = Rücksseite von Fenster
+//   - V = Verschattet durch umgebendes Gebäude
+//   - N = Nacht (Sonne steht unter dem Horizont)
+//   - Azimutwinkel von fensternormale zu sonne bei direkter besonnung
+//   - Skript benutzt math.atan2(). dieses benutzt den mathematischen einheitskreis, der gegen den Uhrzeigersinn gemessen wird. Deswegen ist der Wert rechts von der mitte negativ (siehe skizze)
+//   - verschiedenen ergebniswerte haben vorteil für debugging, nachvollziehbarkeit der daten und steuerungsfunktionalität
+// - Auch die Frage: Auf welchem Rechner sollten die Daten gespeichert werden? es bietet sich wahrscheinlich an, die daten auf dem rechner der @mbe zu speichern
 
 == Integrationskonzepte für die Gebäudeautomation
+=== Systematische Integration der Daten <IntegrationGebaeudeautomation>
 
-=== Überlegung zur Integration in die Gebäudeautomation <IntegrationGebaeudeautomation>
 
-Die generierte Ergebnistabelle der Verschattungssimulation wird wahlweise auf einem lokalen Server innerhalb der Gebäudeinfrastruktur oder auf einem externen Server abgelegt. Von diesem zentralen Speicherort aus erfolgt die Datenübertragung an die Automationsstationen über etablierte Kommunikationsprotokolle wie MQTT oder vergleichbare standardisierte Schnittstellen.
+Die Integration hochauflösender Simulationsdaten in die operative Gebäudeautomation wird in der Praxis maßgeblich durch die Hardware-Restriktionen der Feldebene limitiert. Eine @ras, welche die unmittelbare Steuerung der Jalousieaktorik übernimmt, verfügt systembedingt nur über stark begrenzte Speicherkapazitäten und Rechenressourcen. Die lokale Implementierung eines vollständigen Jahresdatensatzes mit kurzen Zeitintervallen für mehrere Fenster würde den nutzbaren Speicher dieser Controller unverhältnismäßig belasten oder diesen sogar vollständig erschöpfen. Eine direkte und vollständige Übertragung der Simulationsergebnisse auf die unterste Steuerungsebene ist demnach informationstechnisch nicht realisierbar.
 
-Bei der Systemintegration ist die Definition der Übertragungsintervalle maßgeblich. Um die Rechenressourcen der Automationsstationen zu schonen und die Bandbreite des Netzwerks nicht zu überlasten, empfiehlt sich eine asynchrone Datenübertragung. Ein praxisnaher Ansatz besteht darin, die aggregierten Verschattungsdaten für den jeweils folgenden Tag während der nächtlichen Schwachlastzeiten sequenziell zu verteilen. Dies verhindert Netz- und Busüberlastungen während des regulären operativen Gebäudebetriebs.
+Um diesen Kapazitätsengpass zu umgehen, bedarf es einer entkoppelten Systemarchitektur. Die vollständigen Verschattungsdaten werden hierfür zentral auf der @mbe oder einem übergeordneten Server vorgehalten. Ein praxisnaher Ansatz zur Verteilung der Daten besteht in einer asynchronen Übertragung. Anstatt die Raum-Controller kontinuierlich mit neuen Werten zu überschreiben, wird lediglich der spezifische Fahrplan für den jeweils darauffolgenden Tag generiert und an die Feldebene gesendet. Diese Übermittlung erfolgt sequenziell während der nächtlichen Schwachlastzeiten. Diese Methodik stellt sicher, dass die stark limitierten Netzwerk- und Kommunikationsbusse während des regulären operativen Gebäudebetriebs am Tag nicht durch große Datenpakete überlastet werden.
 
-Nach erfolgreicher Übermittlung und temporärer Speicherung in der Automationsstation werden die Daten von den Programmen der Raumautomation verarbeitet. Sie dienen dort als direkte Eingangsgröße für die präzise und automatisierte Steuerung der Jalousieaktorik.
-=== Vorschlag eines modifizierten Funktionsblocks nach VDI 3813...
+Nach der erfolgreichen Übermittlung und temporären Speicherung des Tagesdatensatzes auf der lokalen Automationsstation werden die Informationen von den dortigen Raumautomationsprogrammen verarbeitet. Die empfangenen Verschattungszustände und Azimutwinkel dienen den Funktionsblöcken als direkte Eingangsgröße, um die nachgelagerte Jalousieaktorik präzise zu steuern. Durch diesen Ansatz wird die rechen- und speicherintensive Datenhaltung auf leistungsstarke Server ausgelagert, während die reaktionskritische Ausführung der Fahrbefehle dezentral und ausfallsicher auf der Feldebene verbleibt.
 
+
+// - auf die extremen Kapazitätsproblemen eingehen bezüglich Datenspeicher und CPU-Auslastung
+
+// - asynchrone Datenübertragung: Ein praxisnaher Ansatz besteht darin, die aggregierten Verschattungsdaten für den jeweils folgenden Tag während der nächtlichen Schwachlastzeiten sequenziell zu verteilen. Dies verhindert Netz- und Busüberlastungen während des regulären operativen Gebäudebetriebs.
+
+// - Nach erfolgreicher Übermittlung und temporärer Speicherung werden die Daten von den Programmen der Raumautomation verarbeitet. Sie dienen dort als direkte Eingangsgröße für die präzise und automatisierte Steuerung der Jalousieaktorik.
+
+=== Vorschlag eines modifizierten Funktionsblocks nach VDI 3813...(nicht fertig)
 Basierend auf der Analyse der VDI 3813-2 (vgl. @kap-vdi3813) wird für die entwickelte Systemarchitektur ein modifizierter Funktionsblock konzipiert (siehe @fig-NeuerFunktionsblock). Dieser wird im Gegensatz zur Richtlinie, dem Funktionsblock der Lamellennachführung vorangestellt. Ziel ist es, sowohl die rechenintensive geometrische Kollisionsprüfung als auch die Verwaltung der fassadenspezifischen Ausrichtungswinkel in die Simulation auszulagern. 
 
 #figure(
   image("assets/FunktionsblockNeu.png", width: 60%),
   caption: [Konzept des modifizierten Funktionsblocks für eine simulationsbasierte Verschattungskorrektur],
-  placement: bottom
+  placement: auto
 )<fig-NeuerFunktionsblock>
 
 Der standardisierte Funktionsblock zur Verschattungskorrektur verarbeitet den globalen Sonnenstand, der in der Automationsstation für jede Fassadenseite mit einem lokalen Offset (Azimut) verrechnet werden muss. 
@@ -194,7 +233,7 @@ Der hier konzipierte Funktionsblock empfängt stattdessen über den Dateneingang
 
 Die interne Steuerungslogik wertet den eintreffenden Datentyp aus und schaltet die Signale:
 
-- *Zustände V, R, N:* (*...Hier muss ich genauer aufschlüsseln, was wann, wie passiert*) Empfängt der Block eines der definierten Strings für Fremdverschattung (V), Rückseiten-Ausblendung (R) oder Nacht (N), wird ein anliegender Schließbefehl der Thermoautomatik blockiert. Der Block überschreibt das Stellsignal (`S_AUTO`) mit der parametrierten Parkposition (`PAR_PARK`). Zeitgleich wird über den binären Ausgang (`B_ON = FALSE`) die nachgelagerte Lamellennachführung deaktiviert, da ohne direkte Besonnung kein aktiver Blendschutz erforderlich ist. Dies integriert und vereinfach ebenfalls die Funktion der Dämmerungsautomatik.
+- *Zustände V, R, N:*  Empfängt der Block eines der definierten Strings für Fremdverschattung (V), Rückseiten-Ausblendung (R) oder Nacht (N), wird ein anliegender Schließbefehl der Thermoautomatik blockiert. Der Block überschreibt das Stellsignal (`S_AUTO`) mit der parametrierten Parkposition (`PAR_PARK`). Zeitgleich wird über den binären Ausgang (`B_ON = FALSE`) die nachgelagerte Lamellennachführung deaktiviert, da ohne direkte Besonnung kein aktiver Blendschutz erforderlich ist. Dies integriert und vereinfach ebenfalls die Funktion der Dämmerungsautomatik.
 
 - *Sonnenazimut:* Registriert der Eingang einen numerischen Gleitkommawert, wird dies vom System als direkte Besonnung gewertet. Das Stellsignal (`S_AUTO`) wird in diesem Fall unverändert durchgereicht und die Blendschutz-Automatik aktiviert (`B_ON = TRUE`). Der empfangene Zahlenwert entspricht dem in der Simulation berechneten Einfallswinkel der Sonne relativ zur Fensternormale. Dieser Wert wird über den Ausgang `A_SUN_AZ` direkt an die Lamellennachführung übergeben.
 

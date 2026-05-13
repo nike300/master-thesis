@@ -118,14 +118,14 @@
     long: "BIM-Abwicklungsplan"
   ),
   (
-    key:"as",
-    short: "AS",
-    long: "Automationsstation"
+    key:"mbe",
+    short: "MBE",
+    long: "Management- und Bedieneinrichtung"
   ), 
   (
-    key:"as",
-    short: "AS",
-    long: "Automationsstation"
+    key:"ras",
+    short: "RAS",
+    long: "Raumsautomationsstation"
   ), 
   (
     key:"as",

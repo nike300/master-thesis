@@ -1,8 +1,7 @@
 #let short-title = state("short-title", none)
 #import "@preview/codly:1.3.0": *
-= Implementierung des Proof of Concept (90% fertig) <Kap4>
+= Implementierung des Proof of Concept<Kap4>
 Um den in Kapitel 3 konzipierten Systemansatz auf seine praktische Tragfähigkeit zu überprüfen, wird im Folgenden ein @poc durchgeführt. Ziel dieses Kapitels ist es, die softwaretechnische Machbarkeit der entwickelten Prozesskette - vom fehlerfreien Import heterogener Datensätze (@ifc#[] und GIS) über die raycastingbasierte Verschattungssimulation bis hin zum strukturierten Datenexport - exemplarisch nachzuweisen. Hierfür wurde ein funktionsfähiger Software-Prototyp auf Basis von Blender und Python implementiert. 
-
 Die Entwicklung und Validierung dieses Prototyps erfolgt anhand eines komplexen Referenzprojekts:
 
 #figure(
@@ -26,14 +25,14 @@ Es liegen die Fassadenmodelle aller Türme und Podeste des FOUR als @ifc#[]-Date
 === Import, Aufbereitung und Georeferenzierung des BIM-Modells
 ==== Import und Positionierung des Turm 1 <ImportPositionierungT1>
 *Import:*
-Als Erstes wird eine neue Blenderdatei gespeichert und die @ifc#[]-Datei des Referenzgebäudes importiert. Dies geschieht über das Blender Add-On Bonsai@bonsai_openbim, welches den Import und die Bearbeitung von BIM-Daten ermöglicht. Da die @ifc#[]-Modelle beim FOUR schon als Fassaden-Teilmodelle vorliegen, muss hier beim Import kein Filter angewandt werden, um nicht relevante Bauteile auszuschließen.
+Als Erstes wird eine neue Blenderdatei gespeichert und die @ifc#[]-Datei des Referenzgebäudes importiert. Dies geschieht über das Blender Add-On Bonsai~@bonsai_openbim, welches den Import und die Bearbeitung von BIM-Daten ermöglicht. Da die @ifc#[]-Modelle beim FOUR schon als Fassaden-Teilmodelle vorliegen, muss hier beim Import kein Filter angewandt werden, um nicht relevante Bauteile auszuschließen.
 
 // *Import* Da die in @AnalyseBIMDatenguete[Kapitel] definierten Anforderungen zum Teil nicht erfüllt werden, musste beim Import der FOUR-IFC-Datei noch folgendes gemacht werden:
 
 *Positionierung:*
 Für die Positionierung des Gebäudes sollte zuerst auf die im @ifc#[]Site-Tag hinterlegten Koordinaten zurückgegriffen werden. Nach eingehender Prüfung stellt sich heraus, dass die Koordinaten auf einen Punkt in der Mitte des Baufelds verweisen und nicht auf den gewünschten Ursprung des @ifc#[]-Modells. Nach Sichtung der Planunterlagen wurden im "Masterplan für das BIM-Modell" die richtigen XY-Koordinaten (in Form des Gauß-Krüger-Koordinatensystems) entdeckt. Die Z-Koordinate, also die Höhe des @ifc#[]-Ursprungs, konnte über einen Schnitt ausfindig gemacht werden. Da Frankfurt ca. 100~m über @nn liegt, werden genau 100~m als Koordinatenebene festgelegt. Diese Koordinaten werden somit als Ursprung des gesamten Simulationsmodells definiert. 
 
-Für die weitere Verwendung werden die XY-Koordinaten mithilfe einer Anwendung des Bundesamtes für Kartographie und Geodäsie@bkg_koordinatentransformation in das benötigte UTM32-Koordinatenreferenzsystem übersetzt. Dafür wird das Verschiebegitter Beta2007 verwendet.
+Für die weitere Verwendung werden die XY-Koordinaten mithilfe einer Anwendung des Bundesamtes für Kartographie und Geodäsie~@bkg_koordinatentransformation in das benötigte UTM32-Koordinatenreferenzsystem übersetzt. Dafür wird das Verschiebegitter Beta2007 verwendet.
 
 ==== Aufbereitung des @ifc#[]-Modells Turm 1 <AufbereitungIFC>
 
@@ -88,19 +87,24 @@ Da dieser prototypische Weg sehr zeitaufwendig ist, wird im Rahmen dieser Arbeit
 
 
 === Integration der urbanen Umgebungsdaten<kap-ImportUmgebungsdaten>
-==== Import und Positionierung der Umgebungsdaten...
+==== Import und Positionierung der Umgebungsdaten
+Für die Modellierung der umgebenden, verschattenden Bebauung wird auf die offenen Geodaten der @hvbg~@Hessen3D zurückgegriffen. Die 3D-Gebäudemodelle für das Stadtgebiet Frankfurt am Main werden von offizieller Seite standardmäßig im Format CityGML bereitgestellt.
 
-Für die Modellierung der umgebenden, verschattenden Bebauung wird auf die offenen Geodaten der @hvbg#[]@Hessen3D zurückgegriffen. Die 3D-Gebäudemodelle für das Stadtgebiet Frankfurt am Main werden von offizieller Seite standardmäßig im Format CityGML (internationaler Standard des Open Geospatial Consortiums (OGC) zur Modellierung, Speicherung und dem Austausch semantischer 3D-Stadtmodelle@citygml_30) bereitgestellt.
+Da für Blender keine native Import-Schnittstelle für CityGML-Dateien existiert, ist eine vorherige Datenkonvertierung erforderlich. Die Datensätze werden hierfür in das JSON-basierte Format CityJSON (ebenfalls Datenaustauschformat für digitale 3D-Modelle von Städten und Landschaften~@cityjson) mithilfe eines Tools~@cityjson_conversion überführt.
 
-Da für Blender keine native Import-Schnittstelle für CityGML-Dateien existiert, ist eine vorherige Datenkonvertierung erforderlich. Die Datensätze werden hierfür in das JSON-basierte Format CityJSON (ebenfalls Datenaustauschformat für digitale 3D-Modelle von Städten und Landschaften@cityjson) mithilfe eines Tools@cityjson_conversion überführt.
+Der finale Import der Gebäudekörper in die 3D-Umgebung erfolgt über das Open-Source-Plugin CityJSONEditor~@github_cityjsoneditor für Blender. Da die hierarchische Struktur der amtlichen Frankfurter Daten teilweise von den Standardannahmen des Plugins abwich, wurden im Rahmen dieser Arbeit gezielte Anpassungen am Python-Quellcode der Import-Erweiterung vorgenommen. Diese Fehlerbehebungen umfassen im Wesentlichen drei Aspekte:
 
-Der finale Import der Gebäudekörper in die 3D-Umgebung erfolgt über das Open-Source-Plugin CityJSONEditor@github_cityjsoneditor für Blender. Da die hierarchische Struktur der amtlichen Frankfurter Daten teilweise von den Standardannahmen des Plugins abwich, wurden im Rahmen dieser Arbeit gezielte Anpassungen am Python-Quellcode der Import-Erweiterung vorgenommen. Diese Fehlerbehebungen umfassen im Wesentlichen drei Aspekte:
-+ *Toleranz bei fehlenden Texturen:* Es wird eine Abfrage implementiert, die den Importprozess bei Objekten ohne definierte Fassadentexturen (Appearances) nicht abbricht, sondern die reine Geometrie weiterverarbeitet.
-+ *Datentyp-Konvertierung (@lod):* Die Einleseroutine wird dahingehend modifiziert, dass der im Datensatz als String vorliegende Wert für den Detailgrad (@lod) programmatisch in einen Float umgewandelt wird.
-+ *Filterung geometrieloser Objekte:* Es wird eine Filterroutine integriert, die Datensätze ohne physische 3D-Geometrie (wie bspw. reine Grundstücksgrenzen oder Landnutzungsflächen) beim Import ignoriert, um Programmabbrüche zu verhindern.
++ Toleranz bei fehlenden Texturen: Es wird eine Abfrage implementiert, die den Importprozess bei Objekten ohne definierte Fassadentexturen nicht abbricht, sondern die reine Geometrie weiterverarbeitet.
++ Datentyp-Konvertierung (@lod): Das Einleseskript wird dahingehend modifiziert, dass der im Datensatz als String vorliegende Wert für den Detailgrad (@lod) systematisch in einen Float umgewandelt wird.
++ Filterung geometrieloser Objekte: Es wird eine Filterroutine integriert, die Datensätze ohne physische 3D-Geometrie (z. B. Grundstücksgrenzen) beim Import ignoriert, um Programmabbrüche zu verhindern.
 
-Im Anschluss erfolgt die räumliche Verortung des Stadtmodells in der Simulationsumgebung. Die originären CityJSON-Daten sind im globalen ETRS89/UTM-Koordinatensystem referenziert. Da der Projektbasispunkt (P1) in Blender auf (0,0,0) gesetzt ist, muss P1 von den Koordinaten der Umgebungsdaten subtrahiert werden. Die Koordinaten werden im Quellcode hinterlegt. Durch diese Nullpunktverschiebung wird das Makromodell der Umgebung präzise in das kartesische System der Software überführt. Zuletzt werden Gebäude, die in zweiter und dritter Reihe zum Turm 1 stehen, ausgewählt und aus der Szene gelöscht. Gebäude, die direkt nördlich des Referenzgebäudes (Turm 1) stehen, werden ebenfalls entfernt.
+Im Anschluss erfolgt die räumliche Verortung des Stadtmodells in der Simulationsumgebung. Die originären CityJSON-Daten sind im globalen ETRS89/UTM-Koordinatensystem referenziert. Da der Projektbasispunkt (P1) in Blender auf (0,0,0) gesetzt ist, muss P1 von den Koordinaten der Umgebungsdaten subtrahiert werden. Die Koordinaten werden im Quellcode hinterlegt. Durch diese Nullpunktverschiebung wird das Makromodell der Umgebung präzise in das kartesische System der Software überführt. Zuletzt werden Gebäude, die in zweiter und dritter Reihe zum Turm 1 stehen, ausgewählt und aus der Szene gelöscht. Gebäude, die wie in @kap-ImportUmgebungsdaten beschrieben, nördlich des Referenzgebäudes (Turm 1) stehen, werden ebenfalls entfernt.
+@fig-Umgebungsszene zeigt die Szene mit den Gebäudedaten des @hvbg. Im Hintergrund ist der Nextower zu erkennen, welcher in @ValidierungErgebnisse für die Validierung der Simulation von Bedeutung sein wird.
 
+#figure(
+  image("assets/NurUmgebung.png", width: 80%),
+  caption: [In Blender importierte Innenstadt von Frankfurt am Main]
+)<fig-Umgebungsszene>
 
 ==== Import und Positionierung der Türme 2 bis 4 <ImportT24>
 Da das Gebäudeensemble FOUR zum Zeitpunkt der Datenerhebung noch nicht in den amtlichen CityGML-Datensätzen erfasst ist, werden für die Verschattungssimulation die detaillierten @ifc#[]-Fassadenmodelle der Türme 2 bis 4 herangezogen. Diese liegen in einem sehr hohen Detaillierungsgrad (@lod 500) vor. Dies ist einerseits vorteilhaft für eine hohe Präzision des Schattenwurfs, beinhaltet andererseits jedoch eine massive Menge an nicht benötigten geometrischen und semantischen Daten. Um die Dateigröße zu minimieren und den Arbeitsspeicher während der Simulation zu entlasten, wird eine systematische Reduktion der Modelle durchgeführt:
@@ -115,7 +119,7 @@ Eine manuelle räumliche Transformation oder Neuausrichtung entfällt bei diesem
 
 Es ist anzumerken, dass die @ifc#[]-Modelle keine oder nur generische Materialien für die Fassade hinterlegt haben. Es fehlen also die richtigen Materialeigenschaften (z. B. Reflexionsgrade, Rauheit), um eine komplexe Raytracing-Simulation mit Spiegelungen durchzuführen. 
 
-Die aggregierte Szene ist in @fig-fertigeSzene zu sehen. Man erkennt die vier FOUR in der Mitte mit den umliegenden Gebäuden. Bei dem Podest unter Turm 3 und 4 fehlt die Fassade. Hier handelt es sich um eine Unzulänglichkeit des @ifc#[]-Modells, welches aber keinen Einfluss auf die Simulation hat.
+Die aggregierte Szene ist in @fig-fertigeSzene zu sehen. Man erkennt die vier FOUR in der Mitte mit den umliegenden Gebäuden. Bei dem Podest unter Turm 3 und 4 fehlt die Fassade. Hier handelt es sich um eine Unzulänglichkeit des @ifc#[]-Modells, welche aber keinen Einfluss auf die Simulation hat.
 
 #figure(
   image("assets/FertigeSzene.png", width: 100%),
@@ -132,7 +136,7 @@ Die aggregierte Szene ist in @fig-fertigeSzene zu sehen. Man erkennt die vier FO
     caption: [Einstellungen für Sun Position Add-On],
   ),
   [
-    Für die visuelle Darstellung und Validierung des Sonnenstandes innerhalb der 3D-Umgebung wird das in Blender integrierte Add-On Sun Position@blender_sun_position verwendet. Die korrekte Ausrichtung des simulierten Sonnenlichts erfordert die Parametrierung folgender Randbedingungen:
+    Für die visuelle Darstellung und Validierung des Sonnenstandes innerhalb der 3D-Umgebung wird das in Blender integrierte Add-On Sun Position~@blender_sun_position verwendet. Die korrekte Ausrichtung des simulierten Sonnenlichts erfordert die Parametrierung folgender Randbedingungen:
 
     Im Abschnitt Location werden die exakten geografischen Koordinaten des Projektstandorts definiert. Für das Gebäudeareal FOUR entsprechen diese einem Breitengrad von 50,113 und einem Längengrad von 8,675. Die Nordausrichtung des Modells (North Offset) bleibt in diesem Fall auf null Grad, da die Gebäude bereits korrekt ausgerichtet sind. Die Distanz gibt den Abstand des Sonnenobjekts vom Ursprung an und hat keine Relevanz für den Sonnenstand.
     
@@ -195,7 +199,7 @@ Sobald ein Tag-Zustand vorliegt, iteriert das Skript über alle registrierten Fe
 Fällt das Licht hingegen in einem positiven Winkel auf die Fassadenvorderseite, initiiert das Skript das Vierpunkt-Raycasting. Von den vier Randkoordinaten des Fensters wird ein theoretischer Sehstrahl in Richtung der Sonne projiziert. Der Algorithmus prüft, ob dieser Strahl auf seinem Weg durch die Szene ein Objekt der umgebenden Bebauung schneidet. Die Schleife bricht ab, sobald nur ein einziger der vier Strahlen die Sonne ungehindert erreicht. In diesem Fall wird das gesamte Fenster als besonnt klassifiziert. Nur wenn alle vier Eckpunkte durch externe Geometrien verdeckt sind, meldet der Algorithmus eine vollständige Verschattung.
 
 ==== Datenaggregation und Export
-Im finalen Schritt überführt das Skript die akkumulierten Statuswerte in eine Struktur, die als csv-Datei gespeichert wird. Die generierte Exportdatei listet die chronologischen Zeitstempel als Zeilen und ordnet die zugehörigen @aks der Fenster als Spalten an. Diese Formatierung ermöglicht es der Gebäudeautomation im späteren operativen Betrieb, die Matrix sequenziell einzulesen. *Die ausgegebenen Werte differenzieren dabei klar zwischen aktiver Besonnung, Fremdverschattung, Eigenverschattung und fehlender Einstrahlung bei Nacht.*
+Im finalen Schritt überführt das Skript die akkumulierten Statuswerte in eine Struktur, die als csv-Datei gespeichert wird. Die generierte Exportdatei listet die chronologischen Zeitstempel als Zeilen und ordnet die zugehörigen @aks der Fenster als Spalten an. Diese Formatierung ermöglicht es der Gebäudeautomation im späteren operativen Betrieb, die Matrix sequenziell einzulesen. (Die ausgegebenen Werte differenzieren dabei klar zwischen aktiver Besonnung, Fremdverschattung, Eigenverschattung und fehlender Einstrahlung bei Nacht.) - umschreiben
 
 #figure(
   image("assets/Verschattung1.png", width: 100%),
