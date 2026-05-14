@@ -109,7 +109,37 @@ Um diesen Konflikt zu lösen, muss die Steuerung die präzisen Umgebungsdaten vo
 
 Eine hohe Datenauflösung bleibt somit das konzeptionelle Optimum. Voraussetzung ist lediglich, dass die technische Infrastruktur die großen Datenmengen verarbeiten kann und die Steuerungsprogrammierung ständige Fahrbewegungen zuverlässig dämpft.
 
-==== Zeitlicher Simulationsumfang...
+Um den Berechnungsaufwand und das resultierende Datenvolumen weiter zu optimieren, wurde im Rahmen der zeitlichen Diskretisierung ergänzend untersucht, ob die Simulation eines repräsentativen Tages pro Kalenderwoche für die steuerungstechnischen Anforderungen ausreichend ist. Für diese Evaluation wurden exemplarisch der 17. und der 24. März verglichen. Die Wahl dieses Zeitraums begründet sich durch die astronomische Tag-und-Nacht-Gleiche (Äquinoktium) am 20. März. In dieser Phase weist die Deklination der Sonne ihre maximale tägliche Änderungsrate auf, weshalb der gewählte Zeitraum den ungünstigsten Fall für abweichende Sonnenstände innerhalb einer Kalenderwoche darstellt.
+
+Wie in @fig-panorama_vergleich dargestellt, ergeben sich bei einer isolierten Betrachtung des Zeitpunktes 09:30 Uhr visuelle Diskrepanzen: Während das markierte Referenzfenster am 17. März zu diesem Zeitpunkt noch unverschattet ist, liegt es exakt eine Woche später bereits im Schatten der Umgebungsbebauung. Eine hochauflösende kinematische Analyse des Simulationsmodells zeigt jedoch, dass die harte Schattenkante lediglich etwa sechs Minuten benötigt, um vollständig von der rechten zur linken Fensterkante zu wandern. 
+
+#figure(
+  grid(
+    columns: (1fr, 1fr),
+    gutter: 1em,
+    
+    // Linkes Bild
+    box(width: 100%, clip: true)[
+      #align(center)[
+        #image("assets/VergleichWoche1.png", width: 140%)
+      ]
+    ],
+    
+    // Rechtes Bild
+    box(width: 100%, clip: true)[
+      #align(center)[
+        #image("assets/VergleichWoche2.png", width: 140%)
+      ]
+    ]
+  ),
+  caption: [FL39_W045...],
+  placement: auto
+)<fig-panorama_vergleich>
+
+
+Setzt man diese physikalische Übergangszeit in Relation zu der zuvor definierten zeitlichen Auflösung der Gebäudeautomation von 15 Minuten, wird die Relevanz dieser Abweichung stark relativiert. Die zeitliche Verschiebung des Schattenwurfs, die durch den einwöchigen Sprung des Sonnenstandes entsteht, ist geringer als das gewählte Diskretisierungsintervall der Steuerung. Demzufolge wird die Ungenauigkeit einer wöchentlichen Zusammenfassung von dem 15-minütigen Raster der Automationsstation absorbiert. Aus dieser Erkenntnis lässt sich ableiten, dass die Berechnung eines repräsentativen Tages pro Woche die Speicherkapazitäten der Feldebene drastisch schont, ohne dabei steuerungstechnisch signifikante Einbußen in der Genauigkeit des Blendschutzes zu verursachen.
+
+==== Zeitlicher Simulationsumfang
 Für die Konzeption der Simulation stellt sich zudem die Frage, wie viele Kalenderjahre berechnet werden müssen, um den realen Sonnenverlauf hinreichend abzubilden. Der Umlauf der Erde um die Sonne unterliegt zwar langperiodischen Schwankungen (Milanković-Zyklen~@dwdMilanZyklen), diese sind für die Lebensdauer eines Gebäudes jedoch nicht relevant. Der berechnete Sonnenverlauf kann für den Betrachtungszeitraum als statisch angesehen werden. 
 
 Da das kalendarische Jahr vom astronomischen Sonnenjahr (365,24 Tage) abweicht @astr04eduSonnenjahr, wird diese Differenz alle vier Jahre durch ein Schaltjahr korrigiert. Die hieraus resultierende zeitliche Verschiebung des Sonnenstandes am selben Kalendertag ist für einen simulierten Schattenwurf in @fig-schaltjahr beispielhaft dargestellt. 
@@ -120,9 +150,14 @@ Da das kalendarische Jahr vom astronomischen Sonnenjahr (365,24 Tage) abweicht @
 )<fig-schaltjahr>
 Da sich die räumlichen Abweichungen des Schattens lediglich im Zentimeterbereich bewegen (roter Bereich), ist es für den Systemansatz ausreichend, die Simulation auf ein einzelnes Referenzjahr zu beschränken.
 
-Zur weiteren Reduktion von Datenmenge und Rechenzeit ließe sich die Simulation auf jeden zweiten oder dritten Tag eines Jahres beschränken. Da die geometrischen Abweichungen des Sonnenstandes zwischen aufeinanderfolgenden Tagen marginal ausfallen, stellt dies einen methodisch vertretbaren Ansatz dar.
 
-... hier noch wöchentliche Daten untersuchen
+// - anschließend wird untersucht, ob es auch reicht, nur für jede Woche einen Tag zu berechnen
+// - dafür wird der 17. und 24. märz verglichen. sie werden verglichen, da am 20.03. die tag-nacht-gleiche ist und damit der sonnenstand sich am meisten verändert in dieser periode
+// - wie man in @fig-panorama_vergleich erkennt, ist am 17.03. um 9:30 das rot markierte fenster noch nicht verschattet, eine woche darauf jedoch schon
+// - eine woche
+// - durch analyse der simulation kommt raus, dass allerdings nur ca. 6 minuten braucht, bis die schattenkante von rechts nach links über das gesamte fenster gewandert ist
+// - das ist ja weniger, als die 15 minutüige auflösung. also sehr wahrscheinlich könnte man mit einer einwöchigen auflösung trotdem noch ein hohe genauigkeit erzielen
+// - es wäre vertretbar nur jeden zweiten tag zu berechnen, da 
 ==== Räumliche Auflösung der Messpunkte <RaeumlicheAufloesung>
 
 Die räumliche Abtastung der Fensterflächen bestimmt die Zuverlässigkeit der Simulation. Man muss festlegen, wie viele Testpunkte pro Fenster berechnet werden. Es werden drei verschiedene Optionen untersucht:

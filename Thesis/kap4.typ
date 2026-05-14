@@ -83,7 +83,7 @@ Im Folgenden wird ein vorläufiger Prozess stichpunktartig beschrieben:
   caption: [Draufsicht von FOUR Turm 1 mit an den Fenstern platzierten AKS-Texten für Etage 45 in Blender],
   placement: none
 )<fig-AKSumFenster>
-Da dieser prototypische Weg sehr zeitaufwendig ist, wird im Rahmen dieser Arbeit nur ein Geschoss bearbeitet. Für die spätere Simulation wird der in @AufbereitungIFC festgelegte, temporäre @aks für die Bezeichnung der Fenster verwendet.
+Da dieser prototypische Weg sehr zeitaufwendig ist, wird im Rahmen dieser Arbeit nur ein Geschoss bearbeitet. Für die spätere Simulation wird der im Abschnitt davor festgelegte, temporäre @aks für die Bezeichnung der Fenster verwendet.
 
 
 === Integration der urbanen Umgebungsdaten<kap-ImportUmgebungsdaten>
@@ -155,7 +155,7 @@ Da die Sonne in Frankfurt am Main am längsten Sommertag (Sommersonnenwende) nac
 Für die räumliche Auflösung wird die Vierpunkt-Messung gewählt, da eine mittlere zeitliche Auflösung von 15 Minuten verwendet wird. Aufgrund der hohen Anzahl der Fenster, wäre eine Rastermessung zu rechenintensiv und würde eine große Datenmenge generieren.
 
 === Umsetzung der Jahresverschattung<SimulationJahresverschattung>
-Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette. Es automatisiert die geometrische Verschattungsanalyse innerhalb der 3D-Umgebung und generiert Steuerungsdaten für die Gebäudeautomation. Hierfür wird ein Python-Skript ausgeführt, welches über die @ide @vs-code#[]@vscode gestartet wird. Am Anfang müssen im Konfigurationsteil des Skripts (siehe @code-konfiguration) die gewünschten Parameter eingestellt werden:
+Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette. Es automatisiert die geometrische Verschattungsanalyse innerhalb der 3D-Umgebung und generiert Steuerungsdaten für die Gebäudeautomation. Hierfür wird ein Python-Skript ausgeführt, welches über die @ide @vs-code~@vscode gestartet wird. Am Anfang müssen im Konfigurationsteil des Skripts (siehe @code-konfiguration) die gewünschten Parameter eingestellt werden:
 - Speicherort und Name der generierten csv-Datei
 - Anfangsdatum und Dauer der Simulation in Tagen
 - Start- und Endzeit der Berechnung in vollen Stunden
@@ -190,6 +190,13 @@ In der Vorbereitungsphase durchsucht der Algorithmus den Szenengraphen der Simul
 // Um die spätere Rechenlast während der Zeitschleifen zu minimieren, werden die geometrischen Eigenschaften jedes Fensters nur ein einziges Mal zu Beginn extrahiert. 
 Das Skript ermittelt für jedes Fenster die primäre Glasfläche und berechnet deren physikalischen Normalenvektor. Durch einen vektoriellen Abgleich mit dem geometrischen Zentrum des Gebäudes wird mathematisch verifiziert, dass dieser Normalenvektor stets nach außen zeigt. Parallel dazu speichert das System die exakten 3D-Weltkoordinaten der vier Eckpunkte der Fensterfläche ab, welche als Ausgangspunkte für die spätere Strahlenverfolgung dienen.
 
+#figure(
+  image("assets/Verschattung1.png", width: 100%),
+  caption: [Flussdiagramm Verschattungsalgorithmus],
+  placement: auto
+)<fig-flussdiagramm>
+#pagebreak()
+
 ==== Astronomische Berechnung der Sonnenvektoren
 Die eigentliche Simulation iteriert über den festgelegten Betrachtungszeitraum in diskreten 15-Minuten-Schritten. Für jeden iterativen Zeitschritt übersetzt der integrierte @noaa#[]-Algorithmus den lokalen Längen- und Breitengrad sowie den UTC-korrigierten Zeitstempel in einen dreidimensionalen Richtungsvektor zur Sonne. In dieser Phase findet zudem ein effizienzsteigernder Filterprozess statt: Liegt der berechnete Höhenwinkel der Sonne unter null Grad, registriert das System den Zustand global als Nacht. Der Algorithmus weist allen Fenstern für diesen Zeitstempel den entsprechenden Statuswert zu und überspringt die rechenintensiven Kollisionsprüfungen.
 
@@ -201,12 +208,7 @@ Fällt das Licht hingegen in einem positiven Winkel auf die Fassadenvorderseite,
 ==== Datenaggregation und Export
 Im finalen Schritt überführt das Skript die akkumulierten Statuswerte in eine Struktur, die als csv-Datei gespeichert wird. Die generierte Exportdatei listet die chronologischen Zeitstempel als Zeilen und ordnet die zugehörigen @aks der Fenster als Spalten an. Diese Formatierung ermöglicht es der Gebäudeautomation im späteren operativen Betrieb, die Matrix sequenziell einzulesen. (Die ausgegebenen Werte differenzieren dabei klar zwischen aktiver Besonnung, Fremdverschattung, Eigenverschattung und fehlender Einstrahlung bei Nacht.) - umschreiben
 
-#figure(
-  image("assets/Verschattung1.png", width: 100%),
-  caption: [Flussdiagramm Verschattungsalgorithmus],
-  placement: auto
-)<fig-flussdiagramm>
-#pagebreak()
+
 
 == Auswertung und Validierung
 === Analyse der Simulationsergebnisse

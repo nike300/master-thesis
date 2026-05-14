@@ -3,7 +3,7 @@
 - VerschattungsSimulation.py
 == Verwendete Hilfsmittel <OpenSourceListe>
 
-Im Verlauf dieser Arbeit kamen insgesamt 16 verschiedene Open-Source-Softwarelösungen, Plug-ins, Entwicklertools und frei verfügbare Datenquellen zum Einsatz. Die nachfolgende Übersicht kategorisiert die verwendeten Hilfsmittel nach ihrem jeweiligen Anwendungsbereich. Werkzeuge und Datenquellen, die mit einem Sternchen~(\*) gekennzeichnet sind, wurden während der Konzeptionsphase evaluiert, sind jedoch nicht in den final integrierten Prozess eingeflossen. Die in der Arbeit enthaltenen Skizzen und Zeichnungen sind mit AutoCAD erstellt worden, welches nicht kostenlos verfügbar ist.
+Im Verlauf dieser Arbeit kamen insgesamt 16 verschiedene Open-Source-Softwarelösungen, Plug-ins, Entwicklertools und frei verfügbare Datenquellen zum Einsatz. Die nachfolgende Übersicht kategorisiert die verwendeten Hilfsmittel nach ihrem jeweiligen Anwendungsbereich. Werkzeuge und Datenquellen, die mit einem Sternchen~(\*) gekennzeichnet sind, wurden während der Konzeptionsphase evaluiert, sind jedoch nicht in den final integrierten Prozess eingeflossen. Für die in der Arbeit enthaltenen Skizzen und Zeichnungen, sowie für den in @AKSZuordnung beschriebenen Prozess, ist AutoCAD verwendet worden, welches nicht kostenlos verfügbar ist.
 
 *Software und Plattformen*
 - Blender (3D-Modellierung und Simulationsumgebung)
