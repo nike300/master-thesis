@@ -1,6 +1,9 @@
-= Anhang...<Anhang>
-== Digitale Anlage:<DigitaleAnlage>
-- VerschattungsSimulation.py
+= Anhang<Anhang>
+== Digitale Anlage...<DigitaleAnlage>
+In der digitalen Anlage befinden sich die drei wichtigsten Skripte für diese Arbeit:
+- MainVerschattungssimulation.py
+- GenerateTempAKS.py
+- MatchingAKS.py
 == Verwendete Hilfsmittel <OpenSourceListe>
 
 Im Verlauf dieser Arbeit kamen insgesamt 16 verschiedene Open-Source-Softwarelösungen, Plug-ins, Entwicklertools und frei verfügbare Datenquellen zum Einsatz. Die nachfolgende Übersicht kategorisiert die verwendeten Hilfsmittel nach ihrem jeweiligen Anwendungsbereich. Werkzeuge und Datenquellen, die mit einem Sternchen~(\*) gekennzeichnet sind, wurden während der Konzeptionsphase evaluiert, sind jedoch nicht in den final integrierten Prozess eingeflossen. Für die in der Arbeit enthaltenen Skizzen und Zeichnungen, sowie für den in @AKSZuordnung beschriebenen Prozess, ist AutoCAD verwendet worden, welches nicht kostenlos verfügbar ist.

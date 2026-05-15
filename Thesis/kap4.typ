@@ -154,31 +154,38 @@ Da die Sonne in Frankfurt am Main am längsten Sommertag (Sommersonnenwende) nac
 
 Für die räumliche Auflösung wird die Vierpunkt-Messung gewählt, da eine mittlere zeitliche Auflösung von 15 Minuten verwendet wird. Aufgrund der hohen Anzahl der Fenster, wäre eine Rastermessung zu rechenintensiv und würde eine große Datenmenge generieren.
 
-=== Umsetzung der Jahresverschattung<SimulationJahresverschattung>
-Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette. Es automatisiert die geometrische Verschattungsanalyse innerhalb der 3D-Umgebung und generiert Steuerungsdaten für die Gebäudeautomation. Hierfür wird ein Python-Skript ausgeführt, welches über die @ide @vs-code~@vscode gestartet wird. Am Anfang müssen im Konfigurationsteil des Skripts (siehe @code-konfiguration) die gewünschten Parameter eingestellt werden:
-- Speicherort und Name der generierten csv-Datei
-- Anfangsdatum und Dauer der Simulation in Tagen
-- Start- und Endzeit der Berechnung in vollen Stunden
-- Zeitliche Auflösung der Simulation in Minuten
-- Koordinaten im WGS 84 Koordinatenreferenzsystem
+=== Umsetzung der Verschattungssimulation <SimulationJahresverschattung>
+Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette. Es automatisiert die geometrische Verschattungsanalyse innerhalb der 3D-Umgebung und generiert zeitaufgelöste Steuerungsdaten für die Gebäudeautomation. Das Skript wird über die Entwicklungsumgebung @ide @vs-code~@vscode initiiert. Vor der Ausführung werden im zentralen Konfigurationsblock (siehe @code-konfiguration) die wesentlichen Randbedingungen und Parameter der Simulation definiert:
 
-#codly(offset: 19, zebra-fill: none)
+- *Export-Konfiguration:* Festlegung, ob der exakte relative Azimutwinkel oder ein Binärwert (`0`) bei unverschatteter Besonnung ausgegeben werden soll.
+- *Simulationszeitraum:* Auswahl zwischen einer repräsentativen Jahressimulation (ein simulierter Tag pro Woche) oder der Analyse eines spezifischen Einzeltages.
+- *Datumseinstellungen:* Definition des Bezugsjahres sowie (bei Einzeltagssimulation) des exakten Zielmonats und -tages.
+- *Tageszeitraum:* Festlegung der täglichen Start- und Endzeit der Berechnung in vollen Stunden.
+- *Zeitliche Auflösung:* Definition der Berechnungsschritte in Minuten (z. B. 15-Minuten-Intervalle).
+- *Standortdaten:* Geografische Koordinaten (Breiten- und Längengrad) im WGS-84-Referenzsystem.
+
+
+#codly(offset: 11, zebra-fill: none)
 #codly(number-format: (n) => box(fill: luma(240), height: 1.5em, outset: 0.5em)[#text(luma(100), size: 0.8em)[#str(n)]])
 #figure(
 ```python
-# --- Konfiguration ---
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "Dateiname.csv") # Dateipfad und -name
-print(f"Ziel-Datei: {OUTPUT_FILE}")
-start_date = datetime.date(YEAR, 1, 1) # Anfangsdatum
-for i in range(365): # Simulationsdauer
-    current_date = start_date + datetime.timedelta(days=i)
-    SIMULATION_DATES.append((current_date.day, current_date.month))
-START_HOUR = 5, END_HOUR = 22 # Start- und Endzeit
-MINUTES_STEP = 15 # Simulationsauflösung
-LATITUDE = 50.1126, LONGITUDE = 8.67472 # Koordinaten
+# Schalter & Export
+OUTPUT_ANGLE = True      # True: Gibt Azimut aus | False: Gibt nur '0' aus
+WEEKLY_FULL_YEAR = True  # True: wöchentlich fürs Jahr | False: Nur ein Tag
+# Datum für Einzel-Simulation (wird nur genutzt, wenn WEEKLY_FULL_YEAR = False)
+SINGLE_DAY = 21
+SINGLE_MONTH = 6
+# Zeit & Auflösung
+YEAR = 2026
+START_HOUR = 5           # Startzeit in Stunden (z.B. 5 = 05:00 Uhr)
+END_HOUR = 22            # Endzeit in Stunden (z.B. 22 = 22:00 Uhr)
+MINUTES_STEP = 15        # Zeitschritt in Minuten (z.B. 15, 30, 60)
+# Geografische Koordinaten
+LATITUDE = 50.1126
+LONGITUDE = 8.67472
 ```,
 caption: [Konfiguration der Verschattungssimulation],
-placement: none)<code-konfiguration>
+placement: bottom)<code-konfiguration>
 
 
 
@@ -190,12 +197,6 @@ In der Vorbereitungsphase durchsucht der Algorithmus den Szenengraphen der Simul
 // Um die spätere Rechenlast während der Zeitschleifen zu minimieren, werden die geometrischen Eigenschaften jedes Fensters nur ein einziges Mal zu Beginn extrahiert. 
 Das Skript ermittelt für jedes Fenster die primäre Glasfläche und berechnet deren physikalischen Normalenvektor. Durch einen vektoriellen Abgleich mit dem geometrischen Zentrum des Gebäudes wird mathematisch verifiziert, dass dieser Normalenvektor stets nach außen zeigt. Parallel dazu speichert das System die exakten 3D-Weltkoordinaten der vier Eckpunkte der Fensterfläche ab, welche als Ausgangspunkte für die spätere Strahlenverfolgung dienen.
 
-#figure(
-  image("assets/Verschattung1.png", width: 100%),
-  caption: [Flussdiagramm Verschattungsalgorithmus],
-  placement: auto
-)<fig-flussdiagramm>
-#pagebreak()
 
 ==== Astronomische Berechnung der Sonnenvektoren
 Die eigentliche Simulation iteriert über den festgelegten Betrachtungszeitraum in diskreten 15-Minuten-Schritten. Für jeden iterativen Zeitschritt übersetzt der integrierte @noaa#[]-Algorithmus den lokalen Längen- und Breitengrad sowie den UTC-korrigierten Zeitstempel in einen dreidimensionalen Richtungsvektor zur Sonne. In dieser Phase findet zudem ein effizienzsteigernder Filterprozess statt: Liegt der berechnete Höhenwinkel der Sonne unter null Grad, registriert das System den Zustand global als Nacht. Der Algorithmus weist allen Fenstern für diesen Zeitstempel den entsprechenden Statuswert zu und überspringt die rechenintensiven Kollisionsprüfungen.
@@ -204,6 +205,13 @@ Die eigentliche Simulation iteriert über den festgelegten Betrachtungszeitraum 
 Sobald ein Tag-Zustand vorliegt, iteriert das Skript über alle registrierten Fenster. Die Ermittlung des Verschattungsstatus erfolgt hierbei in einem zweistufigen Verfahren. Der erste Schritt ist ein mathematischer Ausschluss, das sogenannte Backface Culling. Über das Skalarprodukt aus dem berechneten Sonnenvektor und dem zuvor gespeicherten Fensternormalenvektor wird geprüft, ob die direkte Solarstrahlung die Fassade von hinten trifft. Ist dies der Fall, wird die Berechnung für dieses Fenster sofort abgebrochen und der Status für eine rückseitige Verschattung dokumentiert.
 
 Fällt das Licht hingegen in einem positiven Winkel auf die Fassadenvorderseite, initiiert das Skript das Vierpunkt-Raycasting. Von den vier Randkoordinaten des Fensters wird ein theoretischer Sehstrahl in Richtung der Sonne projiziert. Der Algorithmus prüft, ob dieser Strahl auf seinem Weg durch die Szene ein Objekt der umgebenden Bebauung schneidet. Die Schleife bricht ab, sobald nur ein einziger der vier Strahlen die Sonne ungehindert erreicht. In diesem Fall wird das gesamte Fenster als besonnt klassifiziert. Nur wenn alle vier Eckpunkte durch externe Geometrien verdeckt sind, meldet der Algorithmus eine vollständige Verschattung.
+
+#figure(
+  image("assets/Verschattung1.png", width: 100%),
+  caption: [Flussdiagramm Verschattungsalgorithmus],
+  placement: auto
+)<fig-flussdiagramm>
+#pagebreak()
 
 ==== Datenaggregation und Export
 Im finalen Schritt überführt das Skript die akkumulierten Statuswerte in eine Struktur, die als csv-Datei gespeichert wird. Die generierte Exportdatei listet die chronologischen Zeitstempel als Zeilen und ordnet die zugehörigen @aks der Fenster als Spalten an. Diese Formatierung ermöglicht es der Gebäudeautomation im späteren operativen Betrieb, die Matrix sequenziell einzulesen. (Die ausgegebenen Werte differenzieren dabei klar zwischen aktiver Besonnung, Fremdverschattung, Eigenverschattung und fehlender Einstrahlung bei Nacht.) - umschreiben
@@ -288,7 +296,7 @@ Die Simulationsergebnisse werden im Folgenden an einem Auszug aus der CSV-Datei 
   Dass die beiden Fenster zur selben Zeit abweichende Azimutwinkel aufweisen, belegt ihre leicht unterschiedliche räumliche Ausrichtung zur Sonne. Der stetig abnehmende Winkelwert spiegelt dabei den fortschreitenden Sonnenlauf wider. Eine hochdynamische Verschattungssituation zeigt sich exemplarisch um 11:45 - 12:00, als die Fenster für ein kurzes Intervall von 30 Minuten erneut verschattet werden und sich direkte Besonnung und Schatten schnell abwechseln. Zwischen 12:30 und 12:45 Uhr wechselt schließlich das Vorzeichen der Winkelwerte von positiv auf negativ. In diesem Zeitraum kreuzt die Sonne die exakte Mittelachse (Flächennormale) der jeweiligen Fenster.
   ]
 )
-=== Berechnungsaufwand und Optimierung <Simulationsoptimierung>
+=== Berechnungsaufwand und Optimierung... <Simulationsoptimierung>
 Für diese Arbeit wurde der 20.03.26 im 15-Minuten Takt simuliert. Dieser Tag beschreibt die frühjährliche Tag-Nacht-Gleiche (Äquinoktium), an dem die Sonne genau gleich lang über und unter dem Horizont verbleibt. Da die Hälfte des Jahres mehr und die andere Hälfte weniger Sonnenstunden aufweist, eignet sich dieser Tag für eine Hochrechnung der Simulationsdauer auf das gesamte Jahr.
 
 Die Simulation dauerte 14,4 Minuten#footnote[Die Berechnung der Jahressimulation erfolgte auf einer Workstation mit folgender Spezifikation: AMD Ryzen 5 7600X (6-Core, 4,7 GHz), 32 GB RAM, AMD Radeon RX 7800 XT, Windows 11 (64-bit), Blender Version 4.5.3], was für eine gesamte Jahresberechnung 3 Tagen und 16 Stunden entspricht. Da diese Simulation für ein gesamtes Gebäude nur einmal berechnet werden muss, liegt die Simulationsdauer im annehmbaren Bereich. Da Blender für Python-Skripte nur einen CPU-Kern benutzen kann, könnten weitere Blender-Instanzen geöffnet werden, um parallel Datumsbereiche des Jahres zu berechnen. Diese müssten dann final in eine Datei bzw. Datenbank zusammengeführt werden.

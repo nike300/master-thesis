@@ -217,12 +217,14 @@
   if (show-abstract) {
     if (abstract != none) {
       heading(level: 1, numbering: none, outlined: false, ABSTRACT.at(language))
+      v(6pt)
       text(abstract)
       pagebreak()
     }
     
     if (abstract-en != none) {
       heading(level: 1, numbering: none, outlined: false, "Abstract")
+      v(6pt)
       text(abstract-en)
       pagebreak()
     }

@@ -5,7 +5,31 @@ import datetime
 import math
 from mathutils import Vector
 
-# --- KONFIGURATION ------------------------------------------------
+# ==================================================================
+# --- 1. NUTZEREINSTELLUNGEN (Hier alles anpassen) -----------------
+# ==================================================================
+
+# Schalter & Export
+OUTPUT_ANGLE = True      # True: Gibt Azimut aus | False: Gibt nur '0' aus
+WEEKLY_FULL_YEAR = True  # True: wöchentlich fürs Jahr | False: Nur ein Tag
+# Datum für Einzel-Simulation (wird nur genutzt, wenn WEEKLY_FULL_YEAR = False)
+SINGLE_DAY = 21
+SINGLE_MONTH = 6
+# Zeit & Auflösung
+YEAR = 2026
+START_HOUR = 5           # Startzeit in Stunden (z.B. 5 = 05:00 Uhr)
+END_HOUR = 22            # Endzeit in Stunden (z.B. 22 = 22:00 Uhr)
+MINUTES_STEP = 15        # Zeitschritt in Minuten (z.B. 15, 30, 60)
+# Geografische Koordinaten
+LATITUDE = 50.1126
+LONGITUDE = 8.67472
+
+
+# ==================================================================
+# --- 2. INTERNE LOGIK & PFADE ----------------
+# ==================================================================
+
+# --- Pfade einrichten ---
 try:
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     PARENT_DIR = os.path.dirname(SCRIPT_DIR)
@@ -16,24 +40,27 @@ except:
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
-# --- Konfiguration ---
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "21.06.2026.csv")
-print(f"Ziel-Datei: {OUTPUT_FILE}")
-# --- SCHALTER ---
-OUTPUT_ANGLE = True  # True: Gibt den Azimut aus | False: Gibt nur '0' aus
-# --- Zeiteinstellungen ---
-YEAR = 2026
+# --- Datum und Dateinamen generieren ---
 SIMULATION_DATES = []
-start_date = datetime.date(YEAR, 6, 21)
-for i in range(1): 
-    current_date = start_date + datetime.timedelta(days=i)
-    SIMULATION_DATES.append((current_date.day, current_date.month))
-START_HOUR = 5
-END_HOUR = 22
-MINUTES_STEP = 15
-# --- Koordinaten ---
-LATITUDE = 50.1126
-LONGITUDE = 8.67472
+
+if WEEKLY_FULL_YEAR:
+    # Generiert jeden 7. Tag für das komplette Jahr (z.B. 01.01., 08.01., ...)
+    start_date = datetime.date(YEAR, 1, 1)
+    current_date = start_date
+    while current_date.year == YEAR:
+        SIMULATION_DATES.append((current_date.day, current_date.month))
+        current_date += datetime.timedelta(days=7)
+    OUTPUT_FILENAME = f"Jahressimulation_{YEAR}_Woechentlich.csv"
+else:
+    # Einzelner definierter Tag
+    start_date = datetime.date(YEAR, SINGLE_MONTH, SINGLE_DAY)
+    SIMULATION_DATES.append((start_date.day, start_date.month))
+    OUTPUT_FILENAME = f"{start_date.day:02d}.{start_date.month:02d}.{YEAR}.csv"
+
+# --- Zieldatei automatisch benennen ---
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, OUTPUT_FILENAME)
+print(f"Ziel-Datei: {OUTPUT_FILE}")
+
 # ------------------------------------------------------------------
 
 # --- SONNEN-MATHEMATIK (NOAA Algorithmus) ---
@@ -153,9 +180,9 @@ def run_final_simulation():
             is_night = math.degrees(sun_elevation_rad) < 0
             
             if current_step % 1 == 0 or current_step == total_steps: 
-                print(f"Fortschritt: {current_step}/{total_steps} ({day}.{month}. {hour:02d}:{minute:02d})")
+                print(f"Fortschritt: {current_step}/{total_steps} ({day:02d}.{month:02d}. {hour:02d}:{minute:02d})")
                 
-            time_headers.append(f"{day}.{month}._{hour:02d}:{minute:02d}")
+            time_headers.append(f"{day:02d}.{month:02d}._{hour:02d}:{minute:02d}")
             
             if is_night:
                 for res_list in results: res_list.append("N") 
@@ -166,7 +193,7 @@ def run_final_simulation():
                 geom = sensor_geometry[i]
                 dot = sun_vec_direction.dot(geom["normal"])
                 
-                # Backface Culling
+                # Eigenschatten-Prüfung (Front-Face Check)
                 if dot <= 0:
                      results[i].append("R") 
                      continue
@@ -187,32 +214,25 @@ def run_final_simulation():
                     results[i].append("V") # Komplett im Schatten
                 else:
                     if OUTPUT_ANGLE:
-                        # --- NEU: Relativer horizontaler Azimut ---
-                        # 1. 2D-Winkel (XY-Ebene) von Sonne und Fenster berechnen
+                        # --- Relativer horizontaler Azimut ---
                         sun_az = math.atan2(sun_vec_direction.y, sun_vec_direction.x)
                         win_az = math.atan2(geom["normal"].y, geom["normal"].x)
                         
-                        # 2. Differenz in Grad berechnen
                         az_diff = math.degrees(sun_az - win_az)
-                        
-                        # 3. Winkel auf den Bereich -180° bis +180° normieren
                         az_diff = (az_diff + 180) % 360 - 180
                         
-                        # Ausgabe in die Liste (z.B. -45.2 oder 70.1)
-                        results[i].append(f"{az_diff:.1f}")
+                        # --- ÄNDERUNG: .0f entfernt alle Nachkommastellen und rundet ---
+                        results[i].append(f"{az_diff:.0f}")
                     else:
                         results[i].append("0")
 
-    # --- CSV EXPORT (TRANSIPONIERT) ---
+    # --- CSV EXPORT ---
     print("Schreibe CSV...")
     with open(OUTPUT_FILE, "w") as f:
-        # Kopfzeile mit allen echten BMKZ Werten
         sensor_names = [str(sensor["BMKZ"]) for sensor in sensors]
         f.write("Zeitpunkt;" + ";".join(sensor_names) + "\n")
         
-        # Daten-Zeilen (Zeiten)
         for t, time_label in enumerate(time_headers):
-            # Hier die Änderung: .replace('.', ',') für jeden Wert
             row_data = [str(results[i][t]).replace('.', ',') for i in range(len(sensors))]
             f.write(f"{time_label};" + ";".join(row_data) + "\n")
     print(f"FERTIG in {time.time() - start_time:.2f} Sekunden.")
