@@ -172,17 +172,20 @@ Für die Validität einer Verschattungssimulation ist die Definition der Modelli
 
 In der BIM-Methodik beschreibt der @lod sowohl den geometrischen Detaillierungsgrad (Level of Geometry) als auch den semantischen Informationsgehalt (Level of Information). Die Skala reicht üblicherweise von einer konzeptionellen Darstellung (@lod 100) bis hin zum dokumentierten As-Built-Zustand (@lod 500). Für die Untersuchung der Gebäudeautomation und insbesondere der Eigenverschattung ist ein @lod von mindestens 300 oder 350 erforderlich. Erst ab dieser Stufe sind Bauteile wie Fensterlaibungen, Stürze oder Fassadenrücksprünge geometrisch so exakt verortet, dass sie in einer Simulation als relevante Verschattungsobjekte fungieren können.
 
-In der Geoinformatik und speziell im Kontext von CityGML wird der Begriff #gls("lodet", long: true) verwendet, um die Komplexität der äußeren Gebäudehülle im urbanen Raum zu definieren. Gemäß dem Standard des @ogc werden hierbei maßgeblich folgende Stufen unterschieden:
+In der Geoinformatik und speziell im Kontext von CityGML wird der Begriff #gls("lodet", long: true) verwendet, um die Komplexität der äußeren Gebäudehülle im urbanen Raum zu definieren. Gemäß dem Standard des @ogc werden hierbei maßgeblich folgende Stufen unterschieden (siehe auch @fig-lod):
+
+#figure(
+  image("assets/LOD1-3.png", width: 100%),
+  caption: [Darstellung der CityGML-#gls("lodet", long: true) 0 bis 3 @ogcCityGeography],
+  placement: auto
+)<fig-lod>
 
 - @lodet#[]0 (Grundriss-/Geländemodell): Das Gebäude wird lediglich als zweidimensionaler Grundriss oder Dachumriss dargestellt. Da keine echte vertikale Volumenausdehnung vorhanden ist, ist dieser Detailgrad für eine dreidimensionale Verschattungssimulation ungeeignet.
 - @lodet#[]1 (Blockmodell): Das Gebäude wird als einfacher Kubus mit Flachdach dargestellt, was einer Extrusion der Grundfläche entspricht. Diese Abstraktion ist für weit entfernte Verschattungsobjekte ausreichend, führt jedoch im Nahbereich zu Fehlern, da die tatsächliche Dachform ignoriert wird.
 - @lodet#[]2 (Dachmodell): Das Modell beinhaltet standardisierte Dachformen und grobe Dachaufbauten. Für die Verschattungssimulation stellt @lodet#[]2 oft den optimalen Kompromiss aus geometrischer Genauigkeit und Dateigröße dar @Hessen3D.
 - @lodet#[]3 (3D Mesh): Hier werden detaillierte Gebäudehüllen mit Auskragungen, Fensterlaibungen und Texturen modelliert. @lodet#[]3 bietet eine sehr hohe Genauigkeit für die Simulation der Umgebungsverschattung, hat jedoch aufgrund der hohen Polygonanzahl einen negativen Einfluss auf die Rechenleistung.
 
-#figure(
-  image("assets/LOD1-3.png", width: 100%),
-  caption: [Darstellung der CityGML-#gls("lodet", long: true) 0 bis 3 @ogcCityGeography]
-)<fig-lod>
+
 
 Während der BIM-@lod den Fokus auf die interne Intelligenz und die präzise Konstruktion des betrachteten Objekts legt, dient der CityGML-@lodet der effizienten Repräsentation der Umgebungssilhouette. Für eine durchgängige Prozesskette müssen beide Welten so miteinander verknüpft werden, dass das hochdetaillierte @bim#[]-Modell präzise in das Stadtmodell eingebettet werden kann.
 
@@ -289,9 +292,9 @@ Diese Forderung nach maximalem Tageslichteintrag steht jedoch in einem systembed
 Intelligente, automatisierte Jalousiesysteme bilden die technische Lösung dieses Zielkonflikts. Durch eine präzise Steuerung von Behanghöhe und Lamellenwinkel können sie die Tageslichtversorgung, den Blendschutz und den Wärmeschutz dynamisch in Einklang bringen. Besonderes Potenzial weisen hierbei Systeme auf, die nicht nur den globalen Sonnenstand, sondern auch die reale Umgebungsverschattung durch benachbarte Gebäude oder topografische Elemente in ihre Steuerungslogik integrieren. Erst durch die Berücksichtigung dieser Fremdverschattung lässt sich die natürliche Belichtung maximieren, ohne Abstriche beim thermischen oder visuellen Komfort in Kauf nehmen zu müssen.
 
 === Energieeffizienz der Gebäudeautomation
-Die primäre Motivation für die Implementierung komplexer Raumautomationsfunktionen liegt in der Optimierung der Gebäudeenergieeffizienz. Den europäischen regulatorischen Rahmen hierfür bildet die Norm EN 15232, welche Automationssysteme in die Effizienzklassen A bis D unterteilt. Um die höchste Klasse A zu erreichen, fordert diese Norm den Einsatz von Raumautomationssystemen, die den Sonnenschutz in Abhängigkeit der solaren Einstrahlung steuern. Konkret wird dabei jedoch lediglich eine binäre Aktivierung des Sonnenschutzes bei Überschreitung eines globalen Grenzwertes von 130 W/m² verlangt @dinen15232_1_2017[S.69], was messtechnisch über ein Pyranometer erfasst werden kann.
+Die primäre Motivation für die Implementierung komplexer Raumautomationsfunktionen liegt in der Optimierung der Gebäudeenergieeffizienz. Den europäischen regulatorischen Rahmen hierfür bildet die Norm DIN EN ISO 52120-1, welche die DIN EN~15232 ablöst. Hier werden Automationssysteme in die Effizienzklassen A bis D unterteilt. Um die höchste Klasse A zu erreichen, fordert diese Norm den Einsatz von Raumautomationssystemen, die den Sonnenschutz in Abhängigkeit der solaren Einstrahlung steuern. Konkret wird dabei jedoch lediglich eine binäre Aktivierung des Sonnenschutzes bei Überschreitung eines globalen Grenzwertes von 130 W/m² verlangt @dineniso52120_1_2025[S.74], was messtechnisch über ein Pyranometer erfasst werden kann.
 
-Eine deutlich höhere Anforderung stellt die nationale Normenreihe DIN V 18599. Der Teil 11 dieser Norm, welcher den Einfluss der Gebäudeautomation auf den Energiebedarf bewertet, fordert für den höchsten Automatisierungsgrad A explizit einen automatisch betriebenen Sonnenschutz mit integrierter Lamellennachführung (siehe @fig-18599Ausschnit). Der Einsatz einer solchen kontinuierlichen Nachführung der Jalousien wirkt sich gemäß DIN V 18599 Teil 4 direkt positiv auf den Tageslichtversorgungsfaktor des Gebäudes aus. Für die steuerungstechnische Umsetzung einer derartigen Nachführung sind präzise Daten über den lokalen Sonnenstand eine zwingende Grundvoraussetzung. Insbesondere in dicht bebauten urbanen Gebieten lässt sich die Tageslichtversorgung durch die Integration hochauflösender Verschattungsdaten weiter steigern: Detektiert das System eine temporäre Fremdverschattung der Fassade, können die Behänge/Lamellen gezielt geöffnet werden. Dies ermöglicht eine maximale Ausnutzung des diffusen Sonnenlichts.
+Eine deutlich höhere Anforderung stellt die nationale Normenreihe DIN~V~18599. Der Teil 11 dieser Norm, welcher den Einfluss der Gebäudeautomation auf den Energiebedarf bewertet, fordert für den höchsten Automatisierungsgrad A explizit einen automatisch betriebenen Sonnenschutz mit integrierter Lamellennachführung (siehe @fig-18599Ausschnit). Der Einsatz einer solchen kontinuierlichen Nachführung der Jalousien wirkt sich gemäß DIN V 18599 Teil 4 direkt positiv auf den Tageslichtversorgungsfaktor des Gebäudes aus. Für die steuerungstechnische Umsetzung einer derartigen Nachführung sind präzise Daten über den lokalen Sonnenstand eine zwingende Grundvoraussetzung. Insbesondere in dicht bebauten urbanen Gebieten lässt sich die Tageslichtversorgung durch die Integration hochauflösender Verschattungsdaten weiter steigern: Detektiert das System eine temporäre Fremdverschattung der Fassade, können die Behänge/Lamellen gezielt geöffnet werden. Dies ermöglicht eine maximale Ausnutzung des diffusen Sonnenlichts.
 #figure(
   image("assets/18599Ausschnitt.png"),
   caption: [@din18599-1[S. 46]]

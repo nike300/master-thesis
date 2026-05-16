@@ -179,9 +179,9 @@ def run_final_simulation():
             sun_vec_direction, sun_elevation_rad = calculate_sun_vector(dt_utc, LATITUDE, LONGITUDE)
             is_night = math.degrees(sun_elevation_rad) < 0
             
-            if current_step % 1 == 0 or current_step == total_steps: 
+            if current_step % 100 == 0 or current_step == total_steps: 
                 print(f"Fortschritt: {current_step}/{total_steps} ({day:02d}.{month:02d}. {hour:02d}:{minute:02d})")
-                
+                            
             time_headers.append(f"{day:02d}.{month:02d}._{hour:02d}:{minute:02d}")
             
             if is_night:
