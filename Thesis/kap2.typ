@@ -94,18 +94,18 @@ $ alpha_s = cases(
 === Vergleich und Auswahl der Berechnungsverfahren <VergleichAuswahlBerechnungsverfahren>
 Die in den vorangegangenen Abschnitten dargestellten Formeln der DIN EN 17037 stellen die normative Grundlage für die Tageslichtplanung in Europa dar. Sie bieten eine hinreichende Genauigkeit.
 
-Für die Implementierung des Simulations-Prototyps (siehe Kapitel 4) wird jedoch auf den Algorithmus der National Oceanic and Atmospheric Administration (@noaa) zurückgegriffen. Dieser zeichnet sich durch folgende Merkmale aus:
+Für die Implementierung des Simulations-Prototyps (siehe @Kap4) wird jedoch auf den Algorithmus der National Oceanic and Atmospheric Administration (@noaa) zurückgegriffen. Dieser zeichnet sich durch folgende Merkmale aus:
 
 - Höhere Präzision: Während einfache Näherungen Fehler von bis zu $1 degree$ aufweisen können, minimiert der @noaa#[]-Algorithmus (basierend auf den Arbeiten von Jean Meeus @Meeus1998) die Abweichungen auf unter $0,0001 degree$.
 - Berücksichtigung atmosphärischer Effekte: Der Algorithmus inkludiert Korrekturfaktoren für die atmosphärische Refraktion, was insbesondere bei flachen Sonnenständen (Morgen- und Abendstunden) für die Lamellennachführung in der Gebäudeautomation kritisch ist.
 
-Auf eine detaillierte mathematische Herleitung der über 30 Korrekturterme des @noaa#[]-Verfahrens wird an dieser Stelle verzichtet; die Berechnung folgt der dokumentierten Implementierung gemäß @NOAASolar2021.
+Auf eine detaillierte mathematische Herleitung der über 30 Korrekturterme des @noaa#[]-Verfahrens wird an dieser Stelle verzichtet; die Berechnung folgt gemäß der dokumentierten Implementierung~@NOAASolar2021.
 
 
 === Geometrie der Verschattung <GeometrieVerschattung>
 Nachdem die Position der Sonne bestimmt wurde, muss im nächsten Schritt geprüft werden, ob die direkte Sichtlinie zwischen einem betrachteten Punkt auf der Fassade (z. B. Fenstermittelpunkt) und der Sonne durch Hindernisse unterbrochen wird.
 
-Eine etablierte Methode zur Visualisierung dieser Umgebungsverschattung für einen spezifischen Referenzpunkt am Gebäude ist das Sonnenbahndiagramm (siehe @fig-Sonnenbahndiagramm). Dafür müssen für alle Hindernisse in der Umgebung der Höhen- und Azimutwinkel ausgemessen werden. Aus dieser zweidimensionalen Darstellung der Sonnenbahnen und der Umgebungssilhouette lassen sich Grenzwinkel ableiten, ab denen ein externes Objekt einen Schatten auf den betrachteten Punkt wirft. 
+Eine etablierte Methode zur Visualisierung dieser Umgebungsverschattung für einen spezifischen Referenzpunkt am Gebäude ist das Sonnenbahndiagramm (siehe @fig-Sonnenbahndiagramm). Dafür müssen für alle Hindernisse in der Umgebung der Höhen- und Azimutwinkel ausgemessen werden. Aus dieser zweidimensionalen Darstellung der Sonnenbahnen und der Umgebungssilhouette lassen sich Grenzwinkel (Azimut- und Sonnenhöhenwinkel) ableiten, ab denen ein externes Objekt einen Schatten auf den betrachteten Punkt wirft. 
 #figure(
   image("assets/Sonnenstandsdiagramm.png", width: 70%),
   caption: [Sonnenbahndiagramm mit Umgebungssilhouette @Quaschning.],
@@ -113,7 +113,7 @@ Eine etablierte Methode zur Visualisierung dieser Umgebungsverschattung für ein
 ) <fig-Sonnenbahndiagramm>
 
 ==== Der Sonnenvektor <Sonnenvektor>
-Für die geometrische Simulation in 3D-Umgebungen ist die sphärische Darstellung (Winkel) oft unpraktisch. Stattdessen wird die Sonnenposition als normierter Richtungsvektor $vec(S)$ im kartesischen Koordinatensystem definiert. 
+Für die geometrische Simulation in 3D-Umgebungen ist die Darstellung in Winkeln oft unpraktisch. Stattdessen wird die Sonnenposition als normierter Richtungsvektor $vec(S)$ im kartesischen Koordinatensystem definiert. 
 
 Unter der Annahme eines Z-up-Koordinatensystems (z. B. in IFC-Modellen üblich, $Z$ zeigt zum Zenit, $Y$ nach Norden) berechnet sich der Sonnenvektor aus Azimut $alpha_s$ und Elevation $gamma_s$:
 
@@ -123,7 +123,7 @@ $ vec(S) = mat(
   sin(gamma_s)
 ) $
 
-Dieser Vektor zeigt vom Ursprung zur Sonne. Für die Verschattungsberechnung wird der Vektor invertiert ($-vec(S)$), um die Einstrahlungsrichtung zu simulieren.
+Dieser Vektor zeigt von einem beliebigen Punkt zur Sonne.
 
 // ==== Klassifizierung der Verschattungstypen <KlassifizierungVerschattungstypen>
 // Man unterscheidet in der Simulation zwei wesentliche Ursachen für den Schattenwurf:
@@ -134,13 +134,13 @@ Dieser Vektor zeigt vom Ursprung zur Sonne. Für die Verschattungsberechnung wir
 === Raycasting-Verfahren zur Kollisionserkennung
 Das Raycasting (Strahlenverfolgung) ist ein grundlegendes Verfahren der 3D-Computergrafik, das primär zur Ermittlung von Sichtbarkeiten und geometrischen Schnittpunkten im dreidimensionalen Raum eingesetzt wird. Im Kontext der Gebäudeanalyse dient dieser Algorithmus dazu, Fremdverschattungen durch urbane Umgebungsstrukturen (wie Nachbargebäude oder Topografie) präzise zu detektieren.
 
-Anders als in der physikalischen Realität, in der Lichtstrahlen von der Lichtquelle emittiert werden, arbeitet das hier angewandte Verfahren aus Gründen der Recheneffizienz invers (Backward Raytracing). Ausgehend von den zu untersuchenden Empfängerflächen – in der Verschattungssimulation den Messpunkten der Fenster – wird ein linearer Prüfstrahl (Ray) generiert. Dieser Strahl wird exakt entlang des berechneten Sonnenrichtungsvektors $vec(r)$ in den Raum projiziert. Die zugrundeliegende Engine berechnet anschließend mathematisch, ob dieser Strahl auf seinem Weg eine andere Polygonfläche (Mesh) schneidet. Registriert der Algorithmus eine Kollision mit einer Objektgeometrie (Intersection), bevor der Strahl die theoretische Distanz zur Lichtquelle erreicht, gilt der ausgehende Fensterpunkt als durch ein Hindernis verschattet. Hat der Strahl hingegen freie Bahn, wird direkte Besonnung protokolliert.
+Anders als in der physikalischen Realität, in der Lichtstrahlen von der Lichtquelle emittiert werden, arbeitet das hier angewandte Verfahren aus Gründen der Recheneffizienz invers (Backward Raytracing). Ausgehend von den zu untersuchenden Empfängerflächen -- in der Verschattungssimulation den Messpunkten der Fenster -- wird ein linearer Prüfstrahl (Ray) generiert. Dieser Strahl wird exakt entlang des berechneten Sonnenrichtungsvektors $vec(r)$ in den Raum projiziert. Die zugrundeliegende Engine berechnet anschließend mathematisch, ob dieser Strahl auf seinem Weg eine andere Polygonfläche (Mesh) schneidet. Registriert der Algorithmus eine Kollision mit einer Objektgeometrie (Intersection), bevor der Strahl die theoretische Distanz zur Lichtquelle erreicht, gilt der ausgehende Fensterpunkt als durch ein Hindernis verschattet. Hat der Strahl hingegen freie Bahn, wird direkte Besonnung protokolliert.
 
 === Raytracing und Reflexionen <RaytracingReflexionen>
 
 Während das zuvor beschriebene Raycasting-Verfahren primär die binäre Sichtbarkeit zwischen einem Messpunkt und der Lichtquelle prüft, erweitert das Raytracing dieses Prinzip um die rekursive Verfolgung von Lichtstrahlen nach deren erster Interaktion mit einer Oberfläche @tuwien_raytracing. Diese Methode ermöglicht die physikalisch korrekte Simulation komplexer optischer Phänomene im städtischen Kontext. Dazu zählen insbesondere Spiegelungen, die zu zusätzlichen Blendereignissen durch reflektierende Glasfassaden gegenüberliegender Gebäude führen können. Ebenso lässt sich die diffuse Streuung abbilden, welche eine Aufhellung von Innenräumen durch helle Umgebungsflächen bewirkt.
 
-Für den operativen Einsatz stellt Raytracing jedoch eine Herausforderung dar. Zum einen steigt der erforderliche Rechenaufwand mit der Anzahl der simulierten Lichtsprünge exponentiell an, was die Anforderungen an die verwendete Hardware signifikant erhöht. Zum anderen scheitert die Umsetzung in der Praxis an der unzureichenden Datengrundlage. Für eine valide Berechnung müssen im gesamten 3D-Modell präzise Materialparameter wie Reflexionsgrad und Oberflächenrauheit hinterlegt sein. Wie die spätere Analyse der Gebäudemodelle in Kapitel @Datenaufbereitung zeigt, fehlen diese spezifischen semantischen Informationen in IFC-Modellen und Städtemodellen in der Regel vollständig. Aus diesem Grund beschränkt sich die in dieser Arbeit entwickelte Prozesskette auf das binäre Raycasting zur Schattenermittlung.
+Für den operativen Einsatz stellt Raytracing jedoch eine Herausforderung dar. Zum einen steigt der erforderliche Rechenaufwand mit der Anzahl der simulierten Lichtsprünge exponentiell an, was die Anforderungen an die verwendete Hardware signifikant erhöht. Zum anderen scheitert die Umsetzung in der Praxis an der unzureichenden Datengrundlage. Für eine valide Berechnung müssen im gesamten 3D-Modell präzise Materialparameter wie Reflexionsgrad und Oberflächenrauheit hinterlegt sein. Wie die spätere Analyse der Gebäudemodelle in @Datenaufbereitung zeigt, fehlen diese spezifischen semantischen Informationen in IFC-Modellen und Städtemodellen in der Regel vollständig. Aus diesem Grund beschränkt sich die in dieser Arbeit entwickelte Prozesskette auf das binäre Raycasting zur Schattenermittlung.
 
 // *Abgrenzung für diese Arbeit:*
 // ???Da der primäre Energieeintrag durch direkte Solarstrahlung erfolgt und die Datengrundlage für Reflexionseigenschaften in 3D-Modellen oft unzureichend ist, fokussiert sich der entwickelte Prozess (@Kap4[Kapitel]) auf das geometrische Raycasting. Reflexionen werden als sekundärer Einflussfaktor betrachtet und im Ausblick (@Kap5[Kapitel]) diskutiert.
@@ -150,11 +150,11 @@ Für den operativen Einsatz stellt Raytracing jedoch eine Herausforderung dar. Z
 
 Der Datenaustausch im Bauwesen hat sich von analogen Plänen hin zu digitalen Methoden entwickelt. Während 2D-Grundrissdateien in Formaten wie DWG oder DXF weiterhin Anwendung finden, werden sie zunehmend durch objektbasierte 3D-Modelle abgelöst. Diese bieten eine höhere Dichte an geometrischen Informationen und erleichtern das räumliche Verständnis komplexer Strukturen.
 
-Building Information Modeling (@bim) beschreibt einen durchgängigen, prozessorientierten Ansatz von der Planung bis zum Betrieb. BIM strukturiert die gewerkeübergreifende Zusammenarbeit und standardisiert den Informationsfluss. Der OpenBIM-Ansatz setzt hierbei auf herstellerneutrale Dateiformate, um Interoperabilität und Flexibilität bei der Softwareauswahl zu gewährleisten.
+Building Information Modeling (@bim) beschreibt einen durchgängigen, prozessorientierten Ansatz von der Planung bis zum Betrieb. @bim strukturiert die gewerkeübergreifende Zusammenarbeit und standardisiert den Informationsfluss. Der OpenBIM-Ansatz setzt hierbei auf herstellerneutrale Dateiformate, um Interoperabilität und Flexibilität bei der Softwareauswahl zu gewährleisten.
 
-Das objektorientierte Austauschformat @ifc (Industry Foundation Classes) ermöglicht die Anreicherung der Geometrie mit semantischen Attributen. Innerhalb der entwickelten Prozesskette dient diese Struktur dazu, simulationsrelevante Bauteile automatisiert zu identifizieren. Während die Klasse IfcSite die Georeferenzierung ermöglicht, definieren Klassen wie IfcWindow die betrachteten Fensterflächen. Maßgeblich für die Simulationsgüte ist ein adäquater Detaillierungsgrad (@lod), um Eigenverschattungen durch Laibungen oder Auskragungen im Raycasting-Verfahren präzise abzubilden.
+Das objektorientierte Austauschformat @ifc ermöglicht die Anreicherung der 3D-Geometrie mit semantischen Attributen. Innerhalb der entwickelten Prozesskette dient diese Struktur dazu, simulationsrelevante Bauteile automatisiert zu identifizieren. Während die Klasse `IfcSite` die Georeferenzierung ermöglicht, definiert die Klasse `IfcWindow` die betrachteten Fensterflächen. Maßgeblich für die Simulationsgüte ist ein adäquater Detaillierungsgrad (@lod), um Eigenverschattungen durch Laibungen oder Auskragungen im Raycasting-Verfahren präzise abzubilden.
 
-Für die Abbildung des urbanen Kontextes dient das Format CityGML als internationaler Standard für semantische Stadtmodelle. In Ergänzung zur hohen Detailtiefe des IFC-Gebäudemodells liefert CityGML die notwendigen Umgebungsdaten zur Detektion von Fremdverschattung. Das effizientere Austauschformat CityJSON findet ebenfalls Anwendung. Im makroskopischen Bereich bildet das Level of Detail 2 (Dachmodell) den optimalen Kompromiss, um Verschattungsfehler durch vereinfachte Blockmodelle zu vermeiden.
+Für die Abbildung des urbanen Kontextes dient das Format CityGML als internationaler Standard für semantische Stadtmodelle. In Ergänzung zur hohen Detailtiefe des IFC-Gebäudemodells liefert CityGML die notwendigen Umgebungsdaten zur Detektion von Fremdverschattung. Das effizientere Austauschformat CityJSON findet ebenfalls Anwendung. Auf die unterschiedlichen Modellierungstiefen wird im Folgenden eingegangen.
 
 // BIM, IFC, Simulationswerkzeuge (Überblick).
 // Folgende Dateiformate werden verwendet:
@@ -168,11 +168,11 @@ Für die Abbildung des urbanen Kontextes dient das Format CityGML als internatio
 
 === Spezifikation der Modellierungstiefe (LOD / LoD)
 
-Für die Validität einer Verschattungssimulation ist die Definition der Modellierungstiefe entscheidend. Dabei muss begrifflich zwischen dem gebäudezentrierten Ansatz des Building Information Modeling und dem stadtmodellzentrierten Ansatz der Geoinformatik unterschieden werden. Zur besseren Abgrenzung wird im Folgenden der Level of Development mit LOD und der Level of Detail mit LoD abgekürzt.
+Für die Validität einer Verschattungssimulation ist die Definition der Modellierungstiefe entscheidend. Dabei muss begrifflich zwischen dem gebäudezentrierten Ansatz von @bim und dem stadtmodellzentrierten Ansatz der Geoinformatik unterschieden werden. Zur besseren Abgrenzung wird im Folgenden der Level of Development mit LOD und der Level of Detail mit LoD abgekürzt.
 
 In der BIM-Methodik beschreibt der @lod sowohl den geometrischen Detaillierungsgrad (Level of Geometry) als auch den semantischen Informationsgehalt (Level of Information). Die Skala reicht üblicherweise von einer konzeptionellen Darstellung (@lod 100) bis hin zum dokumentierten As-Built-Zustand (@lod 500). Für die Untersuchung der Gebäudeautomation und insbesondere der Eigenverschattung ist ein @lod von mindestens 300 oder 350 erforderlich. Erst ab dieser Stufe sind Bauteile wie Fensterlaibungen, Stürze oder Fassadenrücksprünge geometrisch so exakt verortet, dass sie in einer Simulation als relevante Verschattungsobjekte fungieren können.
 
-In der Geoinformatik und speziell im Kontext von CityGML wird der Begriff #gls("lodet", long: true) verwendet, um die Komplexität der äußeren Gebäudehülle im urbanen Raum zu definieren. Gemäß dem Standard des @ogc werden hierbei maßgeblich folgende Stufen unterschieden (siehe auch @fig-lod):
+Wohingegen in der Geoinformatik und speziell im Kontext von CityGML der Begriff #gls("lodet", long: true) verwendet wird, um die Komplexität der äußeren Gebäudehülle im urbanen Raum zu definieren. Gemäß dem Standard des @ogc werden hierbei maßgeblich folgende Stufen unterschieden (siehe auch @fig-lod):
 
 #figure(
   image("assets/LOD1-3.png", width: 100%),
@@ -187,7 +187,7 @@ In der Geoinformatik und speziell im Kontext von CityGML wird der Begriff #gls("
 
 
 
-Während der BIM-@lod den Fokus auf die interne Intelligenz und die präzise Konstruktion des betrachteten Objekts legt, dient der CityGML-@lodet der effizienten Repräsentation der Umgebungssilhouette. Für eine durchgängige Prozesskette müssen beide Welten so miteinander verknüpft werden, dass das hochdetaillierte @bim#[]-Modell präzise in das Stadtmodell eingebettet werden kann.
+Während der BIM-@lod den Fokus auf die interne Intelligenz und die präzise Konstruktion des betrachteten Objekts legt, dient der CityGML-@lodet der effizienten Repräsentation der Silhouette der Nachbarbebauung. Für eine durchgängige Prozesskette müssen beide Welten so miteinander verknüpft werden, dass das hochdetaillierte @bim#[]-Modell präzise in das Stadtmodell eingebettet werden kann.
 
 === Koordinatenreferenzsysteme<Koordinatenreferenzsysteme>
 
@@ -237,14 +237,14 @@ Eine Projektion stellt die mathematische Rechenvorschrift dar, um die Koordinate
 == Verschattungssysteme und Raumautomation <Verschattungssysteme>
 === Systematik steuerbarer Sonnenschutzsysteme
 
-In der Gebäudeautomation werden Sonnenschutzsysteme primär nach der Anzahl ihrer mechanischen Freiheitsgrade klassifiziert. Diese technische Einteilung bestimmt maßgeblich die Flexibilität der Steuerung sowie das Potenzial zur Tageslichtnutzung.
+In der Gebäudeautomation werden Sonnenschutzsysteme primär nach der Anzahl ihrer mechanischen Freiheitsgrade klassifiziert. Diese technische Einteilung bestimmt die Flexibilität der Steuerung sowie das Potenzial zur Tageslichtnutzung.
 
 Systeme mit einem Freiheitsgrad umfassen vorwiegend Rollläden und textile Screens, welche als vertikal geführte Stoffbahnen fungieren. Die einzige verfügbare Steuergröße bei diesen Systemen ist die prozentuale Behanghöhe. Da sie lediglich vertikal auf- und abgefahren werden können, bieten sie nur ein sehr begrenztes Potenzial zur Steuerung der Tageslichtqualität im Rauminneren. Sie finden vorwiegend im Wohnungsbau Anwendung.
 
 Systeme mit zwei Freiheitsgraden, insbesondere außenliegende Raffstores beziehungsweise Jalousien#footnote[Zur besseren Lesbarkeit und Einheitlichkeit wird in der vorliegenden Arbeit im Folgenden durchgängig der Begriff der Jalousie verwendet.], bilden hingegen den Standard im modernen Büro- und Verwaltungsbau. Diese Anlagen verfügen über die beiden Steuergrößen Behanghöhe und Lamellenwinkel. Die Möglichkeit, die Neigung der einzelnen Lamellen anzupassen, ist die technologische Grundvoraussetzung für eine präzise Lichtlenkung. Aus diesem Grund fokussiert sich die vorliegende Arbeit exklusiv auf die Simulation und Steuerung dieser zweidimensional verstellbaren Jalousiesysteme.
 
 Die physische Bewegung des Sonnenschutzes erfolgt in der Regel über integrierte Elektromotoren. Die Ansteuerung dieser Aktoren geschieht entweder dezentral über raumspezifische Controller oder zentralisiert über eine übergeordnete Automationsstation. 
-#show "z. B.": [z.~B.]
+
 Ein zentraler steuerungstechnischer Mechanismus bei Jalousien ist die Einstellung des sogenannten Cut-off-Winkels. Hierbei wird der maximal geöffnete Neigungswinkel der Lamellen berechnet, bei dem "direkter Sonnenlichteintrag durch die Fassade gerade vermieden wird" @dints18599_4_2025[S.42]. Gleichzeitig wird das direkte Sonnenlicht an die Decke reflektiert (siehe @fig-cutoff). Außerdem verbleibt ein maximaler Spalt zwischen den Lamellen, um den Eintritt von diffusem Himmelslicht in die Raumtiefe und den Blick nach außen zu ermöglichen. Dies stellt eine ideale Balance zwischen Blendschutz und Tageslichtautonomie dar.
 
 Um diesen Zustand aufrechtzuerhalten, wird in der Raumautomation das Prinzip der automatischen Lamellennachführung angewendet. Dabei passt die Steuerung den Cut-off-Winkel im Tagesverlauf kontinuierlich an den sich ändernden Sonnenstand an. Für eine exakte Nachführung benötigt die Automationsstation Echtzeitdaten über den solaren Azimut- und Höhenwinkel. Der Höhenwinkel ist konstant für den Standort, wobei der Azimutwinkel von der Ausrichtung der Fensterfläche abhängt.
@@ -261,17 +261,17 @@ Dynamische Sonnenschutzsysteme erfüllen in der modernen Gebäudeautomation wese
 
 - Sommerlicher Wärmeschutz: Ziel ist die Minimierung des solaren Energieeintrags in das Gebäude, um die anfallende Kühllast und den damit verbundenen Energieverbrauch der Klimatisierung effektiv zu senken. Intelligente Sonnenschutzsysteme können die benötigte Kühlenergie um 30% reduzieren @hutchins2015shading[S. 12].
 
-- Winterlicher Wärmeschutz: Im Heizfall ist die durch transparente Hüllflächen in das Gebäude gelangende Solarstrahlung zu maximieren, um die Heizlast und den primärenergetischen Aufwand zu verringern. Zeitgleich minimieren geschlossene Behänge während der Nachtstunden den Transmissionswärmeverlust von innen nach außen.
+- Winterlicher Wärmeschutz: Im Heizfall ist die in das Gebäude gelangende Solarstrahlung zu maximieren, um die Heizlast und den primärenergetischen Aufwand zu verringern. Zeitgleich minimieren geschlossene Behänge während der Nachtstunden den Transmissionswärmeverlust von innen nach außen.
 
-- Visueller Komfort: Hierbei steht die Vermeidung von ungewollter Direkt- und Reflexblendung an Arbeitsplätzen im Vordergrund. Durch eine präzise Lamellennachführung soll die Sichtverbindung nach außen gemäß DIN EN 14501 weitestgehend erhalten bleiben, was den visuellen Komfort maßgeblich erhöht.
+- Visueller Komfort: Hierbei steht die Vermeidung von ungewollter Direkt- und Reflexblendung an Arbeitsplätzen im Vordergrund. Dies kann durch eine direkte Blendung durch Sonneneinstrahlung, oder auch durch zu hohe Lichtdichten auf Flächen im Sichtfeld entstehen. Mithilfe einer präzisen Lamellennachführung soll die Sichtverbindung nach außen gemäß DIN EN 14501 weitestgehend erhalten bleiben, was den visuellen Komfort maßgeblich erhöht.
 
 - Thermischer Komfort: Dieser wird wesentlich durch die operative Raumtemperatur $theta_"op"$ bestimmt, welche sich als Mittelwert aus der lokalen Lufttemperatur und der mittleren Strahlungstemperatur der Umfassungsflächen zusammensetzt. Sonnenschutzeinrichtungen leisten hier einen entscheidenden Beitrag, indem sie die direkte Bestrahlung von Personen blockieren und somit eine lokale Überhitzung im Sommer unterbinden.
 
-- Tageslichtversorgung: Diese Zielgröße maximiert die relative Nutzungszeit des natürlichen Lichts, um den Einsatz von Kunstlicht zu minimieren @din5034-1. Dynamische Verschattung kann den jährlichen Energieverbrauch der Beleuchtung in den Räumen um 14-42% reduzieren @fernandes2021potential. Eine hohe Tageslichtautonomie wirkt sich zudem nachweislich positiv auf den circadianen Rhythmus sowie die psychische und physische Gesundheit der Gebäudenutzer aus @dgnb1.4.
+- Tageslichtversorgung: Diese Zielgröße maximiert die relative Nutzungszeit des natürlichen Lichts, um den Einsatz von Kunstlicht zu minimieren @din5034-1. Dynamische Verschattung kann den jährlichen Energieverbrauch der Beleuchtung in den Räumen um 14-42% reduzieren~@fernandes2021potential. Eine hohe Tageslichtautonomie wirkt sich zudem nachweislich positiv auf den circadianen Rhythmus sowie die psychische und physische Gesundheit der Gebäudenutzer aus~@dgnb1.4.
 
 - Reduktion von Lichtverschmutzung: Durch das automatisierte Schließen der Behänge in den Nacht- oder frühen Morgenstunden wird verhindert, dass künstliches Licht störend in die Umgebung abstrahlt. Dies schützt umliegende Ökosysteme und natürliche Biorhythmen von Mensch und Natur @lichtverschmutzung.
 
-- Anlagenschutz (Selbstschutz): Zum Schutz vor mechanischer Zerstörung bei Extremwetterereignissen (wie Sturm oder Frost) muss die Anlage in eine sichere Position gefahren werden. Dies erfordert die kontinuierliche Auswertung externer Sensordaten, beispielsweise über eine lokale Dachwetterstation. Zudem verlängert eine gedämpfte, intervallbasierte Steuerung die Lebensdauer der verschleißanfälligen Elektroantriebe.
+- Anlagenschutz (Selbstschutz): Zum Schutz vor mechanischer Zerstörung bei Extremwetterereignissen (wie Sturm oder Frost) muss die Anlage in eine sichere Position gefahren werden. Dies erfordert die Auswertung externer Sensordaten, beispielsweise über eine lokale Dachwetterstation. Zudem verlängert eine gedämpfte, intervallbasierte Steuerung die Lebensdauer der verschleißanfälligen Elektroantriebe.
 
 - Objektschutz (Fremdschutz): Bei Hagelschlag können geschlossene Metallbehänge die Fensterverglasung vor Schäden bewahren. Weiterhin erschweren geschlossene Anlagen außerhalb der Nutzungszeiten unbefugtes Eindringen in das Gebäude und leisten somit einen Beitrag zum mechanischen Einbruchschutz.
 
@@ -282,7 +282,7 @@ Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häu
 Neben den dargelegten Vorteilen ergeben sich in der praktischen Anwendung auch betriebstechnische Herausforderungen. Ein wesentlicher Aspekt ist die akustische Beeinträchtigung durch die integrierten Elektromotoren. Sowohl die vertikale Positionierung des Behanges als auch die kontinuierliche Nachführung der Lamellenwinkel verursachen motorische Betriebsgeräusche, die insbesondere in konzentrierten Arbeitsumgebungen als störend empfunden werden können. Zudem resultiert aus der mechanischen Konstruktion vieler Jalousien ein temporärer Verlust an visuellem Komfort: Während der Auf- oder Abwärtsbewegung schließen sich die Lamellen bauartbedingt meist vollständig, was zu einer kurzzeitigen Verdunkelung des Raumes und einer Unterbrechung der Sichtverbindung nach außen führt. Ein weiteres kritisches Risiko stellt die mechanische Belastung dar: Eine zu hohe Taktung und permanente Fahrbewegungen bei wechselnden Lichtverhältnissen führen zu einem immensen Verschleiß der Elektromotoren. Dies hat häufig vorzeitige Systemausfälle und hohe Wartungskosten zur Folge. Diese negativen Begleiterscheinungen unterstreichen die Relevanz einer prädiktiven Steuerungslogik, welche unnötige Verstellvorgänge durch die Integration präziser Verschattungsdaten vermeidet und die Fahrbefehle auf ein funktional notwendiges Minimum reduziert.
 
 == Normative und regulatorische Rahmenbedingungen<NormativeGrundlagen>
-=== Tageslichtversorgung und Blendschutz (DIN EN 17037) <kap-17037>
+=== Tageslichtversorgung und Blendschutz<kap-17037>
 Die DIN EN 17037 ist der zentrale europäische Standard für die Tageslichtplanung in Gebäuden. Sie definiert vier wesentliche Bewertungskriterien: die Tageslichtversorgung, die Sichtverbindung nach außen, die Besonnung sowie den Blendschutz. Ziel der Norm ist es, ein angemessenes Niveau an natürlichem Licht im Rauminneren sicherzustellen und den visuellen Komfort der Nutzer zu gewährleisten. 
 
 In der Planungspraxis wird die Norm primär von Architekten und Lichtplanern genutzt, um die Geometrie von Räumen, die Dimensionierung von Fensterflächen sowie die Notwendigkeit und Art von Sonnenschutzsystemen zu bemessen. Die Qualität der Tageslichtversorgung wird dabei in die Stufen gering, mittel und hoch eingeteilt. Um eine hohe Klassifizierung zu erreichen, sind in der Regel großflächige Verglasungen erforderlich.
@@ -303,7 +303,7 @@ Eine deutlich höhere Anforderung stellt die nationale Normenreihe DIN~V~18599. 
 Die methodischen Verfahren zur Berechnung des resultierenden Energiebedarfs für Heizung und Kühlung werden international in der Norm EN ISO 52016-1 definiert. Diese berücksichtigt explizit den solaren Energieeintrag durch transparente Gebäudehüllen sowie dessen Reduktion durch Sonnenschutzsysteme. Obwohl die vorliegende Arbeit nicht auf die Durchführung einer thermischen Gebäudesimulation abzielt, verdeutlicht die Norm die bauphysikalische Relevanz des entwickelten Prozesses: Nur wenn die variierende Fremdverschattung auf der Fassade präzise ermittelt wird, kann der resultierende Energieeintrag akkurat berechnet werden.
 
 === Raumautomationsfunktionen (VDI 3813)<kap-vdi3813>
-In der VDI-Richtlinie 3813 Blatt 2 werden normierte Funktionsblöcke definiert, um komplexe @ra#[]-Funktionen herstellerneutral und einheitlich darzustellen. Hierbei werden die einzelnen Funktionsblöcke informationstechnisch miteinander verknüpft, sodass Steuersignale generiert, logisch modifiziert und in einer Kaskade weitergegeben werden können. Die programmtechnische Berechnung erfolgt meist auf Ebene der @as.
+In der VDI-Richtlinie 3813 Blatt 2 werden normierte Funktionsblöcke definiert, um komplexe Raumautomationsfunktionen herstellerneutral und einheitlich darzustellen. Hierbei werden die einzelnen Funktionsblöcke informationstechnisch miteinander verknüpft, sodass Steuersignale generiert, logisch modifiziert und in einer Kaskade weitergegeben werden können. Die programmtechnische Berechnung erfolgt meist auf Ebene der @as oder @ras.
 
 ==== Funktionsblock Thermoautomatik
 Die in @kap-Zielgroessen definierten Ziele des sommerlichen und winterlichen Wärmeschutzes werden durch den Funktionsblock der Thermoautomatik abgebildet. Dieser Funktionsblock wertet Parameter wie die Raum- und Außentemperatur aus. Im Winterfall soll er garantieren, dass in unbelegten Räumen der solare Wärmeeintrag durch geöffnete Behänge maximiert wird, um die Heizlast zu senken. Im Sommerfall hingegen erzwingt der Block das Schließen des Sonnenschutzes bei zu hoher Raumtemperatur, um den solaren Energieeintrag und damit die Kühllast zu minimieren. 
@@ -317,13 +317,13 @@ Gemäß VDI 3813-2 dient dieser Funktionsblock (siehe @fig-FunktionsblockThermo)
   placement: auto
 )<fig-FunktionsblockThermo>
 
-Da die in dieser Arbeit entwickelte 3D-Simulation den Verschattungsstatus jedoch bereits prozessorausgelagert (extern) und hochauflösend ermittelt, wird die interne Winkelkalkulation dieses normierten Blocks obsolet. Die Simulation ersetzt somit nicht nur den statischen Parameter #emph("PAR_SHAD"), sondern macht deutlich, dass die Architektur des gesamten Funktionsblocks im Kontext einer datengetriebenen, simulationsbasierten Gebäudeautomation konzeptionell neu gedacht werden muss.
+Da die in dieser Arbeit entwickelte 3D-Simulation den Verschattungsstatus jedoch bereits extern und hochauflösend ermittelt, wird die interne Winkelkalkulation dieses normierten Blocks obsolet. Die Simulation ersetzt somit nicht nur den statischen Parameter #emph("PAR_SHAD"), sondern macht deutlich, dass die Architektur des gesamten Funktionsblocks im Kontext einer datengetriebenen, simulationsbasierten Gebäudeautomation konzeptionell neu gedacht werden muss (siehe @kap-neuerFunktionsblock).
 
-==== Funktionsblock Lamellennachführung (Blendschutz-Automatik)
-Dieser Funktionsblock dient primär der Sicherstellung des visuellen Komforts für den Gebäudenutzer. Sobald direkte Sonnenstrahlung auf die Fassade trifft – und die Verschattungskorrektur keinen Fremdschatten meldet – berechnet der Block anhand der aktuellen Sonnenelevation den optimalen Neigungswinkel der Jalousielamellen. Ziel ist es, direkte Blendung an den Arbeitsplätzen konsequent zu verhindern, gleichzeitig jedoch ein Maximum an diffusem Tageslicht in die Raumtiefe zu lenken, um die Tageslichtautonomie zu steigern.
+==== Funktionsblock Lamellennachführung
+Dieser Funktionsblock dient primär der Sicherstellung des visuellen Komforts für den Gebäudenutzer. Sobald direkte Sonnenstrahlung auf die Fassade trifft -- und die Verschattungskorrektur keinen Fremdschatten meldet -- berechnet der Block anhand der aktuellen Sonnenelevation den optimalen Neigungswinkel (Cut-Off-Angle) der Jalousielamellen. Ziel ist es, direkte Blendung an den Arbeitsplätzen konsequent zu verhindern, gleichzeitig jedoch ein Maximum an diffusem Tageslicht in die Raumtiefe zu lenken, um die Tageslichtautonomie zu steigern.
 
 ==== Funktionsblock Dämmerungsautomatik
-Zur Erfüllung der Schutzziele bezüglich der Reduktion von Lichtverschmutzung steuert dieser Block die Fassade in den Abend- und Nachtstunden. Nach dem rechnerischen oder sensorgestützten Sonnenuntergang erzwingt der Funktionsblock das Schließen der Behänge. Dies verhindert einerseits das störende Abstrahlen von künstlichem Raumlicht in die urbane Umgebung und bietet den Nutzern andererseits einen effektiven Sichtschutz.
+Zur Reduktion von Lichtverschmutzung steuert dieser Block die Fassade in den Abend- und Nachtstunden. Nach dem rechnerischen oder sensorgestützten Sonnenuntergang erzwingt der Funktionsblock das Schließen der Behänge. Dies verhindert das störende Abstrahlen von künstlichem Raumlicht in die Umgebung.
 
 ==== Funktionsblock Witterungsschutz
 Der Witterungsschutz bildet die oberste sicherheitstechnische Instanz der Raumautomation. Er wertet kontinuierlich externe Wetterparameter wie Windgeschwindigkeit, Niederschlag oder Eisbildung aus. Bei Überschreitung kritischer Grenzwerte zwingt dieser Block die externen Sonnenschutzeinrichtungen unmittelbar in eine mechanisch sichere Endlage (in der Regel den eingefahrenen Zustand). Dies dient dem Schutz der Anlage vor mechanischer Zerstörung.

@@ -58,29 +58,16 @@ Um das technische Potenzial des hier konzipierten Workflows einzuordnen, ist ein
 
 Zusammenfassend motivieren diese Marktbeschränkungen die Zielsetzung der vorliegenden Arbeit. Der angestrebte Workflow soll die Ermittlung der Jahresverschattung von einer manuellen, fehleranfälligen und oft proprietären Dienstleistung in einen transparenten, skalierbaren und herstellerunabhängigen Engineering-Prozess überführen.
 
-== Aufbau der Arbeit <AufbauArbeit>
+== Aufbau der Arbeit
 
-Die vorliegende Arbeit gliedert sich in sechs Kapitel, die den Entwicklungsprozess systematisch von der theoretischen Fundierung bis zur praktischen Integration abbilden. 
+Die vorliegende Arbeit gliedert sich in fünf aufeinander aufbauende Kapitel, die den Entwicklungsprozess systematisch von der theoretischen Fundierung bis zur praktischen Integration abbilden.
 
-Das erste Kapitel dient der Einführung in die Thematik. Es skizziert die Problemstellung im Kontext konventioneller Verschattungssteuerungen, definiert die Zielsetzung der Untersuchung und erläutert den methodischen Aufbau der Arbeit.
+Das erste Kapitel dient der Einführung in die Thematik. Es skizziert die Problemstellung im Kontext konventioneller Verschattungssteuerungen, definiert die Zielsetzung der Untersuchung, analysiert das wirtschaftliche Potenzial sowie die Marktabgrenzung und erläutert den methodischen Aufbau der Arbeit.
 
-Im zweiten Kapitel werden die theoretischen Grundlagen erarbeitet. Der Fokus liegt dabei auf der Sonnenbahnmechanik und der Geometrie der Verschattung. Ergänzend werden steuerbare Sonnenschutzsysteme klassifiziert sowie die relevanten normativen Rahmenbedingungen und digitalen Planungsmethoden im BIM-Kontext dargelegt.
+Im zweiten Kapitel werden die theoretischen Grundlagen erarbeitet. Der inhaltliche Fokus liegt dabei auf der Sonnenbahnmechanik und der Geometrie der Verschattung. Ergänzend werden steuerbare Sonnenschutzsysteme klassifiziert sowie die relevanten normativen Rahmenbedingungen und digitalen Planungsmethoden im BIM-Kontext dargelegt.
 
-Das dritte Kapitel befasst sich mit der Anforderungsanalyse und der methodischen Konzeption des Integrationsprozesses. Hier wird die Auswahl der Simulationsumgebung begründet, die notwendige Güte der Eingangsdaten spezifiziert und die zugrunde liegende Systemarchitektur für den Datentransfer definiert.
+Das dritte Kapitel befasst sich mit der Anforderungsanalyse und der methodischen Konzeption des Integrationsprozesses. In diesem Teil wird die Auswahl der Simulationsumgebung begründet und die notwendige Güte der Eingangsdaten spezifiziert. Darauf aufbauend wird die zugrunde liegende Systemarchitektur für die Simulationslogik definiert und ein Integrationskonzept für die Gebäudeautomation entworfen.
 
-Die softwaretechnische Implementierung des Proof of Concept werden im vierten Kapitel dokumentiert. Am Beispiel des Referenzprojekts FOUR in Frankfurt am Main wird der gesamte Workflow von der Datenaufbereitung bis zur Durchführung der raycastingbasierten Simulation beschrieben und die Genauigkeit der Ergebnisse validiert.
+Die softwaretechnische Implementierung des Proof of Concept wird im vierten Kapitel dokumentiert. Am Beispiel des Referenzprojekts FOUR in Frankfurt am Main wird der gesamte Workflow von der Datenaufbereitung über den Modellaufbau bis zur Durchführung der raycastingbasierten Simulation beschrieben und die Genauigkeit der Ergebnisse validiert.
 
-Den Abschluss der Arbeit bildet das fünfte Kapitel mit einer kritischen Diskussion der Ergebnisse und einem zusammenfassenden Fazit. Neben einer Analyse des wirtschaftlichen Marktpotenzials werden die Grenzen des entwickelten Prozesses aufgezeigt und ein Ausblick auf zukünftige Optimierungsmöglichkeiten gegeben.
-// == 1.3 Aufbau der Arbeit
-
-// Die vorliegende Masterarbeit ist in fünf aufeinander aufbauende Kapitel untergliedert, die den vollständigen Entwicklungsprozess – von der theoretischen Fundierung über die informationstechnische Konzeption bis hin zur softwarebasierten Validierung – detailliert nachzeichnen.
-
-// - *Kapitel 1* führt zunächst in die Thematik ein und motiviert die Arbeit anhand der Defizite aktueller, rein winkelbasierter Verschattungssteuerungen in dicht bebauten urbanen Kontexten. Darauf aufbauend werden die konkrete Problemstellung formuliert und die primären Zielsetzungen der Arbeit definiert, insbesondere die Entwicklung einer durchgängigen, auf Open-Source-Software basierenden Prozesskette zur Integration dreidimensionaler Simulationsdaten.
-
-// - *Kapitel 2* schafft das notwendige theoretische Fundament für diese interdisziplinäre Aufgabenstellung. Es beleuchtet zunächst die astronomischen und geometrischen Berechnungsgrundlagen der Sonnenbahn (unter Anwendung des NOAA-Algorithmus) sowie die Prinzipien der Raycasting-Verfahren. Anschließend werden die informationstechnischen Grundlagen digitaler Gebäudemodelle (BIM), relevanter Austauschformate wie IFC und CityGML sowie geodätische Koordinatenreferenzsysteme erläutert. Ein weiterer Fokus liegt auf den Verschattungssystemen der Raumautomation und den zugehörigen normativen Rahmenbedingungen, insbesondere der DIN EN 17037 und den Richtlinien der VDI 3813.
-
-// - *Kapitel 3* widmet sich der systematischen Anforderungsanalyse und der Konzeption des Integrationsprozesses. Nach der Spezifikation der Simulationsumgebung (Blender) und der qualitativen Anforderungen an BIM- und externe Geodaten wird die Architektur der Simulationslogik entwickelt. Dabei werden Entscheidungen zur räumlichen und zeitlichen Diskretisierung sowie Algorithmen zur Performanceoptimierung und Fehlervermeidung (wie der Front-Face Check) getroffen. Abschließend wird ein modifiziertes Funktionsblock-Konzept nach VDI 3813 entworfen, das die berechneten Verschattungsdaten effizient in die Gebäudeautomation überführt.
-
-// - *Kapitel 4* dokumentiert die softwaretechnische Implementierung und Validierung des Proof of Concepts (PoC). Als Referenzobjekt dient das hochkomplexe innerstädtische Bauprojekt „FOUR“ in Frankfurt am Main. Das Kapitel beschreibt detailliert die praktische Datenaufbereitung, einschließlich IFC-Import, Modellbereinigung, Georeferenzierung und der Zuweisung des Anlagenkennzeichnungsschlüssels (AKS). Darauf folgt die Durchführung der Python-basierten Jahresverschattungssimulation. Abgeschlossen wird das Kapitel mit einer Evaluierung des Berechnungsaufwands sowie der visuellen und algorithmischen Validierung der Ergebnisse anhand historischer Webcam-Aufnahmen.
-
-// - *Kapitel 5* fasst die zentralen Erkenntnisse der Arbeit zusammen und ordnet diese kritisch ein. Eine Marktanalyse grenzt den entwickelten Open-Source-Ansatz von bestehenden, kommerziellen Dienstleistungslösungen ab und bewertet dessen wirtschaftliches Potenzial. Die Arbeit schließt mit einer transparenten Diskussion der aktuellen Systemgrenzen sowie einem Ausblick auf zukünftige Forschungsmöglichkeiten, wie beispielsweise der Berücksichtigung komplexer Reflexionen durch den Einsatz von Raytracing.
+Den Abschluss der Arbeit bildet das fünfte Kapitel mit einer kritischen Diskussion der Ergebnisse und einem zusammenfassenden Fazit. Neben der Zusammenfassung der Erkenntnisse werden die Grenzen des entwickelten Prozesses aufgezeigt und ein Ausblick auf zukünftige Optimierungsmöglichkeiten gegeben.

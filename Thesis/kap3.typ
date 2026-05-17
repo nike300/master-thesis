@@ -254,7 +254,7 @@ Nach der erfolgreichen Übermittlung und temporären Speicherung des Tagesdatens
 
 // - Nach erfolgreicher Übermittlung und temporärer Speicherung werden die Daten von den Programmen der Raumautomation verarbeitet. Sie dienen dort als direkte Eingangsgröße für die präzise und automatisierte Steuerung der Jalousieaktorik.
 
-=== Vorschlag eines modifizierten Funktionsblocks nach VDI 3813...(nicht fertig)
+=== Vorschlag eines modifizierten Funktionsblocks nach VDI 3813...(nicht fertig)<kap-neuerFunktionsblock>
 Basierend auf der Analyse der VDI 3813-2 (vgl. @kap-vdi3813) wird für die entwickelte Systemarchitektur ein modifizierter Funktionsblock konzipiert (siehe @fig-NeuerFunktionsblock). Dieser wird im Gegensatz zur Richtlinie, dem Funktionsblock der Lamellennachführung vorangestellt. Ziel ist es, sowohl die rechenintensive geometrische Kollisionsprüfung als auch die Verwaltung der fassadenspezifischen Ausrichtungswinkel in die Simulation auszulagern. 
 
 #figure(

@@ -54,7 +54,8 @@ Zusätzlich wies das Modell geometrische Redundanzen in Form von sich überschne
 ) <fig-FensterÜberschneidung>
 
 
-Schlussendlich wird ein temporäres Anlagenkennzeichnungssystem erstellt, das sich auf das jeweilige Geschoss und eine fortlaufende Nummer für sämtliche Fensterelemente bezieht. Zum Beispiel steht `FL13_W034` für: 13. Geschoss (Floor) an der 34. Position. Dies wird mithilfe eines Skripts (@DigitaleAnlage) implementiert. Diese Maßnahme ist notwendig, da die ursprünglichen Objektbezeichnungen keine Informationen über die räumliche Zuordnung enthalten. Hierfür müssen mithilfe einer Filterlogik alle relevanten Fensterobjekte vorselektiert werden. Glasscheiben für die Balkonbrüstung und sehr kleine Fensterflächen haben keine Jalousie und werden somit nicht berücksichtigt. Die Auswahl der Fenster konnte nicht anhand der @ifc#[]-Klasse `IfcWindow` erfolgen, da die Fensterobjekte an der abgeschrägten Fassadenseite (siehe @kap-VorstellungFOUR) fälschlicherweise der Klasse `IfcBuildingElementProxy` zugeordnet sind. Stattdessen musste die Filterung der Objekte über den Objektnamen erfolgen. 
+Schlussendlich wird ein temporäres Anlagenkennzeichnungssystem erstellt, das sich auf das jeweilige Geschoss und eine fortlaufende Nummer für sämtliche Fensterelemente bezieht. Zum Beispiel steht `FL13_W034` für: 13. Geschoss (Floor) an der 34. Position. Dies wird mithilfe eines Skripts (@DigitaleAnlage) implementiert. Diese Maßnahme ist notwendig, da die ursprünglichen Objektbezeichnungen keine Informationen über die räumliche Zuordnung enthalten. Hierfür müssen mithilfe einer Filterlogik alle relevanten Fensterobjekte vorselektiert werden. Glasscheiben für die Balkonbrüstung und sehr kleine Fensterflächen haben keine Jalousie und werden somit nicht berücksichtigt. Die Auswahl der Fenster konnte nicht anhand der @ifc#[]-Klasse `IfcWindow` erfolgen, da die Fensterobjekte an der abgeschrägten Fassadenseite (siehe @kap-VorstellungFOUR) fälschlicherweise der Klasse `IfcBuildingElementProxy` zugeordnet sind. Stattdessen musste die Filterung der Objekte über den Objektnamen erfolgen.
+
 
 === Zuweisung des Anlagenkennzeichnungsschlüssels (AKS)<AKSZuordnung>
 Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden.
@@ -120,6 +121,8 @@ Eine manuelle räumliche Transformation oder Neuausrichtung entfällt bei diesem
 Es ist anzumerken, dass die @ifc#[]-Modelle keine oder nur generische Materialien für die Fassade hinterlegt haben. Es fehlen also die richtigen Materialeigenschaften (z. B. Reflexionsgrade, Rauheit), um eine komplexe Raytracing-Simulation mit Spiegelungen durchzuführen. 
 
 Die aggregierte Szene ist in @fig-fertigeSzene zu sehen. Man erkennt die vier FOUR in der Mitte mit den umliegenden Gebäuden. Bei dem Podest unter Turm 3 und 4 fehlt die Fassade. Hier handelt es sich um eine Unzulänglichkeit des @ifc#[]-Modells, welche aber keinen Einfluss auf die Simulation hat.
+
+Für die Fassaden sind in den @ifc#[]-Dateien der Türme 1-4 keine Materialien oder Texturen hinterlegt. Dies müssten erst manuell angelegt und zugeordnet werden, bevor eine komplexe Raytracing-Simulation durchgeführt werden könnte.
 
 #figure(
   image("assets/FertigeSzene.png", width: 100%),
@@ -296,10 +299,9 @@ Die Simulationsergebnisse werden im Folgenden an einem Auszug aus der CSV-Datei 
   Dass die beiden Fenster zur selben Zeit abweichende Azimutwinkel aufweisen, belegt ihre leicht unterschiedliche räumliche Ausrichtung zur Sonne. Der stetig abnehmende Winkelwert spiegelt dabei den fortschreitenden Sonnenlauf wider. Eine hochdynamische Verschattungssituation zeigt sich exemplarisch um 11:45 - 12:00, als die Fenster für ein kurzes Intervall von 30 Minuten erneut verschattet werden und sich direkte Besonnung und Schatten schnell abwechseln. Zwischen 12:30 und 12:45 Uhr wechselt schließlich das Vorzeichen der Winkelwerte von positiv auf negativ. In diesem Zeitraum kreuzt die Sonne die exakte Mittelachse (Flächennormale) der jeweiligen Fenster.
   ]
 )
-=== Berechnungsaufwand und Optimierung... <Simulationsoptimierung>
-Für diese Arbeit wurde der 20.03.26 im 15-Minuten Takt simuliert. Dieser Tag beschreibt die frühjährliche Tag-Nacht-Gleiche (Äquinoktium), an dem die Sonne genau gleich lang über und unter dem Horizont verbleibt. Da die Hälfte des Jahres mehr und die andere Hälfte weniger Sonnenstunden aufweist, eignet sich dieser Tag für eine Hochrechnung der Simulationsdauer auf das gesamte Jahr.
-
-Die Simulation dauerte 14,4 Minuten#footnote[Die Berechnung der Jahressimulation erfolgte auf einer Workstation mit folgender Spezifikation: AMD Ryzen 5 7600X (6-Core, 4,7 GHz), 32 GB RAM, AMD Radeon RX 7800 XT, Windows 11 (64-bit), Blender Version 4.5.3], was für eine gesamte Jahresberechnung 3 Tagen und 16 Stunden entspricht. Da diese Simulation für ein gesamtes Gebäude nur einmal berechnet werden muss, liegt die Simulationsdauer im annehmbaren Bereich. Da Blender für Python-Skripte nur einen CPU-Kern benutzen kann, könnten weitere Blender-Instanzen geöffnet werden, um parallel Datumsbereiche des Jahres zu berechnen. Diese müssten dann final in eine Datei bzw. Datenbank zusammengeführt werden.
+=== Berechnungsaufwand und Optimierung <Simulationsoptimierung>
+Für diese Arbeit wurde das Jahr 2026 für einen Tag pro Woche im 15-Minuten Takt simuliert. Die Simulation dauerte 14 Stunde und 23 Minuten#footnote[Die Berechnung der Jahressimulation erfolgte auf einer Workstation mit folgender Spezifikation: AMD Ryzen 5 7600X (6-Core, 4,7 GHz), 32 GB RAM, AMD Radeon RX 7800 XT, Windows 11 (64-bit), Blender Version 4.5.3]. Die Ergebnisdatei im CSV-Format hat ein Größe von 47~MB.
+Wenn jeder Tag im Jahr berechnet werden würde, käme man auf eine Rechendauer von 4 Tagen und 5 Stunden und eine Dateigröße von 328~MB. Da diese Simulation für ein gesamtes Gebäude nur einmal berechnet werden muss, liegt die Simulationsdauer im annehmbaren Bereich. Da Blender für Python-Skripte nur einen CPU-Kern benutzen kann, könnten weitere Blender-Instanzen geöffnet werden, um parallel Datumsbereiche des Jahres zu berechnen. Diese müssten dann final in eine Datei bzw. Datenbank zusammengeführt werden.
 
 Durch Anwendung des Backface Culling konnte eine Verkürzung der Rechendauer um ca. 50% erreicht werden.
 
