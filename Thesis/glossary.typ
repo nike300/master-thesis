@@ -128,9 +128,9 @@
     long: "Raumsautomationsstation"
   ), 
   (
-    key:"as",
-    short: "AS",
-    long: "Automationsstation"
+    key:"gps",
+    short: "GPS",
+    long: "Global Positioning System"
   ), 
   (
     key:"as",

@@ -15,7 +15,7 @@ Für eine exakte Verschattungssimulation muss die Position der Sonne bekannt sei
 )<fig-sonnenmodell>
 
 ==== Wahre Ortszeit <WahreOrtszeit>
-Wie Duffie und Beckman @Duffie2013 herleiten, sind für die Berechnung der Wahren Ortszeit ($t_"WOZ"$) folgende Parameter notwendig:
+Wie Duffie und Beckman~@Duffie2013 herleiten, sind für die Berechnung der Wahren Ortszeit ($t_"WOZ"$) folgende Parameter notwendig:
 
 - $t_"std"$: Gesetzliche Ortszeit (Local Standard Time) in Stunden.
 - $n$: Tag des Jahres (1 bis 365).
@@ -27,13 +27,13 @@ Die Wahre Ortszeit berechnet sich wie folgt #footnote[Vorzeichenkonvention gemä
 
 $ t_"WOZ" = t_"std" + frac(4 dot (lambda_"loc" - lambda_"std") + E, 60) $
 
-Der Divisor 60 ist notwendig, um die Zeitkorrekturen (Minuten) in das Format der Basiszeit (Stunden) zu überführen. Die Zeitgleichung $E$ (in Minuten) wird angenähert durch:
+Der Divisor 60 ist notwendig, um die Zeitkorrekturen (Minuten) in das Format der Basiszeit (Stunden) zu überführen. Die Zeitgleichung $E$ (in Minuten) wird angenähert durch~@Duffie2013:
 
 $ E &= 229.18 dot (0.000075 + 0.001868 cos(B) - 0.032077 sin(B) \
   &- 0.014615 cos(2B) - 0.040849 sin(2B)) $
 
 mit dem Hilfswinkel $B$:
-$ B &= (n - 1) dot frac(360, 365) $
+$ B &= (n - 1) dot frac(360 degree, 365) $
 
 ==== Stundenwinkel ($omega$) <Stundenwinkel>
 Um die zeitliche Komponente in die geometrische Berechnung einzuführen, wird die Wahre Ortszeit ($t_"WOZ"$) in den Stundenwinkel $omega$ umgerechnet. Da die Erde sich um $15 degree$ pro Stunde dreht, gilt:
@@ -45,21 +45,20 @@ Dabei entspricht $omega = 0 degree$ dem solaren Mittag (Sonne exakt im Süden). 
 ==== Sonnendeklination ($delta$) <Sonnendeklination>
 $delta$ ist der Winkel zwischen der Verbindungslinie Erde-Sonne und der Äquatorebene. Sie beschreibt die Neigung der Erde in Relation zur Sonne und variiert im Jahresverlauf zwischen $-23,45 degree$ und $+23,45 degree$.
 
-Für die Bestimmung der Sonnenposition wird das Berechnungsverfahren gemäß DIN EN 17037 (Tageslicht in Gebäuden) angewendet @dinen17037.
-Ausgangsbasis für die Sonnendeklination $delta$ ist die Tageszahl $J$ (1 für 1. Januar bis 365 für 31. Dezember) und der daraus abgeleitete Jahreswinkel $J'$:
+Für die Bestimmung der Sonnenposition wird das Berechnungsverfahren gemäß DIN EN 17037 (Tageslicht in Gebäuden) angewendet~@dinen17037. Ausgangsbasis für die Sonnendeklination $delta$ ist die bereits zuvor eingeführte Tageszahl $n$ und der daraus abgeleitete Jahreswinkel $n'$:
 
-$ J' = 360 degree dot frac(J, 365) $
+$ n' = 360 degree dot frac(n, 365) $
 
-Die Deklination $delta(J)$ ergibt sich gemäß Gleichung D.3 der Norm:
+Die Deklination $delta(n)$ ergibt sich gemäß Gleichung D.3 der Norm:
 
-$ delta(J) &= 0.3948 \
-  &- 23.2559 dot cos(J' + 9.1 degree) \
-  &- 0.3915 dot cos(2 dot J' + 5.4 degree) \
-  &- 0.1764 dot cos(3 dot J' + 26.0 degree) $ <deklinationsgleichung>
+$ delta(n) &= 0.3948 \
+  &- 23.2559 dot cos(n' + 9.1 degree) \
+  &- 0.3915 dot cos(2 dot n' + 5.4 degree) \
+  &- 0.1764 dot cos(3 dot n' + 26.0 degree) $ <deklinationsgleichung>
 
 // #block(inset: 8pt, fill: luma(240))[
 //   *Hinweis zur Implementierung:*
-//   Die Koeffizienten liefern das Ergebnis in Grad. Für die geometrische Weiterverarbeitung im Simulationsmodell (siehe kapitel 5???) erfolgt eine Umrechnung in das Bogenmaß (Radiant).
+//   Die Koeffizienten liefern das Ergebnis in Grad. Für die geometrische Weiterverarbeitung im Simulationsmodell erfolgt eine Umrechnung in das Bogenmaß (Radiant).
 // ]
 
 ==== Sonnenhöhenwinkel ($gamma_s$) <Sonnenhoehenwinkel>
@@ -77,10 +76,10 @@ Dabei gelten folgende Randbedingungen:
 - $gamma_s > 0 degree$: Die Sonne steht über dem Horizont (Tag).
 - $gamma_s <= 0 degree$: Die Sonne steht unter dem Horizont (Nacht/Dämmerung).
 
-// #block(inset: 8pt, fill: luma(240))[*Relevanz für die Simulation:*In der Prozesskette (Kapitel 5) dient die Prüfung $gamma_s > 0$ als erster Filter ("Early Exit"). Ist der Wert negativ, muss kein aufwendiges Raycasting durchgeführt werden, da keine direkte Verschattung möglich ist.]
+// #block(inset: 8pt, fill: luma(240))[*Relevanz für die Simulation:*In der Prozesskette dient die Prüfung gamma_s > 0 als erster Filter ("Early Exit"). Ist der Wert negativ, muss kein aufwendiges Raycasting durchgeführt werden, da keine direkte Verschattung möglich ist.]
 
 ==== Sonnenazimut ($alpha_s$) <Sonnenazimut>
-Der Sonnenazimut beschreibt die horizontale Himmelsrichtung der Sonne. In Übereinstimmung mit der Norm DIN 5034-1 ist der Bezugspunkt die geografische Nordrichtung. Der Winkel wird im Uhrzeigersinn von $0 degree$ (Nord) bis $360 degree$ gemessen.
+Der Sonnenazimut beschreibt die horizontale Himmelsrichtung der Sonne. In Übereinstimmung mit der Norm DIN 5034-1 ist der Bezugspunkt die geografische Nordrichtung. Der Winkel wird im Uhrzeigersinn von $0 degree$ (Nord) bis $359,99 degree$ gemessen.
 
 Die Berechnung erfolgt abhängig von der Wahren Ortszeit @Quaschning:
 
@@ -88,8 +87,6 @@ $ alpha_s = cases(
   180 degree - arccos(frac(sin(gamma_s) dot sin(phi) - sin(delta), cos(gamma_s) dot cos(phi))) & "für" t_"WOZ" <= 12,
   180 degree + arccos(frac(sin(gamma_s) dot sin(phi) - sin(delta), cos(gamma_s) dot cos(phi))) & "für" t_"WOZ" > 12
 ) $
-
-//#block(inset: 8pt, fill: luma(240))[ *Vorteil für die Simulation:* Diese Definition (Nord = $0 degree$, im Uhrzeigersinn) entspricht dem Koordinatensystem gängiger 3D-Software und GIS-Daten.]
 
 === Vergleich und Auswahl der Berechnungsverfahren <VergleichAuswahlBerechnungsverfahren>
 Die in den vorangegangenen Abschnitten dargestellten Formeln der DIN EN 17037 stellen die normative Grundlage für die Tageslichtplanung in Europa dar. Sie bieten eine hinreichende Genauigkeit.
@@ -113,7 +110,7 @@ Eine etablierte Methode zur Visualisierung dieser Umgebungsverschattung für ein
 ) <fig-Sonnenbahndiagramm>
 
 ==== Der Sonnenvektor <Sonnenvektor>
-Für die geometrische Simulation in 3D-Umgebungen ist die Darstellung in Winkeln oft unpraktisch. Stattdessen wird die Sonnenposition als normierter Richtungsvektor $vec(S)$ im kartesischen Koordinatensystem definiert. 
+Für die geometrische Simulation in 3D-Umgebungen ist die Darstellung in Winkeln oft unpraktisch. Stattdessen wird die Sonnenposition als normierter Richtungsvektor $(S)$ im kartesischen Koordinatensystem definiert. 
 
 Unter der Annahme eines Z-up-Koordinatensystems (z. B. in IFC-Modellen üblich, $Z$ zeigt zum Zenit, $Y$ nach Norden) berechnet sich der Sonnenvektor aus Azimut $alpha_s$ und Elevation $gamma_s$:
 
@@ -134,7 +131,7 @@ Dieser Vektor zeigt von einem beliebigen Punkt zur Sonne.
 === Raycasting-Verfahren zur Kollisionserkennung
 Das Raycasting (Strahlenverfolgung) ist ein grundlegendes Verfahren der 3D-Computergrafik, das primär zur Ermittlung von Sichtbarkeiten und geometrischen Schnittpunkten im dreidimensionalen Raum eingesetzt wird. Im Kontext der Gebäudeanalyse dient dieser Algorithmus dazu, Fremdverschattungen durch urbane Umgebungsstrukturen (wie Nachbargebäude oder Topografie) präzise zu detektieren.
 
-Anders als in der physikalischen Realität, in der Lichtstrahlen von der Lichtquelle emittiert werden, arbeitet das hier angewandte Verfahren aus Gründen der Recheneffizienz invers (Backward Raytracing). Ausgehend von den zu untersuchenden Empfängerflächen -- in der Verschattungssimulation den Messpunkten der Fenster -- wird ein linearer Prüfstrahl (Ray) generiert. Dieser Strahl wird exakt entlang des berechneten Sonnenrichtungsvektors $vec(r)$ in den Raum projiziert. Die zugrundeliegende Engine berechnet anschließend mathematisch, ob dieser Strahl auf seinem Weg eine andere Polygonfläche (Mesh) schneidet. Registriert der Algorithmus eine Kollision mit einer Objektgeometrie (Intersection), bevor der Strahl die theoretische Distanz zur Lichtquelle erreicht, gilt der ausgehende Fensterpunkt als durch ein Hindernis verschattet. Hat der Strahl hingegen freie Bahn, wird direkte Besonnung protokolliert.
+Anders als in der physikalischen Realität, in der Lichtstrahlen von der Lichtquelle emittiert werden, arbeitet das hier angewandte Verfahren aus Gründen der Recheneffizienz invers (Backward Raytracing). Ausgehend von den zu untersuchenden Empfängerflächen -- in der Verschattungssimulation den Messpunkten der Fenster -- wird ein linearer Prüfstrahl (Ray) generiert. Dieser Strahl wird exakt entlang des berechneten Sonnenrichtungsvektors $vec(r)$ in den Raum projiziert. Der zugrundeliegende Computeralgorithmus berechnet anschließend mathematisch, ob dieser Strahl auf seinem Weg eine andere Polygonfläche (Mesh) schneidet. Registriert der Algorithmus eine Kollision mit einem Mesh, bevor der Strahl die theoretische Distanz zur Lichtquelle erreicht, gilt der ausgehende Fensterpunkt als durch ein Hindernis verschattet. Hat der Strahl hingegen freie Bahn, wird direkte Besonnung protokolliert.
 
 === Raytracing und Reflexionen <RaytracingReflexionen>
 
@@ -152,7 +149,8 @@ Der Datenaustausch im Bauwesen hat sich von analogen Plänen hin zu digitalen Me
 
 Building Information Modeling (@bim) beschreibt einen durchgängigen, prozessorientierten Ansatz von der Planung bis zum Betrieb. @bim strukturiert die gewerkeübergreifende Zusammenarbeit und standardisiert den Informationsfluss. Der OpenBIM-Ansatz setzt hierbei auf herstellerneutrale Dateiformate, um Interoperabilität und Flexibilität bei der Softwareauswahl zu gewährleisten.
 
-Das objektorientierte Austauschformat @ifc ermöglicht die Anreicherung der 3D-Geometrie mit semantischen Attributen. Innerhalb der entwickelten Prozesskette dient diese Struktur dazu, simulationsrelevante Bauteile automatisiert zu identifizieren. Während die Klasse `IfcSite` die Georeferenzierung ermöglicht, definiert die Klasse `IfcWindow` die betrachteten Fensterflächen. Maßgeblich für die Simulationsgüte ist ein adäquater Detaillierungsgrad (@lod), um Eigenverschattungen durch Laibungen oder Auskragungen im Raycasting-Verfahren präzise abzubilden.
+Das objektorientierte Austauschformat @ifc ermöglicht die Anreicherung der 3D-Geometrie mit semantischen Attributen. Innerhalb der entwickelten Prozesskette dient diese Struktur dazu, simulationsrelevante Bauteile automatisiert zu identifizieren. Während die Klasse `IfcSite` die Georeferenzierung ermöglicht, definiert die Klasse `IfcWindow` die betrachteten Fensterflächen.
+// Maßgeblich für die Simulationsgüte ist ein adäquater Detaillierungsgrad (@lod), um Eigenverschattungen durch Laibungen oder Auskragungen im Raycasting-Verfahren präzise abzubilden.
 
 Für die Abbildung des urbanen Kontextes dient das Format CityGML als internationaler Standard für semantische Stadtmodelle. In Ergänzung zur hohen Detailtiefe des IFC-Gebäudemodells liefert CityGML die notwendigen Umgebungsdaten zur Detektion von Fremdverschattung. Das effizientere Austauschformat CityJSON findet ebenfalls Anwendung. Auf die unterschiedlichen Modellierungstiefen wird im Folgenden eingegangen.
 
@@ -182,7 +180,7 @@ Wohingegen in der Geoinformatik und speziell im Kontext von CityGML der Begriff 
 
 - @lodet#[]0 (Grundriss-/Geländemodell): Das Gebäude wird lediglich als zweidimensionaler Grundriss oder Dachumriss dargestellt. Da keine echte vertikale Volumenausdehnung vorhanden ist, ist dieser Detailgrad für eine dreidimensionale Verschattungssimulation ungeeignet.
 - @lodet#[]1 (Blockmodell): Das Gebäude wird als einfacher Kubus mit Flachdach dargestellt, was einer Extrusion der Grundfläche entspricht. Diese Abstraktion ist für weit entfernte Verschattungsobjekte ausreichend, führt jedoch im Nahbereich zu Fehlern, da die tatsächliche Dachform ignoriert wird.
-- @lodet#[]2 (Dachmodell): Das Modell beinhaltet standardisierte Dachformen und grobe Dachaufbauten. Für die Verschattungssimulation stellt @lodet#[]2 oft den optimalen Kompromiss aus geometrischer Genauigkeit und Dateigröße dar @Hessen3D.
+- @lodet#[]2 (Dachmodell): Das Modell beinhaltet standardisierte Gebäudeformen und grobe Dachaufbauten. Für die Verschattungssimulation stellt @lodet#[]2 oft den optimalen Kompromiss aus geometrischer Genauigkeit und Dateigröße dar @Hessen3D. Komplexe Gebäudefassaden werden vereinfacht dargestellt.
 - @lodet#[]3 (3D Mesh): Hier werden detaillierte Gebäudehüllen mit Auskragungen, Fensterlaibungen und Texturen modelliert. @lodet#[]3 bietet eine sehr hohe Genauigkeit für die Simulation der Umgebungsverschattung, hat jedoch aufgrund der hohen Polygonanzahl einen negativen Einfluss auf die Rechenleistung.
 
 
@@ -194,7 +192,7 @@ Während der BIM-@lod den Fokus auf die interne Intelligenz und die präzise Kon
 Die Georeferenzierung beschreibt die Zuweisung räumlicher Bezugsinformationen zu einem Datensatz. Für die dynamische Verschattungssimulation ist sie von zentraler Bedeutung, da das lokale Gebäudemodell (BIM) millimetergenau mit den Umgebungsdaten überlagert werden muss. Nur durch einen einheitlichen räumlichen Bezug lässt sich der korrekte solare Einfallswinkel auf die Fassade berechnen. In der Bauplanung und Geoinformatik wird dabei zwischen dem geodätischen Bezugssystem (dem Referenzrahmen) und dem Koordinatensystem (der Kartenprojektion) unterschieden.
 
 ==== Geodätische Bezugssysteme (WGS 84 und ETRS89)
-Ein Bezugssystem definiert das mathematische Modell der Erdform, meist in Form eines Rotationsellipsoids. Das World Geodetic System 1984 (WGS 84) ist ein globales System und dient unter anderem als Grundlage für die satellitengestützte Positionsbestimmung (GPS). Für Projekte innerhalb Europas wird stattdessen das European Terrestrial Reference System 1989 (ETRS89) verwendet. Im Gegensatz zum globalen WGS 84 ist ETRS89 fest mit der eurasischen Kontinentalplatte verbunden. Dies verhindert, dass sich Koordinaten durch die Kontinentaldrift gegenüber dem Boden verändern. In der BIM-Methodik werden diese Systeme genutzt, um den globalen Referenzpunkt innerhalb der Entität IfcSite zu definieren. 
+Ein Bezugssystem definiert das mathematische Modell der Erdform, meist in Form eines Rotationsellipsoids. Das World Geodetic System 1984 (WGS~84) ist ein globales System und dient unter anderem als Grundlage für die satellitengestützte Positionsbestimmung~(@gps). Für Projekte innerhalb Europas wird stattdessen das European Terrestrial Reference System 1989 (ETRS89) verwendet. Im Gegensatz zum globalen WGS~84 ist ETRS89 fest mit der eurasischen Kontinentalplatte verbunden. Dies verhindert, dass sich Koordinaten durch die Kontinentaldrift gegenüber dem Boden verändern. In der BIM-Methodik werden diese Systeme genutzt, um den globalen Referenzpunkt innerhalb der Klasse `IfcSite` zu definieren. 
 
 ==== Kartenprojektionen (Gauß-Krüger und UTM)
 Eine Projektion stellt die mathematische Rechenvorschrift dar, um die Koordinaten eines gekrümmten geodätischen Bezugssystems auf eine zweidimensionale, ebene Fläche zu übertragen. Das Gauß-Krüger-Koordinatensystem (GK) ist ein historisch gewachsenes deutsches System, das klassischerweise auf dem Bessel-Ellipsoid basiert, jedoch auch mit dem modernen ETRS89 kombiniert werden kann. Es unterteilt das Gebiet in 3 Grad breite Meridianstreifen (siehe @fig-koordinatensysteme links). Das Universal Transverse Mercator System (UTM) bildet den heutigen internationalen Standard für projizierte Koordinaten. Ein wesentlicher Vorteil des UTM-Systems ist seine Flexibilität gegenüber dem zugrunde liegenden Referenzrahmen; es kann sowohl auf dem globalen WGS 84 als auch auf dem für Europa stabilen ETRS89 aufsetzen. Durch die Aufteilung der Erde in 6 Grad breite Zonen (siehe @fig-koordinatensysteme rechts) bietet UTM eine weltweit einheitliche und verzerrungsarme Darstellung. Zur Veranschaulichung sind in @tab:koordinaten_formate die entsprechenden Koordinaten des Referenzstandorts FOUR in Frankfurt am Main für die verschiedenen Systeme zusammenfassend gegenübergestellt.
@@ -207,7 +205,7 @@ Eine Projektion stellt die mathematische Rechenvorschrift dar, um die Koordinate
     image("assets/UTM.png", width: 100%)
   ),
   caption: [Vergleich der Meridianstreifen von Gauß-Krüger (links) und UTM (rechts) @computerworks_gis_gk_utm],
-  placement: auto
+  placement: none
 ) <fig-koordinatensysteme>
 
 
@@ -230,7 +228,7 @@ Eine Projektion stellt die mathematische Rechenvorschrift dar, um die Koordinate
     [UTM], [32U E 476703 N 5551194]
   ),
   caption: [Gegenüberstellung geografischer und projizierter Koordinaten für das Referenzprojekt FOUR @koordinaten_umrechner],
-  placement: auto
+  placement: none
 ) <tab:koordinaten_formate>
 
 
@@ -245,13 +243,13 @@ Systeme mit zwei Freiheitsgraden, insbesondere außenliegende Raffstores beziehu
 
 Die physische Bewegung des Sonnenschutzes erfolgt in der Regel über integrierte Elektromotoren. Die Ansteuerung dieser Aktoren geschieht entweder dezentral über raumspezifische Controller oder zentralisiert über eine übergeordnete Automationsstation. 
 
-Ein zentraler steuerungstechnischer Mechanismus bei Jalousien ist die Einstellung des sogenannten Cut-off-Winkels. Hierbei wird der maximal geöffnete Neigungswinkel der Lamellen berechnet, bei dem "direkter Sonnenlichteintrag durch die Fassade gerade vermieden wird" @dints18599_4_2025[S.42]. Gleichzeitig wird das direkte Sonnenlicht an die Decke reflektiert (siehe @fig-cutoff). Außerdem verbleibt ein maximaler Spalt zwischen den Lamellen, um den Eintritt von diffusem Himmelslicht in die Raumtiefe und den Blick nach außen zu ermöglichen. Dies stellt eine ideale Balance zwischen Blendschutz und Tageslichtautonomie dar.
+Ein zentraler steuerungstechnischer Mechanismus bei Jalousien ist die Einstellung des sogenannten Cut-off-Winkels. Hierbei wird der maximal geöffnete Neigungswinkel der Lamellen berechnet, bei dem "direkter Sonnenlichteintrag durch die Fassade gerade vermieden wird"~@dints18599_4_2025[S. 42]. Gleichzeitig wird das direkte Sonnenlicht an die Decke reflektiert (siehe @fig-cutoff). Die Möglichkeit, das Sonnenlicht auf diese Weise effektiv in den Raum zu leiten, wird dabei maßgeblich durch die Breite, die Form und den Abstand der Lamellen bestimmt. Durch diese exakte Positionierung verbleibt ein maximaler Spalt zwischen den Lamellen, der den Eintritt von diffusem Himmelslicht in die Raumtiefe sowie den Sichtbezug nach außen ermöglicht. Dies stellt eine ideale Balance zwischen Blendschutz und Tageslichtautonomie dar.
 
-Um diesen Zustand aufrechtzuerhalten, wird in der Raumautomation das Prinzip der automatischen Lamellennachführung angewendet. Dabei passt die Steuerung den Cut-off-Winkel im Tagesverlauf kontinuierlich an den sich ändernden Sonnenstand an. Für eine exakte Nachführung benötigt die Automationsstation Echtzeitdaten über den solaren Azimut- und Höhenwinkel. Der Höhenwinkel ist konstant für den Standort, wobei der Azimutwinkel von der Ausrichtung der Fensterfläche abhängt.
+Um diesen Zustand aufrechtzuerhalten, wird in der Raumautomation das Prinzip der automatischen Lamellennachführung angewendet. Dabei passt die Steuerung den Cut-off Winkel im Tagesverlauf kontinuierlich an den sich ändernden Sonnenstand an. Für eine exakte Nachführung benötigt die Automationsstation Echtzeitdaten über den solaren Azimut- und Höhenwinkel. Für einen Zeitpunkt ist der Höhenwinkel konstant für den Standort, wobei der Azimutwinkel von der Ausrichtung der Fensterfläche abhängt....
 
 #figure(
   image("assets/CutOffWinkel.pdf", width: 70%),
-  caption: [Darstellung von Jalousien mit eingestelltem Cut-Off-Angle und ins Rauminnere reflektierte Sonnenstrahlen],
+  caption: [Darstellung von Jalousien mit eingestelltem Cut-off Winkel und ins Rauminnere reflektierte Sonnenstrahlen],
   placement: auto
 )<fig-cutoff>
 
@@ -283,7 +281,7 @@ Neben den dargelegten Vorteilen ergeben sich in der praktischen Anwendung auch b
 
 == Normative und regulatorische Rahmenbedingungen<NormativeGrundlagen>
 === Tageslichtversorgung und Blendschutz<kap-17037>
-Die DIN EN 17037 ist der zentrale europäische Standard für die Tageslichtplanung in Gebäuden. Sie definiert vier wesentliche Bewertungskriterien: die Tageslichtversorgung, die Sichtverbindung nach außen, die Besonnung sowie den Blendschutz. Ziel der Norm ist es, ein angemessenes Niveau an natürlichem Licht im Rauminneren sicherzustellen und den visuellen Komfort der Nutzer zu gewährleisten. 
+Die DIN EN 17037~@dinen17037 der zentrale europäische Standard für die Tageslichtplanung in Gebäuden. Sie definiert vier wesentliche Bewertungskriterien: die Tageslichtversorgung, die Sichtverbindung nach außen, die Besonnung sowie den Blendschutz. Ziel der Norm ist es, ein angemessenes Niveau an natürlichem Licht im Rauminneren sicherzustellen und den visuellen Komfort der Nutzer zu gewährleisten. 
 
 In der Planungspraxis wird die Norm primär von Architekten und Lichtplanern genutzt, um die Geometrie von Räumen, die Dimensionierung von Fensterflächen sowie die Notwendigkeit und Art von Sonnenschutzsystemen zu bemessen. Die Qualität der Tageslichtversorgung wird dabei in die Stufen gering, mittel und hoch eingeteilt. Um eine hohe Klassifizierung zu erreichen, sind in der Regel großflächige Verglasungen erforderlich.
 
@@ -292,18 +290,18 @@ Diese Forderung nach maximalem Tageslichteintrag steht jedoch in einem systembed
 Intelligente, automatisierte Jalousiesysteme bilden die technische Lösung dieses Zielkonflikts. Durch eine präzise Steuerung von Behanghöhe und Lamellenwinkel können sie die Tageslichtversorgung, den Blendschutz und den Wärmeschutz dynamisch in Einklang bringen. Besonderes Potenzial weisen hierbei Systeme auf, die nicht nur den globalen Sonnenstand, sondern auch die reale Umgebungsverschattung durch benachbarte Gebäude oder topografische Elemente in ihre Steuerungslogik integrieren. Erst durch die Berücksichtigung dieser Fremdverschattung lässt sich die natürliche Belichtung maximieren, ohne Abstriche beim thermischen oder visuellen Komfort in Kauf nehmen zu müssen.
 
 === Energieeffizienz der Gebäudeautomation
-Die primäre Motivation für die Implementierung komplexer Raumautomationsfunktionen liegt in der Optimierung der Gebäudeenergieeffizienz. Den europäischen regulatorischen Rahmen hierfür bildet die Norm DIN EN ISO 52120-1, welche die DIN EN~15232 ablöst. Hier werden Automationssysteme in die Effizienzklassen A bis D unterteilt. Um die höchste Klasse A zu erreichen, fordert diese Norm den Einsatz von Raumautomationssystemen, die den Sonnenschutz in Abhängigkeit der solaren Einstrahlung steuern. Konkret wird dabei jedoch lediglich eine binäre Aktivierung des Sonnenschutzes bei Überschreitung eines globalen Grenzwertes von 130 W/m² verlangt @dineniso52120_1_2025[S.74], was messtechnisch über ein Pyranometer erfasst werden kann.
+Die primäre Motivation für die Implementierung komplexer Raumautomationsfunktionen liegt in der Optimierung der Gebäudeenergieeffizienz. Den europäischen regulatorischen Rahmen hierfür bildet die Norm DIN EN ISO 52120-1~@dineniso52120_1_2025, welche die DIN~EN~15232 ablöst. Hier werden Automationssysteme in die Effizienzklassen A bis D unterteilt. Um die höchste Klasse A zu erreichen, fordert diese Norm den Einsatz von Raumautomationssystemen, die den Sonnenschutz in Abhängigkeit der solaren Einstrahlung steuern. Konkret wird dabei jedoch lediglich eine binäre Aktivierung des Sonnenschutzes bei Überschreitung eines globalen Grenzwertes von 130 W/m² verlangt~@dineniso52120_1_2025[S.74], was messtechnisch über ein Pyranometer erfasst werden kann.
 
-Eine deutlich höhere Anforderung stellt die nationale Normenreihe DIN~V~18599. Der Teil 11 dieser Norm, welcher den Einfluss der Gebäudeautomation auf den Energiebedarf bewertet, fordert für den höchsten Automatisierungsgrad A explizit einen automatisch betriebenen Sonnenschutz mit integrierter Lamellennachführung (siehe @fig-18599Ausschnit). Der Einsatz einer solchen kontinuierlichen Nachführung der Jalousien wirkt sich gemäß DIN V 18599 Teil 4 direkt positiv auf den Tageslichtversorgungsfaktor des Gebäudes aus. Für die steuerungstechnische Umsetzung einer derartigen Nachführung sind präzise Daten über den lokalen Sonnenstand eine zwingende Grundvoraussetzung. Insbesondere in dicht bebauten urbanen Gebieten lässt sich die Tageslichtversorgung durch die Integration hochauflösender Verschattungsdaten weiter steigern: Detektiert das System eine temporäre Fremdverschattung der Fassade, können die Behänge/Lamellen gezielt geöffnet werden. Dies ermöglicht eine maximale Ausnutzung des diffusen Sonnenlichts.
+Eine deutlich höhere Anforderung stellt die nationale Normenreihe DIN~V~18599. Der Teil 11 dieser Norm~@dinv18599_11_2018, welcher den Einfluss der Gebäudeautomation auf den Energiebedarf bewertet, fordert für den höchsten Automatisierungsgrad A explizit einen automatisch betriebenen Sonnenschutz mit integrierter Lamellennachführung (siehe @fig-18599Ausschnit). Der Einsatz einer solchen kontinuierlichen Nachführung der Jalousien wirkt sich gemäß DIN V 18599 Teil 4~@dints18599_4_2025 direkt positiv auf den Tageslichtversorgungsfaktor des Gebäudes aus. Für die steuerungstechnische Umsetzung einer derartigen Nachführung sind präzise Daten über den lokalen Sonnenstand eine zwingende Grundvoraussetzung. Insbesondere in dicht bebauten urbanen Gebieten lässt sich die Tageslichtversorgung durch die Integration hochauflösender Verschattungsdaten weiter steigern: Detektiert das System eine temporäre Fremdverschattung der Fassade, können die Behänge/Lamellen gezielt geöffnet werden. Dies ermöglicht eine maximale Ausnutzung des diffusen Sonnenlichts.
 #figure(
   image("assets/18599Ausschnitt.png"),
-  caption: [@din18599-1[S. 46]]
+  caption: [@dinv18599_11_2018[S. 32 - 33]]
 )<fig-18599Ausschnit>
 
-Die methodischen Verfahren zur Berechnung des resultierenden Energiebedarfs für Heizung und Kühlung werden international in der Norm EN ISO 52016-1 definiert. Diese berücksichtigt explizit den solaren Energieeintrag durch transparente Gebäudehüllen sowie dessen Reduktion durch Sonnenschutzsysteme. Obwohl die vorliegende Arbeit nicht auf die Durchführung einer thermischen Gebäudesimulation abzielt, verdeutlicht die Norm die bauphysikalische Relevanz des entwickelten Prozesses: Nur wenn die variierende Fremdverschattung auf der Fassade präzise ermittelt wird, kann der resultierende Energieeintrag akkurat berechnet werden.
+Die methodischen Verfahren zur Berechnung des resultierenden Energiebedarfs für Heizung und Kühlung werden international in der Norm EN ISO 52016-1~@dineniso52120_1_2025 definiert. Diese berücksichtigt explizit den solaren Energieeintrag durch transparente Gebäudehüllen sowie dessen Reduktion durch Sonnenschutzsysteme. Obwohl die vorliegende Arbeit nicht auf die Durchführung einer thermischen Gebäudesimulation abzielt, verdeutlicht die Norm die bauphysikalische Relevanz des entwickelten Prozesses: Nur wenn die variierende Fremdverschattung auf der Fassade präzise ermittelt wird, kann der resultierende Energieeintrag akkurat berechnet werden.
 
-=== Raumautomationsfunktionen (VDI 3813)<kap-vdi3813>
-In der VDI-Richtlinie 3813 Blatt 2 werden normierte Funktionsblöcke definiert, um komplexe Raumautomationsfunktionen herstellerneutral und einheitlich darzustellen. Hierbei werden die einzelnen Funktionsblöcke informationstechnisch miteinander verknüpft, sodass Steuersignale generiert, logisch modifiziert und in einer Kaskade weitergegeben werden können. Die programmtechnische Berechnung erfolgt meist auf Ebene der @as oder @ras.
+=== Raumautomationsfunktionen<kap-vdi3813>
+In der VDI-Richtlinie 3813 Blatt 2~@vdi3813-2 werden normierte Funktionsblöcke definiert, um komplexe Raumautomationsfunktionen herstellerneutral und einheitlich darzustellen. Hierbei werden die einzelnen Funktionsblöcke informationstechnisch miteinander verknüpft, sodass Steuersignale generiert, logisch modifiziert und in einer Kaskade weitergegeben werden können. Die programmtechnische Berechnung erfolgt meist auf Ebene der @as oder @ras.
 
 ==== Funktionsblock Thermoautomatik
 Die in @kap-Zielgroessen definierten Ziele des sommerlichen und winterlichen Wärmeschutzes werden durch den Funktionsblock der Thermoautomatik abgebildet. Dieser Funktionsblock wertet Parameter wie die Raum- und Außentemperatur aus. Im Winterfall soll er garantieren, dass in unbelegten Räumen der solare Wärmeeintrag durch geöffnete Behänge maximiert wird, um die Heizlast zu senken. Im Sommerfall hingegen erzwingt der Block das Schließen des Sonnenschutzes bei zu hoher Raumtemperatur, um den solaren Energieeintrag und damit die Kühllast zu minimieren. 
@@ -320,7 +318,7 @@ Gemäß VDI 3813-2 dient dieser Funktionsblock (siehe @fig-FunktionsblockThermo)
 Da die in dieser Arbeit entwickelte 3D-Simulation den Verschattungsstatus jedoch bereits extern und hochauflösend ermittelt, wird die interne Winkelkalkulation dieses normierten Blocks obsolet. Die Simulation ersetzt somit nicht nur den statischen Parameter #emph("PAR_SHAD"), sondern macht deutlich, dass die Architektur des gesamten Funktionsblocks im Kontext einer datengetriebenen, simulationsbasierten Gebäudeautomation konzeptionell neu gedacht werden muss (siehe @kap-neuerFunktionsblock).
 
 ==== Funktionsblock Lamellennachführung
-Dieser Funktionsblock dient primär der Sicherstellung des visuellen Komforts für den Gebäudenutzer. Sobald direkte Sonnenstrahlung auf die Fassade trifft -- und die Verschattungskorrektur keinen Fremdschatten meldet -- berechnet der Block anhand der aktuellen Sonnenelevation den optimalen Neigungswinkel (Cut-Off-Angle) der Jalousielamellen. Ziel ist es, direkte Blendung an den Arbeitsplätzen konsequent zu verhindern, gleichzeitig jedoch ein Maximum an diffusem Tageslicht in die Raumtiefe zu lenken, um die Tageslichtautonomie zu steigern.
+Dieser Funktionsblock dient primär der Sicherstellung des visuellen Komforts für den Gebäudenutzer. Sobald direkte Sonnenstrahlung auf die Fassade trifft -- und die Verschattungskorrektur keinen Fremdschatten meldet -- berechnet der Block anhand der aktuellen Sonnenelevation den optimalen Neigungswinkel (Cut-off Winkel) der Jalousielamellen. Ziel ist es, direkte Blendung an den Arbeitsplätzen konsequent zu verhindern, gleichzeitig jedoch ein Maximum an diffusem Tageslicht in die Raumtiefe zu lenken, um die Tageslichtautonomie zu steigern.
 
 ==== Funktionsblock Dämmerungsautomatik
 Zur Reduktion von Lichtverschmutzung steuert dieser Block die Fassade in den Abend- und Nachtstunden. Nach dem rechnerischen oder sensorgestützten Sonnenuntergang erzwingt der Funktionsblock das Schließen der Behänge. Dies verhindert das störende Abstrahlen von künstlichem Raumlicht in die Umgebung.

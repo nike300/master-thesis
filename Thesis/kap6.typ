@@ -64,6 +64,8 @@ Aus einer wirtschaftlichen  Perspektive empfiehlt sich die Entwicklung eines sta
 
 Zu guter Letzt kann der Gesamtprozess durch eine bessere Aufgabenverteilung optimiert werden. Architekturbüros führen für Normen wie die DIN EN 17037 oder für Präsentationszwecke ohnehin häufig detaillierte 3D-Simulationen durch. Es ist daher sinnvoll, schon im BIM-Abwicklungsplan festzulegen, dass die Architekten die 3D-Szene oder sogar die Verschattungsdaten direkt als Vorleistung bereitstellen. Das erspart der Systemintegration eine eigene, zeitintensive Simulation und verhindert effektiv, dass Arbeitsschritte im Projekt doppelt ausgeführt werden.
 
+
+... wäre auch interessant hier noch zu berechnen, wieviel energie (Beleuchtung, kühlung etc.) gespart werden kann mit jahresverschattung?
 // == Ausblick...
 // - die genaue Integration der Daten in die GA mit der eigentlichen Verschattungssteuerung beschreiben
 // - Topographie mit berücksichtigen: welche datensätze stehen zur Verfügung; wie bindet man sie am besten ein
