@@ -55,7 +55,13 @@ Die Auswahl des geeigneten Datenanbieters für das Referenzprojekt erfolgt anhan
 
 *Verfügbarkeit und Abdeckung:* Zunächst muss geprüft werden, welcher Anbieter Daten für den spezifischen Standort in der erforderlichen Qualität bereitstellt. Während globale Anbieter (z. B. OpenStreetMaps oder Google Maps) oft flächendeckende, aber detailarme Daten liefern, bieten kommunale Geoportale (z. B. Vermessungsämter) oft präzisere Datensätze an. Zu beachten sind hierbei lizenzrechtliche Einschränkungen: So sind beispielsweise die photorealistischen 3D-Tiles der Google Maps Platform in der EU derzeit nur eingeschränkt für Simulationszwecke nutzbar @GoogleTilesAdjustments.
 
-*Level of Detail:* Gebäudemodelle sollten mindestens in @lodet#[]2 vorliegen, um einen korrekten Schattenwurf in der Simulation zu generieren.
+*Level of Detail:* Um einen korrekten Schattenwurf in der Simulation zu gewährleisten, sollten die verwendeten Gebäudemodelle mindestens im @lodet#[]2 vorliegen. Bei Gebäuden mit einer komplexen Außenhülle (siehe exemplarisch @fig-JengaTower) ist hingegen mindestens ein @lodet#[]3 erforderlich.
+
+#figure(
+  image("assets/JengaTower.jpg", width: 80%),
+  caption: [Das als "Jenga Tower" bekannte Gebäude\ in 56 Leonard Street in New York City, USA @jenga_tower_penthouse],
+  placement: auto
+)<fig-JengaTower>
 
 *Datenformat:* Die Wahl des Datenformats ist maßgeblich für den Import der Kontextmodelle. Semantische Formate wie CityGML oder CityJSON enthalten neben der Geometrie auch Attribute wie absolute Koordinaten, erfordern für die Verarbeitung in gängigen 3D-Engines jedoch meist eine vorherige Konvertierung. Rein geometrische Formate wie OBJ, glTF oder FBX bestehen hingegen ausschließlich aus 3D-Polygonnetzen. Sie ermöglichen eine direkte und performante Verarbeitung in der Simulationsumgebung, erfordern aufgrund der fehlenden Metadaten jedoch eine manuelle Georeferenzierung.
 
