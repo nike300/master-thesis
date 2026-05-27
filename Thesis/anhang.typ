@@ -28,3 +28,42 @@ Im Verlauf dieser Arbeit kamen insgesamt 16 verschiedene Open-Source-Softwarelö
 *Datenquellen*
 - 3D-Stadtmodell des Hessischen Landesamtes für Bodenmanagement und Geoinformation 
 - OpenStreetMap\* (öffentliche Gebäudemodell-Daten)
+
+== Mathematische Herleitung des verallgemeinerten Cut-Off-Winkels <AnhangHerleitungCutOff>
+
+Die Herleitung des verallgemeinerten Cut-Off-Winkels $beta$ basiert auf der geometrischen Blockadebedingung für direkte Sonnenstrahlung zwischen zwei horizontalen Jalousielamellen. Die mathematische Verknüpfung des solaren Profilwinkels $alpha_p$, der Lamellenbreite $w$ und des vertikalen Lamellenabstands $d$ ist durch die grundlegende Tangensrelation der Schnittgeometrie definiert:
+
+$ tan(alpha_p) = frac(d - w dot sin(beta), w dot cos(beta)) $
+
+Um den für die Automationsstation benötigten Stellwinkel $beta$ explizit als Funktion der bekannten geometrischen Parameter und des Sonnenstandes darzustellen, wird diese implizite Gleichung nachfolgend schrittweise aufgelöst.
+
+*Schritt 1: Auflösung des Hauptnenners* \
+Zur Beseitigung des Bruchs wird die gesamte Gleichung mit dem Nennerterm $w dot cos(beta)$ multipliziert:
+$ w dot cos(beta) dot tan(alpha_p) = d - w dot sin(beta) $
+
+*Schritt 2: Isolation der winkelabhängigen Variablen* \
+Durch Addition von $w dot sin(beta)$ werden alle Terme, welche die gesuchte Zielvariable $beta$ enthalten, auf die linke Seite der Gleichung überführt:
+$ w dot sin(beta) + w dot cos(beta) dot tan(alpha_p) = d $
+
+*Schritt 3: Reduktion des gemeinsamen Skalierungsfaktors* \
+Da die Lamellenbreite $w$ als gemeinsamer Koeffizient auf der linken Gleichungsseite auftritt, wird die Gleichung durch $w$ dividiert:
+$ sin(beta) + cos(beta) dot tan(alpha_p) = frac(d, w) $
+
+*Schritt 4: Substitution der Tangensfunktion* \
+Unter Ausnutzung der trigonometrischen Grundbeziehung $tan(alpha_p) = frac(sin(alpha_p), cos(alpha_p))$ wird der verbleibende Tangensterm ersetzt:
+$ sin(beta) + cos(beta) dot frac(sin(alpha_p), cos(alpha_p)) = frac(d, w) $
+
+*Schritt 5: Überführung auf einen gemeinsamen Hauptnenner* \
+Um das mathematische Fundament für die Anwendung eines Additionstheorems zu schaffen, wird die gesamte Gleichung mit $cos(alpha_p)$ multipliziert:
+$ sin(beta) dot cos(alpha_p) + cos(beta) dot sin(alpha_p) = frac(d, w) dot cos(alpha_p) $
+
+*Schritt 6: Transformation mittels trigonometrischem Additionstheorem* \
+Die Struktur der linken Gleichungsseite entspricht exakt dem Theorem für die Sinusfunktion von Summen, welches allgemein als $sin(x) dot cos(y) + cos(x) dot sin(y) = sin(x + y)$ definiert ist. Durch Substitution mit $x = beta$ und $y = alpha_p$ vereinfacht sich der komplexe Ausdruck zu einem singulären Term:
+$ sin(beta + alpha_p) = frac(d, w) dot cos(alpha_p) $
+
+*Schritt 7: Anwendung der Umkehrfunktion und finale Freistellung* \
+Durch die Anwendung des Arcussinus ($arcsin$) auf beide Seiten der Gleichung wird das Argument der Sinusfunktion freigestellt:
+$ beta + alpha_p = arcsin(frac(d, w) dot cos(alpha_p)) $
+
+Die anschließende Subtraktion des Profilwinkels $alpha_p$ liefert die finale, explizite Bestimmungsgleichung zur Berechnung des optimalen Cut-Off-Stellwinkels:
+$ beta = arcsin(frac(d, w) dot cos(alpha_p)) - alpha_p $

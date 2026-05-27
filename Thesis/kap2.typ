@@ -243,15 +243,64 @@ Systeme mit zwei Freiheitsgraden, insbesondere außenliegende Raffstores beziehu
 
 Die physische Bewegung des Sonnenschutzes erfolgt in der Regel über integrierte Elektromotoren. Die Ansteuerung dieser Aktoren geschieht entweder dezentral über raumspezifische Controller oder zentralisiert über eine übergeordnete Automationsstation. 
 
-Ein zentraler steuerungstechnischer Mechanismus bei Jalousien ist die Einstellung des sogenannten Cut-off-Winkels. Hierbei wird der maximal geöffnete Neigungswinkel der Lamellen berechnet, bei dem "direkter Sonnenlichteintrag durch die Fassade gerade vermieden wird"~@dints18599_4_2025[S. 42]. Gleichzeitig wird das direkte Sonnenlicht an die Decke reflektiert (siehe @fig-cutoff). Die Möglichkeit, das Sonnenlicht auf diese Weise effektiv in den Raum zu leiten, wird dabei maßgeblich durch die Breite, die Form und den Abstand der Lamellen bestimmt. Durch diese exakte Positionierung verbleibt ein maximaler Spalt zwischen den Lamellen, der den Eintritt von diffusem Himmelslicht in die Raumtiefe sowie den Sichtbezug nach außen ermöglicht. Dies stellt eine ideale Balance zwischen Blendschutz und Tageslichtautonomie dar.
 
-Um diesen Zustand aufrechtzuerhalten, wird in der Raumautomation das Prinzip der automatischen Lamellennachführung angewendet. Dabei passt die Steuerung den Cut-off Winkel im Tagesverlauf kontinuierlich an den sich ändernden Sonnenstand an. Für eine exakte Nachführung benötigt die Automationsstation Echtzeitdaten über den solaren Azimut- und Höhenwinkel. Für einen Zeitpunkt ist der Höhenwinkel konstant für den Standort, wobei der Azimutwinkel von der Ausrichtung der Fensterfläche abhängt....
+
+=== Cut-off-Winkel und automatische Lamellennachführung <CutOffWinkelKapitel>
+
+Ein zentraler steuerungstechnischer Mechanismus bei Jalousien ist die Einstellung des sogenannten Cut-off-Winkels. Hierbei wird der maximal geöffnete Neigungswinkel der Lamellen berechnet, bei dem "direkter Sonnenlichteintrag durch die Fassade gerade vermieden wird"~@dints18599_4_2025[S. 42]. Durch diese exakte Positionierung verbleibt ein maximaler Spalt zwischen den Lamellen, der den Eintritt von diffusem Himmelslicht in die Raumtiefe sowie den Sichtbezug nach außen ermöglicht. Abhängig von der Beschaffenheit und Geometrie der Lamellenoberfläche kann zudem ein Teil des einfallenden Lichts gezielt an die Raumdecke reflektiert werden (siehe @fig-cutoff). Dies stellt in der Gebäudeautomation eine ideale Balance zwischen zwingendem Blendschutz und maximaler Tageslichtautonomie dar.
+
+Um diesen Zustand aufrechtzuerhalten, wird in der Raumautomation das Prinzip der automatischen Lamellennachführung angewendet. Dabei passt die Steuerung den Stellwinkel der Jalousie im Tagesverlauf kontinuierlich an den sich ändernden Sonnenstand an. Die geometrische Randbedingung für diesen Cut-off-Zustand ist erfüllt, wenn der direkte Sonnenstrahl exakt die Vorderkante der oberen Lamelle und die Hinterkante der darunterliegenden Lamelle tangiert (siehe @fig-CutOffWinkelDetail). In der Praxis wird auf den berechneten Stellwinkel oftmals noch eine sicherheitstechnische Marge addiert, um systembedingte Toleranzen zu kompensieren.
 
 #figure(
-  image("assets/CutOffWinkel.pdf", width: 70%),
-  caption: [Darstellung von Jalousien mit eingestelltem Cut-off Winkel und ins Rauminnere reflektierte Sonnenstrahlen],
+  image("assets/CutOffWinkel.pdf", width: 60%),
+  caption: [Darstellung von Jalousien mit eingestelltem Cut-off-Winkel und ins Rauminnere reflektierten Sonnenstrahlen],
   placement: auto
 )<fig-cutoff>
+
+#figure(
+  image("assets/Cut-OffWinkelDetail.pdf", width: 60%),
+  caption: [Detailschnitt zweier Lamellen einer Jalousie für die Berechnung des Cut-off-Winkels $beta$ mit einfallendem Lichtstrahl im Profilwinkel $alpha_p$ (in Anlehnung an Athienitis und Tzempelikos~@athienitis2002methodology)],
+  placement: auto
+)<fig-CutOffWinkelDetail>
+
+Für die exakte Berechnung des erforderlichen Neigungswinkels $beta$ wird der Lichteinfall durch den solaren Profilwinkel $alpha_p$ beschrieben. Da horizontale Lamellen konstruktionsbedingt keine seitliche Abschattung bieten, ist der Profilwinkel der alleinig maßgebliche Winkel für den direkten Lichtdurchlass in den Raum. Wie Athienitis und Tzempelikos~@athienitis2002methodology[S. 276] darlegen, projiziert dieser Winkel den realen dreidimensionalen Sonnenstand auf eine zweidimensionale Schnittebene orthogonal zur Fensterfläche. Er bestimmt sich aus der tatsächlichen Sonnenhöhe $gamma_s$ und dem relativen Sonnenazimut $Delta alpha$ — also der horizontalen Winkeldifferenz zwischen dem Sonnenstand und der Fassadennormalen:
+
+$ alpha_p = arctan(frac(tan(gamma_s), cos(Delta alpha))) $
+
+Der Profilwinkel ist folglich stets größer oder gleich der tatsächlichen Sonnenhöhe. Fällt das Licht schräg von der Seite auf die Fassade, vergrößert sich der Profilwinkel, sodass die Sonnenstrahlen aus Sicht der horizontalen Lamellen steiler einfallen. Die mathematische Umsetzung des Cut-off-Betriebs stützt sich hierbei auf die von Athienitis und Tzempelikos~@athienitis2002methodology dargelegte geometrische Beziehung für den Strahlenverlauf innerhalb einer Jalousie. Überträgt man diese fundamentale Gleichung auf getrennte Variablen für den Lamellenabstand $d$ und die Lamellenbreite $w$, ergeben sich folgende geometrische Zusammenhänge:
+
+Für die vertikale Gegenkathete gilt:
+$ overline(B C) = d - w dot sin(beta) $
+
+Für die horizontale Ankathete gilt:
+$ overline(A C) = w dot cos(beta) $
+
+Unter Anwendung der Tangensfunktion ergibt sich daraus der implizite Zusammenhang für den Profilwinkel:
+$ tan(alpha_p) = frac(d - w dot sin(beta), w dot cos(beta)) $
+
+Mithilfe der Anwendung trigonometrischer Additionstheoreme lässt sich diese Ausgangsgleichung auflösen, um den benötigten Stellwinkel $beta$ für die Implementierung auf der Automationsstation explizit zu berechnen (für die detaillierte mathematische Herleitung siehe @AnhangHerleitungCutOff):
+
+$ beta = arcsin(frac(d, w) dot cos(alpha_p)) - alpha_p $
+
+Durch die Bereitstellung eines fensterspezifischen Sonnenazimuts und des globalen Sonnenhöhenwinkels kann sowohl der Profilwinkel als auch die daraus resultierende optimale Lamellenposition berechnet werden.
+
+
+// === Cut-Off-Winkel und automatische Lamellennachführung
+// Ein zentraler steuerungstechnischer Mechanismus bei Jalousien ist die Einstellung des sogenannten Cut-off-Winkels. Hierbei wird der maximal geöffnete Neigungswinkel der Lamellen berechnet, bei dem "direkter Sonnenlichteintrag durch die Fassade gerade vermieden wird"~@dints18599_4_2025[S. 42]. Gleichzeitig wird das direkte Sonnenlicht an die Decke reflektiert (siehe @fig-cutoff). Die Möglichkeit, das Sonnenlicht auf diese Weise effektiv in den Raum zu leiten, wird dabei maßgeblich durch die Breite, die Form und den Abstand der Lamellen bestimmt. Durch diese exakte Positionierung verbleibt ein maximaler Spalt zwischen den Lamellen, der den Eintritt von diffusem Himmelslicht in die Raumtiefe sowie den Sichtbezug nach außen ermöglicht. Dies stellt eine ideale Balance zwischen Blendschutz und Tageslichtautonomie dar.
+
+// Um diesen Zustand aufrechtzuerhalten, wird in der Raumautomation das Prinzip der automatischen Lamellennachführung angewendet. Dabei passt die Steuerung den Cut-off Winkel im Tagesverlauf kontinuierlich an den sich ändernden Sonnenstand an. Für eine exakte Nachführung benötigt die Automationsstation Echtzeitdaten über den solaren Azimut- und Höhenwinkel. 
+
+// #figure(
+//   image("assets/Cut-OffWinkelDetail.pdf", width: 70%),
+//   caption: [Detailschnitt zweier Lamellen einer Jalousie für die Berechnung des Cut-Off Winkels $beta$ mit einfallendem Lichtstrahl im Profilwinkel $alpha_P$ in Anlehnung an Athienitis und Tzempelikos~@athienitis2002methodology],
+//   placement: auto
+// )<fig-CutOffWinkelDetail>
+
+// #figure(
+//   image("assets/CutOffWinkel.pdf", width: 70%),
+//   caption: [Darstellung von Jalousien mit eingestelltem Cut-off Winkel und ins Rauminnere reflektierte Sonnenstrahlen],
+//   placement: auto
+// )<fig-cutoff>
 
 === Bauphysikalische und lichttechnische Zielgrößen <kap-Zielgroessen>
 
