@@ -89,8 +89,8 @@
   ),
   (
     key:"as",
-    short: "AS",
-    long: "Automationsstation"
+    short: "AE",
+    long: "Automationseinrichtung"
   ),
   (
     key:"bim",
@@ -131,10 +131,5 @@
     key:"gps",
     short: "GPS",
     long: "Global Positioning System"
-  ), 
-  (
-    key:"as",
-    short: "AS",
-    long: "Automationsstation"
   ), 
 )

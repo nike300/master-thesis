@@ -108,8 +108,8 @@ The content of this thesis may not be made available, either in its entirety or 
 )
 
 #let ABSTRACT = (
-  "de": "Abstract",
-  "en": "Abstract",
+  "de": "Abstract (deutsch)",
+  "en": "Abstract (englisch)",
 )
 
 #let ACRONYMS = (

@@ -2,7 +2,7 @@
 #import "@preview/codly:1.3.0": *
 = Implementierung des Proof of Concept<Kap4>
 Um den in Kapitel 3 konzipierten Systemansatz auf seine praktische Tragfähigkeit zu überprüfen, wird im Folgenden ein @poc durchgeführt. Ziel dieses Kapitels ist es, die softwaretechnische Machbarkeit der entwickelten Prozesskette - vom fehlerfreien Import heterogener Datensätze (@ifc#[] und GIS) über die raycastingbasierte Verschattungssimulation bis hin zum strukturierten Datenexport - exemplarisch nachzuweisen. Hierfür wurde ein funktionsfähiger Software-Prototyp auf Basis von Blender und Python implementiert. 
-Die Entwicklung und Validierung dieses Prototyps erfolgt anhand eines komplexen Referenzprojekts:
+Die Entwicklung und Validierung dieses Prototyps erfolgt anhand eines komplexen Referenzprojekts.
 
 #figure(
   image("assets/ÜbersichtFOUR.svg", width: 70%),
@@ -95,16 +95,17 @@ Da für Blender keine native Import-Schnittstelle für CityGML-Dateien existiert
 
 Der finale Import der Gebäudekörper in die 3D-Umgebung erfolgt über das Open-Source-Plugin CityJSONEditor~@github_cityjsoneditor für Blender. Da die hierarchische Struktur der amtlichen Frankfurter Daten teilweise von den Standardannahmen des Plugins abwich, wurden im Rahmen dieser Arbeit gezielte Anpassungen am Python-Quellcode der Import-Erweiterung vorgenommen. Diese Fehlerbehebungen umfassen im Wesentlichen drei Aspekte:
 
-+ Toleranz bei fehlenden Texturen: Es wird eine Abfrage implementiert, die den Importprozess bei Objekten ohne definierte Fassadentexturen nicht abbricht, sondern die reine Geometrie weiterverarbeitet.
-+ Datentyp-Konvertierung (@lod): Das Einleseskript wird dahingehend modifiziert, dass der im Datensatz als String vorliegende Wert für den Detailgrad (@lod) systematisch in einen Float umgewandelt wird.
-+ Filterung geometrieloser Objekte: Es wird eine Filterroutine integriert, die Datensätze ohne physische 3D-Geometrie (z. B. Grundstücksgrenzen) beim Import ignoriert, um Programmabbrüche zu verhindern.
++ *Toleranz bei fehlenden Texturen:* Es wird eine Abfrage implementiert, die den Importprozess bei Objekten ohne definierte Fassadentexturen nicht abbricht, sondern die reine Geometrie weiterverarbeitet.
++ *Datentyp-Konvertierung (@lod):* Das Einleseskript wird dahingehend modifiziert, dass der im Datensatz als String vorliegende Wert für den Detailgrad (@lod) systematisch in einen Float umgewandelt wird.
++ *Filterung geometrieloser Objekte:* Es wird eine Filterroutine integriert, die Datensätze ohne physische 3D-Geometrie (z. B. Grundstücksgrenzen) beim Import ignoriert, um Programmabbrüche zu verhindern.
 
 Im Anschluss erfolgt die räumliche Verortung des Stadtmodells in der Simulationsumgebung. Die originären CityJSON-Daten sind im globalen ETRS89/UTM-Koordinatensystem referenziert. Da der Projektbasispunkt (P1) in Blender auf (0,0,0) gesetzt ist, muss P1 von den Koordinaten der Umgebungsdaten subtrahiert werden. Die Koordinaten werden im Quellcode hinterlegt. Durch diese Nullpunktverschiebung wird das Makromodell der Umgebung präzise in das kartesische System der Software überführt. Zuletzt werden Gebäude, die in zweiter und dritter Reihe zum Turm 1 stehen, ausgewählt und aus der Szene gelöscht. Gebäude, die wie in @kap-ImportUmgebungsdaten beschrieben, nördlich des Referenzgebäudes (Turm 1) stehen, werden ebenfalls entfernt.
 @fig-Umgebungsszene zeigt die Szene mit den Gebäudedaten des @hvbg. Im Hintergrund ist der Nextower zu erkennen, welcher in @ValidierungErgebnisse für die Validierung der Simulation von Bedeutung sein wird.
 
 #figure(
-  image("assets/NurUmgebung.png", width: 80%),
-  caption: [In Blender importierte Innenstadt von Frankfurt am Main]
+  image("assets/NurUmgebung.png", width: 70%),
+  caption: [In Blender importierte Innenstadt von Frankfurt am Main],
+  placement: auto
 )<fig-Umgebungsszene>
 
 ==== Import und Positionierung der Türme 2 bis 4 <ImportT24>
@@ -125,7 +126,7 @@ Die aggregierte Szene ist in @fig-fertigeSzene zu sehen. Man erkennt die vier FO
 Für die Fassaden sind in den @ifc#[]-Dateien der Türme 1-4 keine Materialien oder Texturen hinterlegt. Dies müssten erst manuell angelegt und zugeordnet werden, bevor eine komplexe Raytracing-Simulation durchgeführt werden könnte.
 
 #figure(
-  image("assets/FertigeSzene.png", width: 100%),
+  image("assets/FertigeSzene.png", width: 70%),
   caption: [Aufnahme der fertigen Szene mit Turm 1-4 FOUR und den umgebenden Gebäuden in Blender],
   placement: auto
 )<fig-fertigeSzene>
@@ -133,7 +134,7 @@ Für die Fassaden sind in den @ifc#[]-Dateien der Türme 1-4 keine Materialien o
 === Definition der astronomischen Randbedingungen
 #grid(
   columns: (1.5fr, 2fr),
-  gutter: 1cm,
+  gutter: 0.5cm,
   figure(
     image("assets/BlenderSunSettings.png", width: 100%),
     caption: [Einstellungen für Sun Position Add-On],
@@ -143,9 +144,10 @@ Für die Fassaden sind in den @ifc#[]-Dateien der Türme 1-4 keine Materialien o
 
     Im Abschnitt Location werden die exakten geografischen Koordinaten des Projektstandorts definiert. Für das Gebäudeareal FOUR entsprechen diese einem Breitengrad von 50,113 und einem Längengrad von 8,675. Die Nordausrichtung des Modells (North Offset) bleibt in diesem Fall auf null Grad, da die Gebäude bereits korrekt ausgerichtet sind. Die Distanz gibt den Abstand des Sonnenobjekts vom Ursprung an und hat keine Relevanz für den Sonnenstand.
     
-    Im Abschnitt Time wird die zeitliche Basis festgelegt. Durch die Zuweisung der lokalen Zeitzone (hier UTC+1) sowie der Eingabe eines spezifischen Datums und einer Uhrzeit berechnet der interne Algorithmus des Moduls automatisch den resultierenden Azimut- und Höhenwinkel. Es muss darauf geachtet werden, während der Sommerzeit das Feld "Daylight Savings" zu aktivieren.
+    Im Abschnitt Time wird die zeitliche Basis festgelegt. Durch die Zuweisung der lokalen Zeitzone (hier UTC+1) sowie der Eingabe eines spezifischen Datums und einer Uhrzeit berechnet der interne Algorithmus des Moduls automatisch den
   ]
 )
+resultierenden Azimut- und Höhenwinkel. Es muss darauf geachtet werden, während der Sommerzeit das Feld "Daylight Savings" zu aktivieren.
 Das gekoppelte Lichtobjekt der Szene wird daraufhin in der virtuellen Umgebung exakt positioniert. Dies ermöglicht eine präzise visuelle Simulation des Schattenwurfs für jeden beliebigen Zeitpunkt im Jahresverlauf.
 
 
@@ -158,7 +160,7 @@ Da die Sonne in Frankfurt am Main am längsten Sommertag (Sommersonnenwende) nac
 Für die räumliche Auflösung wird die Vierpunkt-Messung gewählt, da eine mittlere zeitliche Auflösung von 15 Minuten verwendet wird. Aufgrund der hohen Anzahl der Fenster, wäre eine Rastermessung zu rechenintensiv und würde eine große Datenmenge generieren.
 
 === Umsetzung der Verschattungssimulation <SimulationJahresverschattung>
-Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette. Es automatisiert die geometrische Verschattungsanalyse innerhalb der 3D-Umgebung und generiert zeitaufgelöste Steuerungsdaten für die Gebäudeautomation. Das Skript wird über die Entwicklungsumgebung @ide @vs-code~@vscode initiiert. Vor der Ausführung werden im zentralen Konfigurationsblock (siehe @code-konfiguration) die wesentlichen Randbedingungen und Parameter der Simulation definiert:
+Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette. Es automatisiert die geometrische Verschattungsanalyse innerhalb der 3D-Umgebung und generiert zeitaufgelöste Steuerungsdaten für die Gebäudeautomation. Das Skript wird über die Entwicklungsumgebung @ide @vs-code~@vscode initiiert. Vor der Ausführung werden im zentralen Konfigurationsblock (siehe @kap-code-konfiguration im Anhang) die wesentlichen Randbedingungen und Parameter der Simulation definiert:
 
 - *Export-Konfiguration:* Festlegung, ob der exakte relative Azimutwinkel oder ein Binärwert (`0`) bei unverschatteter Besonnung ausgegeben werden soll.
 - *Simulationszeitraum:* Auswahl zwischen einer repräsentativen Jahressimulation (ein simulierter Tag pro Woche) oder der Analyse eines spezifischen Einzeltages.
@@ -167,38 +169,27 @@ Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette.
 - *Zeitliche Auflösung:* Definition der Berechnungsschritte in Minuten (z. B. 15-Minuten-Intervalle).
 - *Standortdaten:* Geografische Koordinaten (Breiten- und Längengrad) im WGS-84-Referenzsystem.
 
-
-#codly(offset: 11, zebra-fill: none)
-#codly(number-format: (n) => box(fill: luma(240), height: 1.5em, outset: 0.5em)[#text(luma(100), size: 0.8em)[#str(n)]])
-#figure(
-```python
-# Schalter & Export
-OUTPUT_ANGLE = True      # True: Gibt Azimut aus | False: Gibt nur '0' aus
-WEEKLY_FULL_YEAR = True  # True: wöchentlich fürs Jahr | False: Nur ein Tag
-# Datum für Einzel-Simulation (wird nur genutzt, wenn WEEKLY_FULL_YEAR = False)
-SINGLE_DAY = 21
-SINGLE_MONTH = 6
-# Zeit & Auflösung
-YEAR = 2026
-START_HOUR = 5           # Startzeit in Stunden (z.B. 5 = 05:00 Uhr)
-END_HOUR = 22            # Endzeit in Stunden (z.B. 22 = 22:00 Uhr)
-MINUTES_STEP = 15        # Zeitschritt in Minuten (z.B. 15, 30, 60)
-# Geografische Koordinaten
-LATITUDE = 50.1126
-LONGITUDE = 8.67472
-```,
-caption: [Konfiguration der Verschattungssimulation],
-placement: bottom)<code-konfiguration>
-
-
-
 Der Programmablauf (siehe @fig-flussdiagramm) unterteilt sich in vier Phasen:
+
+
+// #pagebreak()
 
 
 ==== Initialisierung und Extraktion der Gebäudegeometrie
 In der Vorbereitungsphase durchsucht der Algorithmus den Szenengraphen der Simulationsumgebung nach allen Objekten, die anhand des Attributs "@aks" als Fenstersensoren klassifiziert sind. 
 // Um die spätere Rechenlast während der Zeitschleifen zu minimieren, werden die geometrischen Eigenschaften jedes Fensters nur ein einziges Mal zu Beginn extrahiert. 
-Das Skript ermittelt für jedes Fenster die primäre Glasfläche und berechnet deren physikalischen Normalenvektor. Durch einen vektoriellen Abgleich mit dem geometrischen Zentrum des Gebäudes wird mathematisch verifiziert, dass dieser Normalenvektor stets nach außen zeigt. Parallel dazu speichert das System die exakten 3D-Weltkoordinaten der vier Eckpunkte der Fensterfläche ab, welche als Ausgangspunkte für die spätere Strahlenverfolgung dienen.
+Das Skript ermittelt für jedes Fenster die primäre Glasfläche und berechnet deren physikalischen Normalenvektor. 
+
+#pagebreak() // Startet eine neue Seite exakt für diese Abbildung
+#v(6fr)
+
+#figure(
+  image("assets/Verschattung1.png", width: 100%),
+  caption: [Flussdiagramm Verschattungsalgorithmus]
+)<fig-flussdiagramm>
+
+#pagebreak() // Erzwingt, dass der nachfolgende Fließtext auf der nächsten Seite beginnt
+ Parallel dazu speichert das System die exakten 3D-Weltkoordinaten der vier Eckpunkte der Fensterfläche ab, welche als Ausgangspunkte für die spätere Strahlenverfolgung dienen.
 
 
 ==== Astronomische Berechnung der Sonnenvektoren
@@ -209,12 +200,6 @@ Sobald ein Tag-Zustand vorliegt, iteriert das Skript über alle registrierten Fe
 
 Fällt das Licht hingegen in einem positiven Winkel auf die Fassadenvorderseite, initiiert das Skript das Vierpunkt-Raycasting. Von den vier Randkoordinaten des Fensters wird ein theoretischer Sehstrahl in Richtung der Sonne projiziert. Der Algorithmus prüft, ob dieser Strahl auf seinem Weg durch die Szene ein Objekt der umgebenden Bebauung schneidet. Die Schleife bricht ab, sobald nur ein einziger der vier Strahlen die Sonne ungehindert erreicht. In diesem Fall wird das gesamte Fenster als besonnt klassifiziert. Nur wenn alle vier Eckpunkte durch externe Geometrien verdeckt sind, meldet der Algorithmus eine vollständige Verschattung.
 
-#figure(
-  image("assets/Verschattung1.png", width: 100%),
-  caption: [Flussdiagramm Verschattungsalgorithmus],
-  placement: auto
-)<fig-flussdiagramm>
-#pagebreak()
 
 ==== Datenaggregation und Export
 Im finalen Schritt überführt das Skript die akkumulierten Statuswerte in eine Struktur, die als csv-Datei gespeichert wird. Die generierte Exportdatei listet die chronologischen Zeitstempel als Zeilen und ordnet die zugehörigen @aks der Fenster als Spalten an. Diese Formatierung ermöglicht es der Gebäudeautomation im späteren operativen Betrieb, die Matrix sequenziell einzulesen. (Die ausgegebenen Werte differenzieren dabei klar zwischen aktiver Besonnung, Fremdverschattung, Eigenverschattung und fehlender Einstrahlung bei Nacht.) - umschreiben
@@ -222,15 +207,17 @@ Im finalen Schritt überführt das Skript die akkumulierten Statuswerte in eine 
 
 
 == Auswertung und Validierung
+Im Folgenden werden die Simulationsergebnisse analysiert und die Simulation sowie der Algorithmus validiert.
+//Im Folgenden wird dargelegt, wie die berechneten Verschattungsprofile durch visuelle Kontrollen im 3D-Modell sowie durch algorithmische Abgleiche auf ihre Belastbarkeit hin überprüft wurden. Diese Qualitätssicherung ist von zentraler Bedeutung, um sicherzustellen, dass die exportierten Daten eine valide und sichere Grundlage für die anschließende automatisierte Parametrierung der Sonnenschutzsysteme bilden.
 === Analyse der Simulationsergebnisse
 Die Simulationsergebnisse werden im Folgenden an einem Auszug aus der CSV-Datei präsentiert.
 #grid(
-  columns: (19em, 20.5em),
+  columns: (14em, 23.5em),
   gutter: 1em,
   // Zwingt beide Spalten nach oben und linksbündig an den Rand
   // align: (top + left, top + left), 
   [
-    #set text(size: 9pt) 
+    #show table: set text(size: 9pt) 
     // figure.align steuert, dass die Caption linksbündig unter der Tabelle steht
     #show figure: set align(left)
     #figure(
@@ -249,7 +236,7 @@ Die Simulationsergebnisse werden im Folgenden an einem Auszug aus der CSV-Datei 
         ),
         
         fill: (col, row) => if row == 110 { luma(240) } else { none },
-        [*Zeitpunkt*], [*FL13_W034*], [*FL13_W035*],
+        [*Zeitpunkt*], [*~W034~*], [*~W035~*],
         [21.6.-05:00], [N], [N],
         [21.6.-05:15], [N], [N],
         [21.6.-05:30], [R], [R],
@@ -288,34 +275,25 @@ Die Simulationsergebnisse werden im Folgenden an einem Auszug aus der CSV-Datei 
         [21.6.-13:45], [V], [V],
         [...], [...], [...],
       ),
-      caption: [Auszug der zeitaufgelösten Verschattungsdaten für zwei Fenster]
+      caption: [Auszug der Verschattungsdaten für zwei Fenster im 13. OG]
     ) <tab-verschattungsdaten>
   ],
   [
-  In @tab-verschattungsdaten ist ein Auszug der Simulationsergebnisse für den 21.06.2026 (Sommersonnenwende) dargestellt. Die erste Spalte gibt den Zeitpunkt (Datum und Uhrzeit) der Berechnung an. Die zweite und dritte Spalte zeigen den Verschattungszustand von zwei beispielhaften Fenstern, welche mit dem in @AufbereitungIFC definierten @aks bezeichnet sind.
+  In @tab-verschattungsdaten ist ein Auszug der Simulationsergebnisse für den 21.06.2026 (Sommersonnenwende) dargestellt. Die erste Spalte gibt den Zeitpunkt (Datum und Uhrzeit) der Berechnung an. Die zweite und dritte Spalte zeigen den Verschattungszustand von zwei beispielhaften Fenstern.
 
   Zu Beginn der Simulation (5:00 bis 5:15 Uhr) ist für beide Fenster "N" (Nacht) eingetragen, da die Sonne noch unter dem Horizont liegt. Ab 5:30 Uhr wechselt der Status auf "R" (Rückseite): Die Sonne befindet sich zu diesem Zeitpunkt hinter der Fassadenebene, weshalb keine direkte Besonnung möglich ist. Zwischen 6:45 und 9:30 Uhr werden die Fenster durch externe Gebäudeobjekte verschattet ("V"). Im Anschluss trifft direkte Sonnenstrahlung auf das Glas, was durch den berechneten relativen Azimutwinkel (-90° bis +90°) abgebildet wird.
 
-  Dass die beiden Fenster zur selben Zeit abweichende Azimutwinkel aufweisen, belegt ihre leicht unterschiedliche räumliche Ausrichtung zur Sonne. Der stetig abnehmende Winkelwert spiegelt dabei den fortschreitenden Sonnenlauf wider. Eine hochdynamische Verschattungssituation zeigt sich exemplarisch um 11:45 - 12:00, als die Fenster für ein kurzes Intervall von 30 Minuten erneut verschattet werden und sich direkte Besonnung und Schatten schnell abwechseln. Zwischen 12:30 und 12:45 Uhr wechselt schließlich das Vorzeichen der Winkelwerte von positiv auf negativ. In diesem Zeitraum kreuzt die Sonne die exakte Mittelachse (Flächennormale) der jeweiligen Fenster.
+  Dass die beiden Fenster zur selben Zeit abweichende Azimutwinkel aufweisen, belegt ihre leicht unterschiedliche räumliche Ausrichtung zur Sonne. Der stetig abnehmende Winkelwert spiegelt dabei den fortschreitenden Sonnenlauf wider. Eine hochdynamische Verschattungssituation zeigt sich exemplarisch um 11:45 - 12:00, als die Fenster für ein kurzes Intervall von 30 Minuten erneut verschattet werden und sich direkte Besonnung und Schatten schnell abwechseln. Zwischen 12:30 und wechselt schließlich das Vorzeichen der Winkelwerte von positiv auf negativ. In diesem Zeitraum kreuzt die Sonne die exakte Mittelachse (Flächennormale) der jeweiligen Fenster.
   ]
 )
+#v(-.75em) //Verringert den vertikalen Abstand
+ 
 === Berechnungsaufwand und Optimierung <Simulationsoptimierung>
 Für diese Arbeit wurde das Jahr 2026 für einen Tag pro Woche im 15-Minuten Takt simuliert. Die Simulation dauerte 14 Stunde und 23 Minuten#footnote[Die Berechnung der Jahressimulation erfolgte auf einer Workstation mit folgender Spezifikation: AMD Ryzen 5 7600X (6-Core, 4,7 GHz), 32 GB RAM, AMD Radeon RX 7800 XT, Windows 11 (64-bit), Blender Version 4.5.3]. Die Ergebnisdatei im CSV-Format hat ein Größe von 47~MB.
 Wenn jeder Tag im Jahr berechnet werden würde, käme man auf eine Rechendauer von 4 Tagen und 5 Stunden und eine Dateigröße von 328~MB. Da diese Simulation für ein gesamtes Gebäude nur einmal berechnet werden muss, liegt die Simulationsdauer im annehmbaren Bereich. Da Blender für Python-Skripte nur einen CPU-Kern benutzen kann, könnten weitere Blender-Instanzen geöffnet werden, um parallel Datumsbereiche des Jahres zu berechnen. Diese müssten dann final in eine Datei bzw. Datenbank zusammengeführt werden.
 
 Durch Anwendung des Backface Culling konnte eine Verkürzung der Rechendauer um ca. 50% erreicht werden.
 
-/*
-68 x 365 = 24.820 Spalten
-
-
-- Ohne Optimierung (760s)
-- Zusammenfügen von umliegenden Objekten 786s (Optimierungepotenzial bei -3,4%)
-- löschen von 80% der kleinen Häuser 764s
-- Mathe-Skript 793s
-- Mathe Skript mit Normalenoptimierung: 408s
-- ""+Winkel: 434s
-*/
 === Visuelle und algorithmische Validierung <ValidierungErgebnisse>
 ==== Validierung der virtuellen Szene
 Die Validierung der virtuellen Szene erfolgt durch einen visuellen Abgleich zwischen einem gerenderten Bild der Simulation und einer fotografischen Aufnahme des FOUR zu einem definierten Zeitpunkt. Als Referenz dient eine für die Bauüberwachung und das Marketing genutzte Webcam auf dem 137 Meter hohen Nextower am Thurn-und-Taxis-Platz, welcher sich in etwa 500 Metern Entfernung befindet. Die historischen Aufnahmen sind über die Website des Anbieters @zeitrafferFOURFrankfurt abrufbar. Für den Abgleich wurde ein wolkenarmer Tag gewählt, um durch ein Minimum an diffusem Licht klare Schattenkanten zu erhalten. Der Nextower ist im digitalen Modell integriert, um die Kameraposition exakt nachzubilden.
@@ -344,8 +322,8 @@ Wie in @fig-validierungSkript zu erkennen ist, liegen die als verschattet identi
 
 #figure(
   box(
-    width: 12cm, 
-    height: 12cm, 
+    width: 8cm, 
+    height: 10cm, 
     clip: true,
     align(center + horizon)[
       #image("assets/ValidierungSkript.png", width: 200%)

@@ -76,12 +76,12 @@
   // ---------- Fonts & Related Measures ---------------------------------------
 
   let body-font = "New Computer Modern"
-  let body-size = 11pt
+  let body-size = 11.5pt
   let heading-font = "New Computer Modern"
   let h1-size = 20pt
-  let h2-size = 11pt
-  let h3-size = 11pt
-  let h4-size = 11pt
+  let h2-size = 16pt
+  let h3-size = 14pt
+  let h4-size = body-size
   let page-grid = 13.6pt  // vertical spacing on all pages
 
   
@@ -93,7 +93,8 @@
   let in-body = state("in-body", true)                  // to control heading formatting in/outside of body
 
   // customize look of figure
-  set figure.caption(separator: [ --- ], position: bottom,)
+  set figure.caption(separator: [ --- ], position: bottom)
+  // show figure.caption: set text(size: 1em)
   // set figure(supplement: [Abb.])
   // customize look of code blocks
   // show figure.where(kind: raw): set figure(supplement: [Quellcode])
@@ -119,7 +120,7 @@
       // Hier wird definiert, dass im Text "Abb." statt "Abbildung" steht
       // [Abb. #numbering(el.numbering, ..counter(figure).at(el.location()))]
       let specific-counter = counter(figure.where(kind: el.kind))
-      [Abb. #numbering(el.numbering, ..specific-counter.at(el.location()))]
+      [Abb.~#numbering(el.numbering, ..specific-counter.at(el.location()))]
     } else {
       it
     }
@@ -167,7 +168,8 @@
   )
   set par(
     spacing: page-grid,
-    leading: page-grid - body-size, 
+ //   leading: page-grid - body-size,
+    leading: 0.5em, //Zeilenabstand 0.25 = 1 fach, 0.75 = 1,5 fach
     justify: true,
   )
 
@@ -176,31 +178,53 @@
     margin: (
       top: 2.5cm,
       bottom: 3.0cm,
-      left: 3.0cm + 5mm, // left margin + BCOR (binding correction)
+      left: 3.0cm + 5mm,
       right: 2.5cm,
     ),
-    header:
-      grid(
-        columns: (10fr, 1fr),
-        align: (left, right),
-        row-gutter: 0.5em,
-        smallcaps(text(font: heading-font, size: body-size, 
-          context {
-            hydra(1, display: (_, it) => it.body, use-last: true, skip-starting: false)
-          },
-        )),
-        text(font: heading-font, size: body-size, 
-          number-type: "lining",
-          context {if in-frontmatter.get() {
-              counter(page).display("i")      // roman page numbers for the frontmatter
+    
+    // Header-Definition
+    header: context {
+      let is-chapter-start = query(heading.where(level: 1)).any(h => h.location().page() == here().page())
+      
+      if not is-chapter-start {
+        grid(
+          columns: (12fr, 1fr),
+          align: (left, right),
+          row-gutter: 0.5em,
+          smallcaps(text(font: heading-font, size: body-size, 
+            hydra(1, display: (_, it) => it.body, use-last: true)
+          )),
+          text(font: heading-font, size: body-size, number-type: "lining",
+            if in-frontmatter.get() {
+              counter(page).display("i")
             } else {
-              counter(page).display("1")      // arabic page numbers for the rest of the document
+              counter(page).display("1")
             }
-          }
-        ),
-        grid.cell(colspan: 2, line(length: 100%, stroke: 0.5pt)),
-      ),
-      header-ascent: page-grid,
+          ),
+          grid.cell(colspan: 2, line(length: 100%, stroke: 0.5pt)),
+        )
+      }
+    },
+    
+    // Footer-Definition
+    footer: context {
+      let is-chapter-start = query(heading.where(level: 1)).any(h => h.location().page() == here().page())
+      
+      if is-chapter-start {
+        align(center)[
+          #text(font: heading-font, size: body-size, number-type: "lining",
+            if in-frontmatter.get() {
+              counter(page).display("i")
+            } else {
+              counter(page).display("1")
+            }
+          )
+        ]
+      }
+    },
+    
+    header-ascent: page-grid,
+    footer-descent: page-grid,
   )
   set terms(hanging-indent: 0pt)
   // set terms(separator: [: ])
@@ -217,13 +241,13 @@
   if (show-abstract) {
     if (abstract != none) {
       heading(level: 1, numbering: none, outlined: false, ABSTRACT.at(language))
-      v(6pt)
+      v(12pt)
       text(abstract)
       pagebreak()
     }
     
     if (abstract-en != none) {
-      heading(level: 1, numbering: none, outlined: false, "Abstract")
+      heading(level: 1, numbering: none, outlined: false, ABSTRACT.at("en"))
       v(6pt)
       text(abstract-en)
       pagebreak()
@@ -286,7 +310,7 @@
     
     context{ 
       if in-body.get() {
-        v(page-grid * 1.5)
+        v(page-grid * 0)
         
         block(width: 100%, below: 1em)[
             
@@ -324,7 +348,7 @@
   show heading.where(level: 2): it => {v(16pt) + text(size: h2-size, it)}
   show heading.where(level: 3): it => {v(0pt) + text(size: h3-size, it)}
   show heading.where(level: 4): it => {v(6pt)
-  block(text(size: h4-size, weight: "semibold", it.body))
+  block(text(size: h4-size, weight: "bold", it.body))
 }
 
  // ---------- Body Text ---------------------------------------

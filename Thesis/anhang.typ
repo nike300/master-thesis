@@ -1,3 +1,4 @@
+#import "@preview/codly:1.3.0": *
 = Anhang<Anhang>
 == Digitale Anlage...<DigitaleAnlage>
 In der digitalen Anlage befinden sich die drei wichtigsten Skripte für diese Arbeit:
@@ -67,3 +68,26 @@ $ beta + alpha_p = arcsin(frac(d, w) dot cos(alpha_p)) $
 
 Die anschließende Subtraktion des Profilwinkels $alpha_p$ liefert die finale, explizite Bestimmungsgleichung zur Berechnung des optimalen Cut-Off-Stellwinkels:
 $ beta = arcsin(frac(d, w) dot cos(alpha_p)) - alpha_p $
+
+== Konfiguration der Verschattungssimulation<kap-code-konfiguration>
+#codly(offset: 11, zebra-fill: none)
+#codly(number-format: (n) => box(fill: luma(240), height: 1.5em, outset: 0.5em)[#text(luma(100), size: 0.8em)[#str(n)]])
+#figure(
+```python
+# Schalter & Export
+OUTPUT_ANGLE = True      # True: Gibt Azimut aus | False: Gibt nur '0' aus
+WEEKLY_FULL_YEAR = True  # True: wöchentlich fürs Jahr | False: Nur ein Tag
+# Datum für Einzel-Simulation (wird nur genutzt, wenn WEEKLY_FULL_YEAR = False)
+SINGLE_DAY = 21
+SINGLE_MONTH = 6
+# Zeit & Auflösung
+YEAR = 2026
+START_HOUR = 5           # Startzeit in Stunden (z.B. 5 = 05:00 Uhr)
+END_HOUR = 22            # Endzeit in Stunden (z.B. 22 = 22:00 Uhr)
+MINUTES_STEP = 15        # Zeitschritt in Minuten (z.B. 15, 30, 60)
+# Geografische Koordinaten
+LATITUDE = 50.1126
+LONGITUDE = 8.67472
+```,
+caption: [Konfiguration der Verschattungssimulation],
+placement: none)<code-konfiguration>

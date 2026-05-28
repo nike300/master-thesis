@@ -1,13 +1,15 @@
 = Anforderungsanalyse und Konzeption des Integrationsprozesses <Kap3>
+Das dritte Kapitel widmet sich der methodischen Konzeption der entwickelten Prozesskette. Ausgehend von einer Analyse der aktuellen Situation in der Gebäudeautomation werden die benötigten Softwarewerkzeuge spezifiziert und die qualitativen Anforderungen an die zu verarbeitenden BIM- und Geodaten definiert. Auf dieser Basis wird die logische Systemarchitektur entworfen, welche die räumliche und zeitliche Diskretisierung der Simulationsdaten festlegt und in ein neuartiges Integrationskonzept für die operative Steuerung mündet.
+
 == Analyse der Ausgangssituation und Zieldefinition <AnalyseAusgangssituation>
 
-In der aktuellen Praxis der Gebäudeautomation weist die konventionelle Einbindung von Verschattungsdaten signifikante Defizite auf. Die Berücksichtigung von Fremdverschattung durch umliegende Bebauung oder Topografie erfolgt oftmals über manuelle und fehleranfällige Prozesse. Dabei werden statische Verschattungsdaten in Form von Grenzwinkeln für einzelne Fenster, Fenstergruppen oder ganze Fassadenabschnitte händisch in der Jalousiesteuerung der BMS-Software hinterlegt (siehe @fig-jalousiesteuerung). Diese Winkel werden in der Praxis oftmals nur approximativ eingestellt und durch empirische Anpassungen im Nachhinein korrigiert.
+In der aktuellen Praxis der Gebäudeautomation weist die konventionelle Einbindung von Verschattungsdaten signifikante Defizite auf. Die Berücksichtigung von Fremdverschattung durch umliegende Bebauung oder Topografie erfolgt oftmals über manuelle und fehleranfällige Prozesse. Dabei werden statische Verschattungsdaten in Form von Grenzwinkeln für einzelne Fenster, Fenstergruppen oder ganze Fassadenabschnitte händisch in der Jalousiesteuerung der BMS-Software (im GA-System...) hinterlegt (siehe @fig-jalousiesteuerung). Diese Winkel werden in der Praxis oftmals nur approximativ eingestellt und durch empirische Anpassungen im Nachhinein korrigiert.
 
-Im operativen Betrieb berechnet die @as fortlaufend den aktuellen Sonnenstand und gleicht diesen mit den definierten Grenzwinkeln ab. Auf Basis dieses Abgleichs entscheidet die Logik, ob der entsprechende Punkt zum gegebenen Zeitpunkt verschattet ist oder direkter Sonneneinstrahlung ausgesetzt sein kann.
+Im operativen Betrieb berechnet die @as(AE...) fortlaufend den aktuellen Sonnenstand und gleicht diesen mit den definierten Grenzwinkeln ab. Auf Basis dieses Abgleichs entscheidet die Logik, ob der entsprechende Punkt zum gegebenen Zeitpunkt verschattet ist oder direkter Sonneneinstrahlung ausgesetzt sein kann.
 
 #figure(
-  image("assets/JalousiesteuerungAlt.png", width: 80%),
-  caption: [Screenshot der Parametereingabe für eine konventionelle, winkelbasierte Jalousiesteuerung in der @ebo #[]@se_ebo.],
+  image("assets/JalousiesteuerungAlt.png", width: 100%),
+  caption: [Screenshot der Parametereingabe für eine winkelbasierte Jalousiesteuerung in der @ebo #[]@se_ebo.],
   placement: auto
 ) <fig-jalousiesteuerung>
 
@@ -17,7 +19,7 @@ Für Gebäude mit einfacher architektonischer Geometrie und einer weitläufigen,
 
 Verschattungssimulationen basierend auf 3D-Daten halten heutzutage zunehmend Einzug in die Gebäudeautomation. Erste Hersteller, wie beispielsweise Warema oder Sauter, bieten die Berechnung der Jahresverschattung bereits als Dienstleistung an. Aufgrund ihres Mehrwerts für die Tageslichtautonomie und Energieeffizienz wird die Integration derartiger Daten in zukünftigen Bauprojekten vermehrt gefordert werden.
 
-Ziel dieses Kapitels ist es, einen methodischen Ansatz aufzuzeigen, wie unter dem ausschließlichen Einsatz von Open-Source-Software und frei verfügbaren Datensätzen eine präzise Verschattungssimulation realisiert werden kann. Hierfür wird im Folgenden zunächst die Auswahl einer geeigneten Simulationsumgebung begründet. Anschließend erfolgt die Spezifikation der notwendigen Datengrundlage, bestehend aus der @bim#[]-Datengüte und externen Geodaten. Darauf aufbauend werden die räumlichen und zeitlichen Auflösungen festgelegt sowie die informationstechnische Konzeption der Simulationslogik definiert. Den Abschluss bildet der Entwurf der Systemarchitektur, in welcher die generierten Daten über einen modifizierten Funktionsblock nach VDI 3813 in die Gebäudeautomation integriert werden.
+Ziel dieses Kapitels ist es, einen methodischen Ansatz aufzuzeigen, wie unter dem ausschließlichen Einsatz von Open-Source-Software und frei verfügbaren Datensätzen eine präzise Verschattungssimulation realisiert werden kann. Hierfür wird im Folgenden zunächst die Auswahl einer geeigneten Simulationsumgebung begründet. Anschließend erfolgt die Spezifikation der notwendigen Datengrundlage, bestehend aus der @bim#[]-Datengüte und externen Geodaten. Darauf aufbauend werden die räumlichen und zeitlichen Auflösungen festgelegt sowie die informationstechnische Konzeption der Simulationslogik definiert. Den Abschluss bildet der Entwurf der Systemarchitektur, in welcher die generierten Daten über einen modifizierten Funktionsblock nach VDI 3813 in die Gebäudeautomation integriert werden. (vlt. absatz nach vorne stellen...)
 
 == Spezifikation der Werkzeuge und Datengrundlage
 === Auswahl der Simulationsumgebung <AuswahlSimulationsumgebung>
@@ -165,7 +167,6 @@ Da sich die räumlichen Abweichungen des Schattens lediglich im Zentimeterbereic
 // - das ist ja weniger, als die 15 minutüige auflösung. also sehr wahrscheinlich könnte man mit einer einwöchigen auflösung trotdem noch ein hohe genauigkeit erzielen
 // - es wäre vertretbar nur jeden zweiten tag zu berechnen, da 
 ==== Räumliche Auflösung der Messpunkte <RaeumlicheAufloesung>
-
 Die räumliche Abtastung der Fensterflächen bestimmt die Zuverlässigkeit der Simulation. Man muss festlegen, wie viele Testpunkte pro Fenster berechnet werden. Es werden drei verschiedene Optionen untersucht:
 
 *1. Einpunkt-Messung (Fenstermittelpunkt):*
