@@ -54,37 +54,40 @@ Zusätzlich wies das Modell geometrische Redundanzen in Form von sich überschne
 ) <fig-FensterÜberschneidung>
 
 
-Schlussendlich wird ein temporäres Anlagenkennzeichnungssystem erstellt, das sich auf das jeweilige Geschoss und eine fortlaufende Nummer für sämtliche Fensterelemente bezieht. Zum Beispiel steht `FL13_W034` für: 13. Geschoss (Floor) an der 34. Position. Dies wird mithilfe eines Skripts (@DigitaleAnlage) implementiert. Diese Maßnahme ist notwendig, da die ursprünglichen Objektbezeichnungen keine Informationen über die räumliche Zuordnung enthalten. Hierfür müssen mithilfe einer Filterlogik alle relevanten Fensterobjekte vorselektiert werden. Glasscheiben für die Balkonbrüstung und sehr kleine Fensterflächen haben keine Jalousie und werden somit nicht berücksichtigt. Die Auswahl der Fenster konnte nicht anhand der @ifc#[]-Klasse `IfcWindow` erfolgen, da die Fensterobjekte an der abgeschrägten Fassadenseite (siehe @kap-VorstellungFOUR) fälschlicherweise der Klasse `IfcBuildingElementProxy` zugeordnet sind. Stattdessen musste die Filterung der Objekte über den Objektnamen erfolgen.
+// Schlussendlich wird ein temporäres Anlagenkennzeichnungssystem erstellt, das sich auf das jeweilige Geschoss und eine fortlaufende Nummer für sämtliche Fensterelemente bezieht. Zum Beispiel steht `FL13_W034` für: 13. Geschoss (Floor) an der 34. Position. Dies wird mithilfe eines Skripts (@DigitaleAnlage) implementiert. Diese Maßnahme ist notwendig, da die ursprünglichen Objektbezeichnungen keine Informationen über die räumliche Zuordnung enthalten. Hierfür müssen mithilfe einer Filterlogik alle relevanten Fensterobjekte vorselektiert werden. Glasscheiben für die Balkonbrüstung und sehr kleine Fensterflächen haben keine Jalousie und werden somit nicht berücksichtigt. Die Auswahl der Fenster konnte nicht anhand der @ifc#[]-Klasse `IfcWindow` erfolgen, da die Fensterobjekte an der abgeschrägten Fassadenseite (siehe @kap-VorstellungFOUR) fälschlicherweise der Klasse `IfcBuildingElementProxy` zugeordnet sind. Stattdessen musste die Filterung der Objekte über den Objektnamen erfolgen.
+
+==== Zuweisung des Anlagenkennzeichnungsschlüssels (AKS)<AKSZuordnung>
+Ein fehlendes @bks im @ifc#[]-Modell erschwert die Automatisierung der Prozesskette. Die nachträgliche Zuweisung dieser Daten erfordert einen hohen manuellen Aufwand und unterbricht den automatisierten Arbeitsablauf. Für eine vollständige Realisierung des Gesamtprojekts wird dieser Schritt jedoch zwingend notwendig, um die realen AKS-Daten zu integrieren. Der speziell für dieses Problem entwickelte Prozess wird an dieser Stelle nicht beschrieben. Für die Validierung der Simulation und die anschließende Datenübergabe im Rahmen dieses Proof of Concept erzeugt stattdessen ein Skript (@DigitaleAnlage) ein temporäres Bezeichnungssystem. Dieses weist den Objekten eine einfache Struktur aus Geschoss und fortlaufender Nummer zu, beispielsweise FL13_W034 für das 13. Geschoss an Position 34. Zuvor selektiert eine Filterlogik die zu berücksichtigenden Fenster. Da die Elemente der abgeschrägten Fassade (siehe @kap-VorstellungFOUR) im Modell der Klasse IfcBuildingElementProxy anstelle von IfcWindow zugeordnet sind, erfolgt diese Filterung über den Objektnamen. Bauteile ohne Jalousien, wie Balkonbrüstungen oder sehr kleine Fensterflächen, schließt das Skript dabei aus.
 
 
-=== Zuweisung des Anlagenkennzeichnungsschlüssels (AKS)<AKSZuordnung>
-Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden.
-Um die Gebäudeautomation zu planen, wurde die Engineering-Software eConfigure von Schneider Electric eingesetzt. Die Planung war zum Zeitpunkt der Arbeit schon komplett abgeschlossen. Bei der Planung wurden Grundrisse der Etagen hinterlegt und alle Komponenten der Raumautomation verortet (siehe @fig-eConfigure). Hierbei gibt es mehrere Symbole für Jalousien, die zum einen den außenliegenden Sonnenschutz und zum anderen den innenliegenden Blendschutz beschreiben. Der Text neben den Symbolen beinhaltet den erforderlichen @aks.
-#figure(
-  image("assets/AusschnittEConfigure.png"),
-  caption: [Ausschnitt der Raumautomation aus eConfigure vom FOUR in Frankfurt],
-  placement: none
-)<fig-eConfigure>
+// === Zuweisung des Anlagenkennzeichnungsschlüssels (AKS)<AKSZuordnung>
+// Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden.
+// Um die @ga zu planen, wurde die Engineering-Software eConfigure von Schneider Electric eingesetzt. Die Planung war zum Zeitpunkt der Arbeit schon komplett abgeschlossen. Bei der Planung wurden Grundrisse der Etagen hinterlegt und alle Komponenten der Raumautomation verortet (siehe @fig-eConfigure). Hierbei gibt es mehrere Symbole für Jalousien, die zum einen den außenliegenden Sonnenschutz und zum anderen den innenliegenden Blendschutz beschreiben. Der Text neben den Symbolen beinhaltet den erforderlichen @aks.
+// #figure(
+//   image("assets/AusschnittEConfigure.png"),
+//   caption: [Ausschnitt der Raumautomation aus eConfigure vom FOUR in Frankfurt],
+//   placement: none
+// )<fig-eConfigure>
 
-Für die Zuordnung muss also eine Übertragung des Anlagenkennzeichnungssystems (AKS) der Jalousieaktoren auf die Fensterelemente im BIM-Modell erfolgen.
-Im Folgenden wird ein vorläufiger Prozess stichpunktartig beschrieben:
+// Für die Zuordnung muss also eine Übertragung des Anlagenkennzeichnungssystems (AKS) der Jalousieaktoren auf die Fensterelemente im BIM-Modell erfolgen.
+// Im Folgenden wird ein vorläufiger Prozess stichpunktartig beschrieben:
 
 
 
-+ *Referenzexport*: Der betroffene Geschossgrundriss wird aus der 3D-Umgebung (Blender) als zweidimensionale Referenz exportiert.
-+ *Planvorbereitung*: Im Projektierungstool eConfigure werden Hilfslinien entlang der Fassadenkontur erstellt, um eine spätere Skalierung und Positionierung der Pläne zu ermöglichen.
-+ *Datenexport*: Die Grundrisse der vier Mietbereiche werden aus eConfigure in das etablierte CAD-Austauschformat DWG exportiert.
-+ *Aufbereitung und Referenzierung*: In AutoCAD werden die Teilgrundrisse zusammengeführt, bereinigt, maßstäblich skaliert und räumlich positioniert.
-+ *Überlagerung*: Die geometrischen Referenzdaten aus Blender und die Planungsdaten aus eConfigure werden visuell überlagert.
-+ *Datenreduktion*: Sämtliche Planinhalte mit Ausnahme der textuellen @aks#[]-Bezeichner werden entfernt.
-+ *Reimport in die 3D-Umgebung*: Die bereinigte DWG-Datei wird in Blender importiert. Die textuellen Bezeichner befinden sich nun räumlich exakt entlang der Fassadenlinie (siehe @fig-AKSumFenster).
-+ *Algorithmische Zuweisung*: Ein Python-Skript iteriert über alle Fensterelemente und identifiziert für jedes Fenster das räumlich nächstgelegene Textobjekt (Nearest-Neighbor-Suche). Der ausgelesene String wird als Attribut in das Fensterobjekt geschrieben. Dieses Attribut dient in der anschließenden Verschattungssimulation als eindeutiger, auslesbarer Identifikator.
-#figure(
-  image("assets/PositionierungAKS.png", width: 60%),
-  caption: [Draufsicht von FOUR Turm 1 mit an den Fenstern platzierten AKS-Texten für Etage 45 in Blender],
-  placement: none
-)<fig-AKSumFenster>
-Da dieser prototypische Weg sehr zeitaufwendig ist, wird im Rahmen dieser Arbeit nur ein Geschoss bearbeitet. Für die spätere Simulation wird der im Abschnitt davor festgelegte, temporäre @aks für die Bezeichnung der Fenster verwendet.
+// + *Referenzexport*: Der betroffene Geschossgrundriss wird aus der 3D-Umgebung (Blender) als zweidimensionale Referenz exportiert.
+// + *Planvorbereitung*: Im Projektierungstool eConfigure werden Hilfslinien entlang der Fassadenkontur erstellt, um eine spätere Skalierung und Positionierung der Pläne zu ermöglichen.
+// + *Datenexport*: Die Grundrisse der vier Mietbereiche werden aus eConfigure in das etablierte CAD-Austauschformat DWG exportiert.
+// + *Aufbereitung und Referenzierung*: In AutoCAD werden die Teilgrundrisse zusammengeführt, bereinigt, maßstäblich skaliert und räumlich positioniert.
+// + *Überlagerung*: Die geometrischen Referenzdaten aus Blender und die Planungsdaten aus eConfigure werden visuell überlagert.
+// + *Datenreduktion*: Sämtliche Planinhalte mit Ausnahme der textuellen @aks#[]-Bezeichner werden entfernt.
+// + *Reimport in die 3D-Umgebung*: Die bereinigte DWG-Datei wird in Blender importiert. Die textuellen Bezeichner befinden sich nun räumlich exakt entlang der Fassadenlinie (siehe @fig-AKSumFenster).
+// + *Algorithmische Zuweisung*: Ein Python-Skript iteriert über alle Fensterelemente und identifiziert für jedes Fenster das räumlich nächstgelegene Textobjekt (Nearest-Neighbor-Suche). Der ausgelesene String wird als Attribut in das Fensterobjekt geschrieben. Dieses Attribut dient in der anschließenden Verschattungssimulation als eindeutiger, auslesbarer Identifikator.
+// #figure(
+//   image("assets/PositionierungAKS.png", width: 60%),
+//   caption: [Draufsicht von FOUR Turm 1 mit an den Fenstern platzierten AKS-Texten für Etage 45 in Blender],
+//   placement: none
+// )<fig-AKSumFenster>
+// Da dieser prototypische Weg sehr zeitaufwendig ist, wird im Rahmen dieser Arbeit nur ein Geschoss bearbeitet. Für die spätere Simulation wird der im Abschnitt davor festgelegte, temporäre @aks für die Bezeichnung der Fenster verwendet.
 
 
 === Integration der urbanen Umgebungsdaten<kap-ImportUmgebungsdaten>
@@ -160,7 +163,7 @@ Da die Sonne in Frankfurt am Main am längsten Sommertag (Sommersonnenwende) nac
 Für die räumliche Auflösung wird die Vierpunkt-Messung gewählt, da eine mittlere zeitliche Auflösung von 15 Minuten verwendet wird. Aufgrund der hohen Anzahl der Fenster, wäre eine Rastermessung zu rechenintensiv und würde eine große Datenmenge generieren.
 
 === Umsetzung der Verschattungssimulation <SimulationJahresverschattung>
-Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette. Es automatisiert die geometrische Verschattungsanalyse innerhalb der 3D-Umgebung und generiert zeitaufgelöste Steuerungsdaten für die Gebäudeautomation. Das Skript wird über die Entwicklungsumgebung @ide @vs-code~@vscode initiiert. Vor der Ausführung werden im zentralen Konfigurationsblock (siehe @kap-code-konfiguration im Anhang) die wesentlichen Randbedingungen und Parameter der Simulation definiert:
+Das entwickelte Python-Skript bildet das technische Kernstück der Prozesskette. Es automatisiert die geometrische Verschattungsanalyse innerhalb der 3D-Umgebung und generiert zeitaufgelöste Steuerungsdaten für die @ga. Das Skript wird über die Entwicklungsumgebung @ide @vs-code~@vscode initiiert. Vor der Ausführung werden im zentralen Konfigurationsblock (siehe @kap-code-konfiguration im Anhang) die wesentlichen Randbedingungen und Parameter der Simulation definiert:
 
 - *Export-Konfiguration:* Festlegung, ob der exakte relative Azimutwinkel oder ein Binärwert (`0`) bei unverschatteter Besonnung ausgegeben werden soll.
 - *Simulationszeitraum:* Auswahl zwischen einer repräsentativen Jahressimulation (ein simulierter Tag pro Woche) oder der Analyse eines spezifischen Einzeltages.
@@ -202,7 +205,7 @@ Fällt das Licht hingegen in einem positiven Winkel auf die Fassadenvorderseite,
 
 
 ==== Datenaggregation und Export
-Im finalen Schritt überführt das Skript die akkumulierten Statuswerte in eine Struktur, die als csv-Datei gespeichert wird. Die generierte Exportdatei listet die chronologischen Zeitstempel als Zeilen und ordnet die zugehörigen @aks der Fenster als Spalten an. Diese Formatierung ermöglicht es der Gebäudeautomation im späteren operativen Betrieb, die Matrix sequenziell einzulesen. (Die ausgegebenen Werte differenzieren dabei klar zwischen aktiver Besonnung, Fremdverschattung, Eigenverschattung und fehlender Einstrahlung bei Nacht.) - umschreiben
+Im finalen Schritt überführt das Skript die akkumulierten Statuswerte in eine Struktur, die als csv-Datei gespeichert wird. Die generierte Exportdatei listet die chronologischen Zeitstempel als Zeilen und ordnet die zugehörigen @aks der Fenster als Spalten an. Diese Formatierung ermöglicht es der @ga im späteren operativen Betrieb, die Matrix sequenziell einzulesen. (Die ausgegebenen Werte differenzieren dabei klar zwischen aktiver Besonnung, Fremdverschattung, Eigenverschattung und fehlender Einstrahlung bei Nacht.) - umschreiben
 
 
 

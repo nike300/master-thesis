@@ -131,5 +131,10 @@
     key:"gps",
     short: "GPS",
     long: "Global Positioning System"
-  ), 
+  ),
+  (
+    key: "bks",
+    short: "BKS",
+    long: "Betriebsmittelkennzeichnungssystem"
+  ) 
 )

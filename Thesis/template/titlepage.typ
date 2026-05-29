@@ -165,7 +165,7 @@
       text(weight: "bold", fill: luma(80), TITLEPAGE_DATE.at(language)),
       text(
         if (type(date) == datetime) {
-          date.display(date-format)
+          date.display("31.05.2026")
         } else {
           date.at(0).display(date-format) + [ -- ] + date.at(1).display(date-format)
         },
