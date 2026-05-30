@@ -17,8 +17,8 @@
 #show "i. d. R.": [i.~d.~R.]
 
 #show: clean-hda.with(
-  title: "Entwicklung einer durchgängigen Prozesskette zur Integration dynamischer Verschattungssimulationen in die Gebäudeautomation",
-  subtitle: "Softwaregestützte Umsetzung und Validierung eines Workflows vom BIM-Modell bis zur operativen Steuerung.",
+  title: "Methodik zur Erstellung und Integration umgebungsabhängiger Verschattungsdaten in die Raumautomation",
+  subtitle: "Konzeption, Umsetzung und Validierung einer Verschattungssimulation am Beispiel eines Hochhaus-Referenzprojekts",
   // Optionaler Untertitelalternative: Konzeption und prototypische Umsetzung eines softwaregestützten Workflows
   authors:
   ((name: "Niklas Wittkämper", 

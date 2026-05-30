@@ -83,7 +83,7 @@ Eine weitere Maßnahme zur Reduktion der Rechenlast und Datenmenge ist die Besch
 Zwar können weit entfernte Gebäude bei einer sehr tief stehenden Sonne (in den Morgen- oder Abendstunden) theoretisch einen Schattenwurf auf die Referenzfassade verursachen. Dieser Effekt ist im Kontext der @ga jedoch vernachlässigbar, da sich die resultierenden Schattenkanten aufgrund des flachen Einfallswinkels sehr schnell über die Fassade bewegen und somit keine relevante Tageslichtnutzung durch öffnen der Behänge erzielt werden könnte.
 
 == Konzeption der Systemarchitektur und Simulationslogik
-Aufbauend auf der definierten Datengrundlage widmet sich dieser Abschnitt der methodischen Umsetzung. Ziel ist der Entwurf einer Systemarchitektur, die komplexe 3D-Geometriedaten in verwertbare Steuerungsdaten für die operative Gebäudeautomation übersetzt. Hierfür wird zunächst die räumliche und zeitliche Diskretisierung der Simulation festgelegt, um das Datenvolumen und die Rechenzeit zu optimieren. Anschließend werden die eingesetzten Algorithmen zur fehlerfreien Strahlenverfolgung erläutert. Den Abschluss bildet die Definition der informationstechnischen Schnittstellen, welche den Datentransfer von der Simulationsumgebung bis in die Feldebene strukturieren.
+Aufbauend auf der definierten Datengrundlage widmet sich dieser Abschnitt der methodischen Umsetzung. Ziel ist der Entwurf einer Systemarchitektur, die komplexe 3D-Geometriedaten in verwertbare Steuerungsdaten für die operative Gebäudeautomation übersetzt. Hierfür wird zunächst die räumliche und zeitliche Diskretisierung der Simulation festgelegt, um das Datenvolumen und die Rechenzeit zu optimieren. Anschließend werden die eingesetzten Algorithmen zur fehlerfreien Strahlenverfolgung erläutert. Den Abschluss bildet die Definition der informationstechnischen Schnittstellen, welche den Datentransfer von der Simulationsumgebung bis in die Automationsebene strukturieren.
 === Diskretisierung und Simulationsumfang <ZeitlicheAufloesungUmfang>
 ==== Zeitliche Diskretisierung
  Die Wahl der zeitlichen Auflösung für die Verschattungsdaten hat maßgeblichen Einfluss auf die Tageslichtausbeute des Gebäudes. 
@@ -113,7 +113,8 @@ Eine hohe Datenauflösung bleibt somit das konzeptionelle Optimum. Voraussetzung
 
 Um den Berechnungsaufwand und das resultierende Datenvolumen weiter zu optimieren, wurde im Rahmen der zeitlichen Diskretisierung ergänzend untersucht, ob die Simulation eines repräsentativen Tages pro Kalenderwoche für die steuerungstechnischen Anforderungen ausreichend ist. Für diese Evaluation wurden exemplarisch der 17. und der 24. März verglichen. Die Wahl dieses Zeitraums begründet sich durch die astronomische Tag-und-Nacht-Gleiche (Äquinoktium) am 20. März. In dieser Phase weist die Deklination der Sonne ihre maximale tägliche Änderungsrate auf, weshalb der gewählte Zeitraum den ungünstigsten Fall für abweichende Sonnenstände innerhalb einer Kalenderwoche darstellt.
 
-Wie in @fig-panorama_vergleich dargestellt, ergeben sich bei einer isolierten Betrachtung eines Fensters um 09:30 Uhr visuelle Diskrepanzen: Während das markierte Referenzfenster am 17. März zu diesem Zeitpunkt noch unverschattet ist, liegt es exakt eine Woche später bereits im Schatten der Umgebungsbebauung. Eine Analyse des Simulationsmodells zeigt jedoch, dass die harte Schattenkante lediglich etwa sechs Minuten benötigt, um vollständig von der rechten zur linken Fensterkante zu wandern. 
+Wie in @fig-panorama_vergleich dargestellt, ergeben sich bei einer isolierten Betrachtung eines Fensters um 09:30 Uhr visuelle Diskrepanzen: Während das markierte Referenzfenster am 17. März zu diesem Zeitpunkt noch unverschattet ist, liegt es exakt eine Woche später bereits im Schatten der Umgebungsbebauung. Eine weitere Analyse zeigt jedoch, dass die Schattenkante lediglich etwa sechs Minuten benötigt, um vollständig von der rechten zur linken Fensterkante zu wandern. 
+
 
 #figure(
   grid(
@@ -138,8 +139,7 @@ Wie in @fig-panorama_vergleich dargestellt, ergeben sich bei einer isolierten Be
   placement: auto
 )<fig-panorama_vergleich>
 
-
-*Setzt man diese physikalische Übergangszeit in Relation zu der zuvor definierten zeitlichen Auflösung der @ga von 15 Minuten, wird die Relevanz dieser Abweichung stark relativiert. Die zeitliche Verschiebung des Schattenwurfs, die durch den einwöchigen Sprung des Sonnenstandes entsteht, ist geringer als das gewählte Diskretisierungsintervall der Steuerung. Demzufolge wird die Ungenauigkeit einer wöchentlichen Zusammenfassung von dem 15-minütigen Raster der Automationsstation absorbiert. Aus dieser Erkenntnis lässt sich ableiten, dass die Berechnung eines repräsentativen Tages pro Woche die Speicherkapazitäten der Feldebene drastisch schont, ohne dabei steuerungstechnisch signifikante Einbußen in der Genauigkeit des Blendschutzes zu verursachen...*
+Unter Berücksichtigung der zeitlichen Diskretisierung lässt sich der Einfluss dieser wöchentlichen Abweichung relativieren. Bei einem Berechnungsintervall von 15 Minuten verschiebt sich der Schattenwurf zwischen den einzelnen Zeitschritten bereits um nahezu drei Fensterbreiten. Tritt nun im ungünstigsten Szenario eine geometrische Abweichung von maximal einer Fensterbreite durch die wöchentliche Vereinfachung auf, spielt diese Abweichung angesichts des ohnehin schnell wandernden Schattens eine untergeordnete Rolle. Aus dieser Erkenntnis folgt, dass die Berechnung eines repräsentativen Tages pro Woche die benötigten Speicherkapazitäten auf der Automationsebene erheblich entlastet, ohne steuerungstechnisch relevante Einbußen bei der Präzision des Blendschutzes zu verursachen.
 
 ==== Zeitlicher Simulationsumfang
 Für die Konzeption der Simulation stellt sich zudem die Frage, wie viele Kalenderjahre berechnet werden müssen, um den realen Sonnenverlauf hinreichend abzubilden. Der Umlauf der Erde um die Sonne unterliegt zwar langperiodischen Schwankungen (Milanković-Zyklen), diese sind für die Lebensdauer eines Gebäudes jedoch nicht relevant. Der berechnete Sonnenverlauf kann für den Betrachtungszeitraum als statisch angesehen werden. 
@@ -161,7 +161,7 @@ Da sich die räumlichen Abweichungen des Schattens lediglich im Zentimeterbereic
 // - das ist ja weniger, als die 15 minutüige auflösung. also sehr wahrscheinlich könnte man mit einer einwöchigen auflösung trotdem noch ein hohe genauigkeit erzielen
 // - es wäre vertretbar nur jeden zweiten tag zu berechnen, da 
 ==== Räumliche Auflösung der Messpunkte <RaeumlicheAufloesung>
-Die räumliche Abtastung der Fensterflächen bestimmt die Genauigkeit der Verschattungsdaten. Man muss festlegen, wie viele Testpunkte pro Fenster berechnet werden. Es werden zwei verschiedene Optionen untersucht:
+Die räumliche Abtastung der Fensterflächen bestimmt die Genauigkeit der Verschattungsdaten. Es gilt festzulegen, wie viele Testpunkte pro Fenster berechnet werden sollen. Es werden zwei verschiedene Optionen untersucht:
 
 *1. Einpunkt-Messung (Fenstermittelpunkt):*
 Es wird ein einzelner Raycast vom geometrischen Zentrum des Fensters zur Sonne berechnet. Dieser Ansatz hat den Vorteil, dass er die geringste Rechenzeit aufweist, allerdings anfällig für Situationen mit Teilverschattung ist: Verdeckt ein Schatten beispielsweise nur die untere Fensterhälfte inklusive der Fenstermitte, meldet der Algorithmus bereits eine Verschattung des Fensters. Dabei ist die obere Fensterhälfte noch stark besonnt und verursacht Blendung.
@@ -201,62 +201,41 @@ Die informationstechnische Konzeption der Systemarchitektur definiert maßgeblic
 
 Da die benachbarten Gebäude in der Regel statisch sind, stellt die Vorabberechnung in der Praxis keinen Nachteil dar. Sollte es dennoch zu baulichen Veränderungen in der Umgebung kommen, gibt es zwei Fälle die eintreten können: Entsteht ein neues Nachbargebäude, welches im vorliegenden Datensatz noch nicht erfasst ist, geht die Steuerung fälschlicherweise weiterhin von direkter Besonnung aus und schließt die Behänge. Dies führt zwar zu einer suboptimalen Tageslichtausbeute, der kritische Blendschutz für die Nutzer bleibt jedoch vollständig gewahrt. Eine Herausforderung stellt lediglich der umgekehrte Fall dar: Entfällt ein schattenspendendes Gebäude (beispielsweise durch Abriss), würde die Anlage den Behang öffnen und eine starke Blendung bei klarem Himmel zulassen. In einem solchen Szenario muss der Datensatz durch eine erneute Simulation zwingend aktualisiert werden.
 
-Um die zu übertragenden Datenmengen und die Bus-Auslastung zu minimieren, wird eine strikte Trennung zwischen globalen und lokalen Daten vorgenommen. Die Sonnenhöhe (Elevationswinkel) ist zu einem spezifischen Zeitpunkt für das gesamte Gebäude und somit für alle Fenster identisch. Um redundante Daten zu vermeiden, wird die Elevation nicht pro Fenster in der Simulationsdatei gespeichert. Stattdessen kann dieser globale Wert entweder zyklisch von einer zentralen Dachwetterstation empfangen oder durch einen standardisierten Algorithmus direkt auf der Automationsstation berechnet werden.
+Um die zu übertragenden Datenmengen und die Bus-Auslastung zu minimieren, wird eine Trennung zwischen globalen und lokalen Daten vorgenommen. Die Sonnenhöhe (Elevationswinkel) ist zu einem spezifischen Zeitpunkt für das gesamte Gebäude und somit für alle Fenster identisch. Um redundante Daten zu vermeiden, wird die Elevation nicht pro Fenster in der Simulationsdatei gespeichert. Stattdessen kann dieser globale Wert entweder zyklisch von einer zentralen Dachwetterstation empfangen oder durch einen standardisierten Algorithmus direkt auf der @as bzw. @rae berechnet werden.
 
-Der fensterspezifische Datensatz beschränkt sich somit auf den diskreten Verschattungszustand beziehungsweise den horizontalen Einfallswinkel der Sonne. Die Ausgabe differenziert dabei zwischen folgenden Zuständen:
+Der fensterspezifische Datensatz beschränkt sich somit auf den diskreten Verschattungszustand beziehungsweise den horizontalen Einfallswinkel (Fensterazimut) der Sonne. Die Ausgabe differenziert dabei zwischen folgenden Zuständen:
 
 - *R (Rückseitenverschattung):* Die Sonne befindet sich hinter der Fassadenebene des Fensters.
 - *V (Verschattung durch Fremdobjekte):* Die Sonne wird durch umliegende Gebäude oder Topografie blockiert.
 - *N (Nacht):* Die Sonne befindet sich unterhalb des Horizonts.
-- *Azimutwinkel:* Numerischer Wert bei direkter Besonnung in -90° bis +90°.
+- *Fensterazimut:* Numerischer Wert bei direkter Besonnung in -90° bis +90°.
 
 
-Der übergebene Azimutwinkel beschreibt den relativen horizontalen Einfallswinkel der Sonnenstrahlen auf die Fensternormale. Da die Berechnungen auf dem mathematischen Einheitskreis basieren, werden Winkel gegen den Uhrzeigersinn positiv und im Uhrzeigersinn negativ abgebildet. In @fig-fensterazimut wird exemplarisch ein Fenster mit Süd-Ost-Ausrichtung und den resultierenden Azimutwinkeln bei verschiedenen Sonnenständen dargestellt. Ein Winkel von 0° bedeutet dabei, dass die Sonne frontal vor dem Fenster steht, der horizontale Lichteinfall also orthogonal zur Fassadenebene erfolgt.
-
-Die differenzierte Ausgabe dieser Zustände bietet eine hohe Flexibilität für die Steuerungslogik und erleichtert der Systemintegration bei der Inbetriebnahme die Fehleranalyse sowie die Nachvollziehbarkeit des Anlagenverhaltens.
-
-Hinsichtlich der Datenspeicherung und Verteilung stellt sich die Frage der Hardwareallokation. Da die Automationsstationen der Feldebene in der Regel nur über begrenzte Speicherkapazitäten verfügen, ist es nicht praktikabel, die Jahresdatensätze von tausenden Fenstern lokal zu hinterlegen. Es bietet sich stattdessen an, die vollständigen CSV--Dateien zentral auf dem Server der @mbe zu speichern. Die @mbe kann die aktuellen Zustände zyklisch (beispielsweise im 5-Minuten-Takt) auslesen und die jeweils relevanten Datenpunkte über standardisierte Protokolle (wie z. B. BACnet) an die zuständigen Raumautomationsstationen übertragen.
+Der übergebene Azimutwinkel beschreibt den relativen horizontalen Einfallswinkel der Sonnenstrahlen auf die Fensternormale. Da die Berechnungen auf dem mathematischen Einheitskreis basieren, werden Winkel gegen den Uhrzeigersinn positiv und im Uhrzeigersinn negativ abgebildet. In @fig-fensterazimut wird exemplarisch ein Fenster mit Süd-Ost-Ausrichtung und den resultierenden Azimutwinkeln bei verschiedenen Sonnenständen dargestellt. Ein Winkel von 0° bedeutet dabei, dass die Sonne frontal vor dem Fenster steht, der horizontale Lichteinfall also orthogonal zur Fassadenebene erfolgt. Mithilfe des Fensterazimutwinkels und der Sonnenelevation kann dann für jede dem Fenster zugeordnete Jalousie der entsprechende Cut-Off-Winkel kalkuliert werden.
 
 #figure(
   image("assets/Fensterazimut.pdf", width: 70%),
   caption: [Angabe des Fensterazimutwinkels für beispielhaftes Fenster mit Süd-Ost-Ausrichtung],
-  placement: auto
+  placement: none
 ) <fig-fensterazimut>
 
-// === Systemarchitektur und Schnittstellen<DefinitionSystemarchitektur>
-// - die Simulation wird einmalig für ein ganzes Jahr durchgeführt, da... 
-// - Handelt es sich um ein zustandsloses System, das einmalig einen Fahrplan (Schedule) generiert, oder um ein dynamisches System, das auf Veränderungen (beispielsweise neue Verschattungsobjekte durch Baustellen) reagieren kann.
-//   - nicht kritisch, wenn neues gebäude dazukommt, da der wichtige blendschutz weiterhin gegeben ist
-//   - wenn allerdings ein gebäude entfällt und die steuerung die Behänge öffnet, weil sie denkt, dass das fenster verschattet ist, kommt es zu einer blendung bei klarem himmel
-// - Tabelle mit Elevationswinkel könnte mitgegeben oder auf AS oder wetterstation berechnet werden(Vermeidung von Redundanz: Die Sonnenhöhe (Elevation) ist zu einem bestimmten Zeitpunkt für das gesamte Gebäude (und somit für alle 6000 Fenster) identisch.) 
-// - Status R, V, N - Azimut erklären
-//   - R = Rücksseite von Fenster
-//   - V = Verschattet durch umgebendes Gebäude
-//   - N = Nacht (Sonne steht unter dem Horizont)
-//   - Azimutwinkel von fensternormale zu sonne bei direkter besonnung
-//   - Skript benutzt math.atan2(). dieses benutzt den mathematischen einheitskreis, der gegen den Uhrzeigersinn gemessen wird. Deswegen ist der Wert rechts von der mitte negativ (siehe skizze)
-//   - verschiedenen ergebniswerte haben vorteil für debugging, nachvollziehbarkeit der daten und steuerungsfunktionalität
-// - Auch die Frage: Auf welchem Rechner sollten die Daten gespeichert werden? es bietet sich wahrscheinlich an, die daten auf dem rechner der @mbe zu speichern
+Die differenzierte Ausgabe dieser Zustände bietet eine hohe Flexibilität für die Steuerungslogik und erleichtert der Systemintegration bei der Inbetriebnahme die Fehleranalyse sowie die Nachvollziehbarkeit des Anlagenverhaltens.
 
 == Integrationskonzepte für die Gebäudeautomation
-=== Systematische Integration der Daten <IntegrationGebaeudeautomation>
+=== Systematische Integration der Daten
 
+Die Integration hochauflösender Simulationsdaten in die operative @ga wird in der Praxis maßgeblich durch die Hardware-Restriktionen der Automationsebene limitiert. Eine @rae, welche die unmittelbare Steuerung der Jalousieaktorik übernimmt, verfügt systembedingt nur über stark begrenzte Speicherkapazitäten und Rechenressourcen. Die lokale Implementierung eines vollständigen Jahresdatensatzes mit kurzen Zeitintervallen für tausende Fenster würde den nutzbaren Speicher dieser Controller überlasten. Eine direkte und vollständige Übertragung der Simulationsergebnisse auf die unterste Steuerungsebene ist demnach nicht praktikabel.
 
-Die Integration hochauflösender Simulationsdaten in die operative @ga wird in der Praxis maßgeblich durch die Hardware-Restriktionen der Feldebene limitiert. Eine @ras, welche die unmittelbare Steuerung der Jalousieaktorik übernimmt, verfügt systembedingt nur über stark begrenzte Speicherkapazitäten und Rechenressourcen. Die lokale Implementierung eines vollständigen Jahresdatensatzes mit kurzen Zeitintervallen für mehrere Fenster würde den nutzbaren Speicher dieser Controller unverhältnismäßig belasten oder diesen sogar vollständig erschöpfen. Eine direkte und vollständige Übertragung der Simulationsergebnisse auf die unterste Steuerungsebene ist demnach informationstechnisch nicht realisierbar.
+Um diesen Kapazitätsengpass zu umgehen, bedarf es einer entkoppelten Systemarchitektur, bei der die vollständigen CSV-Verschattungsdaten zentral auf der @mbe oder einem übergeordneten Projektserver vorgehalten werden. Zwar bestünde theoretisch die Möglichkeit, dass die @mbe die aktuellen Zustände zyklisch (beispielsweise im 15-Minuten-Takt) ausliest und über standardisierte Protokolle wie BACnet an die @rae sendet, dies birgt jedoch das Risiko einer hohen, kontinuierlichen Netzwerkbelastung.
 
-Um diesen Kapazitätsengpass zu umgehen, bedarf es einer entkoppelten Systemarchitektur. Die vollständigen Verschattungsdaten werden hierfür zentral auf der @mbe oder einem übergeordneten Server vorgehalten. Ein praxisnaher Ansatz zur Verteilung der Daten besteht in einer asynchronen Übertragung. Anstatt die Raum-Controller kontinuierlich mit neuen Werten zu überschreiben, wird lediglich der spezifische Fahrplan für den jeweils darauffolgenden Tag generiert und an die Feldebene gesendet. Diese Übermittlung erfolgt sequenziell während der nächtlichen Schwachlastzeiten. Diese Methodik stellt sicher, dass die stark limitierten Netzwerk- und Kommunikationsbusse während des regulären operativen Gebäudebetriebs am Tag nicht durch große Datenpakete überlastet werden.
+Ein deutlich robusterer und praxisnäherer Ansatz besteht stattdessen in einer asynchronen, wöchentlichen Übertragung. Da die Simulation im Rahmen dieser Arbeit methodisch auf einen repräsentativen Tag pro Woche ausgelegt ist, muss auch das Datenupdate auf der Automationsebene nicht täglich erfolgen. Stattdessen extrahiert der Server im Vorfeld den spezifischen Fahrplan für die gesamte darauffolgende Woche. Die Übermittlung dieses Datensatzes an die Automationsebene erfolgt einmalig sequenziell in der Nacht vor dem eigentlichen Wochenwechsel. Diese Methodik stellt sicher, dass die Netzwerk- und Kommunikationsbusse während der regulären Betriebszeiten entlastet werden.
 
-Nach der erfolgreichen Übermittlung und temporären Speicherung des Tagesdatensatzes auf der lokalen Automationsstation werden die Informationen von den dortigen Raumautomationsprogrammen verarbeitet. Die empfangenen Verschattungszustände und Azimutwinkel dienen den Funktionsblöcken als direkte Eingangsgröße, um die nachgelagerte Jalousieaktorik präzise zu steuern. Durch diesen Ansatz wird die rechen- und speicherintensive Datenhaltung auf leistungsstarke Server ausgelagert, während die reaktionskritische Ausführung der Fahrbefehle dezentral und ausfallsicher auf der Feldebene verbleibt.
+Nach der erfolgreichen Übermittlung und temporären Speicherung des wöchentlichen Fahrplans auf der lokalen @rae werden die Informationen von den dortigen Raumautomationsprogrammen verarbeitet. Die empfangenen Verschattungszustände und Fensterazimute dienen den Funktionsblöcken als direkte Eingangsgröße, um die nachgelagerte Jalousieaktorik präzise zu steuern. Durch diesen Ansatz wird die rechen- und speicherintensive Datenhaltung auf die Managementebene ausgelagert, während die Berechnung der Fahrbefehle dezentral auf der Automationsebene verbleibt.
 
-
-// - auf die extremen Kapazitätsproblemen eingehen bezüglich Datenspeicher und CPU-Auslastung
-
-// - asynchrone Datenübertragung: Ein praxisnaher Ansatz besteht darin, die aggregierten Verschattungsdaten für den jeweils folgenden Tag während der nächtlichen Schwachlastzeiten sequenziell zu verteilen. Dies verhindert Netz- und Busüberlastungen während des regulären operativen Gebäudebetriebs.
-
-// - Nach erfolgreicher Übermittlung und temporärer Speicherung werden die Daten von den Programmen der Raumautomation verarbeitet. Sie dienen dort als direkte Eingangsgröße für die präzise und automatisierte Steuerung der Jalousieaktorik.
+Im Falle einer Netzwerkstörung, bei der keine aktualisierten Daten die @as erreichen, können die zuletzt übermittelten Verschattungsinformationen weiterhin genutzt werden. Wie in @ZeitlicheAufloesungUmfang dargelegt, resultiert dies zwar in einem geringfügigen Qualitätsverlust bei der Jalousiesteuerung, die grundlegende Systemfunktionalität bleibt jedoch vollständig erhalten.
 
 === Vorschlag eines modifizierten Funktionsblocks nach VDI 3813...(nicht fertig)<kap-neuerFunktionsblock>
-Basierend auf der Analyse der VDI 3813-2 (vgl. @kap-vdi3813) wird für die entwickelte Systemarchitektur ein modifizierter Funktionsblock konzipiert (siehe @fig-NeuerFunktionsblock). Dieser wird im Gegensatz zur Richtlinie, dem Funktionsblock der Lamellennachführung vorangestellt. Ziel ist es, sowohl die rechenintensive geometrische Kollisionsprüfung als auch die Verwaltung der fassadenspezifischen Ausrichtungswinkel in die Simulation auszulagern. 
+Basierend auf der Analyse der VDI 3813-2 (vgl. @kap-vdi3813) wird für die entwickelte Systemarchitektur ein modifizierter Funktionsblock konzipiert (siehe @fig-NeuerFunktionsblock). Dieser wird im Gegensatz zur Richtlinie, dem Funktionsblock der Lamellennachführung vorangestellt. Ziel ist es, sowohl die geometrische Kollisionsprüfung als auch die Verwaltung der fensterspezifischen Azimutwinkel in die Simulation auszulagern. 
 
 #figure(
   image("assets/FunktionsblockNeu.png", width: 60%),
@@ -264,7 +243,7 @@ Basierend auf der Analyse der VDI 3813-2 (vgl. @kap-vdi3813) wird für die entwi
   placement: auto
 )<fig-NeuerFunktionsblock>
 
-Der standardisierte Funktionsblock zur Verschattungskorrektur verarbeitet den globalen Sonnenstand, der in der Automationsstation für jede Fassadenseite mit einem lokalen Offset (Azimut) verrechnet werden muss. 
+Der standardisierte Funktionsblock zur Verschattungskorrektur verarbeitet den globalen Sonnenstand, der in der @as für jede Fassadenseite mit einem lokalen Offset (Azimut) verrechnet werden muss. 
 Der hier konzipierte Funktionsblock empfängt stattdessen über den Dateneingang (`SIM_DATA`) einen Datensatz, der fensterspezifische Parameter enthält, und routet diese als Steuergrößen an die nachgelagerten Instanzen.
 
 Die interne Steuerungslogik wertet den eintreffenden Datentyp aus und schaltet die Signale:

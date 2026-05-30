@@ -6,8 +6,7 @@ In der digitalen Anlage befinden sich die drei wichtigsten Skripte für diese Ar
 - GenerateTempAKS.py
 - MatchingAKS.py
 == Verwendete Hilfsmittel <OpenSourceListe>
-
-Im Verlauf dieser Arbeit kamen insgesamt 16 verschiedene Open-Source-Softwarelösungen, Plug-ins, Entwicklertools und frei verfügbare Datenquellen zum Einsatz. Die nachfolgende Übersicht kategorisiert die verwendeten Hilfsmittel nach ihrem jeweiligen Anwendungsbereich. Werkzeuge und Datenquellen, die mit einem Sternchen~(\*) gekennzeichnet sind, wurden während der Konzeptionsphase evaluiert, sind jedoch nicht in den final integrierten Prozess eingeflossen. Für die in der Arbeit enthaltenen Skizzen und Zeichnungen, sowie für den in @AKSZuordnung beschriebenen Prozess, ist AutoCAD verwendet worden, welches nicht kostenlos verfügbar ist.
+Im Verlauf dieser Arbeit kamen insgesamt 16 verschiedene Open-Source-Softwarelösungen, Plug-ins, Entwicklertools und frei verfügbare Datenquellen zum Einsatz. Die nachfolgende Übersicht kategorisiert die verwendeten Hilfsmittel nach ihrem jeweiligen Anwendungsbereich. Werkzeuge und Datenquellen, die mit einem Sternchen~(\*) gekennzeichnet sind, wurden während der Konzeptionsphase evaluiert, sind jedoch nicht in den final integrierten Prozess eingeflossen. Für die in der Arbeit enthaltenen Skizzen und Zeichnungen, sowie für den in @AKSZuordnungAnhang beschriebenen Prozess, ist AutoCAD verwendet worden, welches nicht kostenlos verfügbar ist.
 
 *Software und Plattformen*
 - Blender (3D-Modellierung und Simulationsumgebung)
@@ -69,6 +68,36 @@ $ beta + alpha_p = arcsin(frac(d, w) dot cos(alpha_p)) $
 Die anschließende Subtraktion des Profilwinkels $alpha_p$ liefert die finale, explizite Bestimmungsgleichung zur Berechnung des optimalen Cut-Off-Stellwinkels:
 $ beta = arcsin(frac(d, w) dot cos(alpha_p)) - alpha_p $
 
+== Zuweisung des Anlagenkennzeichnungsschlüssels<AKSZuordnungAnhang>
+Da die Fenster vom Fassadenbauer mit einem Typenkennzeichnungsschlüssel bezeichnet wurden, um die Zuordnung auf der Baustelle zu ermöglichen, ist es nicht möglich, von dem Fenster auf den zuständigen Jalousieaktor zu schließen. Somit muss eine alternative Zuordnung gefunden werden.
+Um die @ga zu planen, wurde die Engineering-Software eConfigure von Schneider Electric eingesetzt. Die Planung war zum Zeitpunkt der Arbeit schon komplett abgeschlossen. Bei der Planung wurden Grundrisse der Etagen hinterlegt und alle Komponenten der Raumautomation verortet (siehe @fig-eConfigure). Hierbei gibt es mehrere Symbole für Jalousien, die zum einen den außenliegenden Sonnenschutz und zum anderen den innenliegenden Blendschutz beschreiben. Der Text neben den Symbolen beinhaltet den erforderlichen @aks.
+#figure(
+  image("assets/AusschnittEConfigure.png"),
+  caption: [Ausschnitt der Raumautomation aus eConfigure vom FOUR in Frankfurt],
+  placement: none
+)<fig-eConfigure>
+
+Für die Zuordnung muss also eine Übertragung des Anlagenkennzeichnungssystems (AKS) der Jalousieaktoren auf die Fensterelemente im BIM-Modell erfolgen.
+Im Folgenden wird ein vorläufiger Prozess stichpunktartig beschrieben:
+
+
+
++ *Referenzexport*: Der betroffene Geschossgrundriss wird aus der 3D-Umgebung (Blender) als zweidimensionale Referenz exportiert.
++ *Planvorbereitung*: Im Projektierungstool eConfigure werden Hilfslinien entlang der Fassadenkontur erstellt, um eine spätere Skalierung und Positionierung der Pläne zu ermöglichen.
++ *Datenexport*: Die Grundrisse der vier Mietbereiche werden aus eConfigure in das etablierte CAD-Austauschformat DWG exportiert.
++ *Aufbereitung und Referenzierung*: In AutoCAD werden die Teilgrundrisse zusammengeführt, bereinigt, maßstäblich skaliert und räumlich positioniert.
++ *Überlagerung*: Die geometrischen Referenzdaten aus Blender und die Planungsdaten aus eConfigure werden visuell überlagert.
++ *Datenreduktion*: Sämtliche Planinhalte mit Ausnahme der textuellen @aks#[]-Bezeichner werden entfernt.
++ *Reimport in die 3D-Umgebung*: Die bereinigte DWG-Datei wird in Blender importiert. Die textuellen Bezeichner befinden sich nun räumlich exakt entlang der Fassadenlinie (siehe @fig-AKSumFenster).
++ *Algorithmische Zuweisung*: Ein Python-Skript iteriert über alle Fensterelemente und identifiziert für jedes Fenster das räumlich nächstgelegene Textobjekt (Nearest-Neighbor-Suche). Der ausgelesene String wird als Attribut in das Fensterobjekt geschrieben. Dieses Attribut dient in der anschließenden Verschattungssimulation als eindeutiger, auslesbarer Identifikator.
+#figure(
+  image("assets/PositionierungAKS.png", width: 60%),
+  caption: [Draufsicht von FOUR Turm 1 mit an den Fenstern platzierten AKS-Texten für Etage 45 in Blender],
+  placement: none
+)<fig-AKSumFenster>
+Da dieser prototypische Weg sehr zeitaufwendig ist, wird im Rahmen dieser Arbeit nur ein Geschoss bearbeitet. Für die spätere Simulation wird der im Abschnitt davor festgelegte, temporäre @aks für die Bezeichnung der Fenster verwendet.
+
+
 == Konfiguration der Verschattungssimulation<kap-code-konfiguration>
 #codly(offset: 11, zebra-fill: none)
 #codly(number-format: (n) => box(fill: luma(240), height: 1.5em, outset: 0.5em)[#text(luma(100), size: 0.8em)[#str(n)]])
@@ -91,3 +120,4 @@ LONGITUDE = 8.67472
 ```,
 caption: [Konfiguration der Verschattungssimulation],
 placement: none)<code-konfiguration>
+

@@ -123,11 +123,6 @@
     long: "Management- und Bedieneinrichtung"
   ), 
   (
-    key:"ras",
-    short: "RAS",
-    long: "Raumsautomationsstation"
-  ), 
-  (
     key:"gps",
     short: "GPS",
     long: "Global Positioning System"
@@ -136,5 +131,10 @@
     key: "bks",
     short: "BKS",
     long: "Betriebsmittelkennzeichnungssystem"
-  ) 
+  ) ,
+  (
+    key: "rae",
+    short: "RAE",
+    long: "Raumautomationseinrichtung"
+  )
 )

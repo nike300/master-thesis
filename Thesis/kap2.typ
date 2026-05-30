@@ -153,7 +153,7 @@ Building Information Modeling (@bim) beschreibt einen durchgängigen, prozessori
 Das objektorientierte Austauschformat @ifc ermöglicht die Anreicherung der 3D-Geometrie mit semantischen Attributen. Innerhalb der entwickelten Prozesskette dient diese Struktur dazu, simulationsrelevante Bauteile automatisiert zu identifizieren. Während die Klasse `IfcSite` die Georeferenzierung ermöglicht, definiert die Klasse `IfcWindow` die betrachteten Fensterflächen.
 // Maßgeblich für die Simulationsgüte ist ein adäquater Detaillierungsgrad (@lod), um Eigenverschattungen durch Laibungen oder Auskragungen im Raycasting-Verfahren präzise abzubilden.
 
-Für die Abbildung des urbanen Kontextes dient das Format CityGML als internationaler Standard für semantische Stadtmodelle. In Ergänzung zur hohen Detailtiefe des IFC-Gebäudemodells liefert CityGML die notwendigen Umgebungsdaten zur Detektion von Fremdverschattung. Das effizientere Austauschformat CityJSON findet ebenfalls Anwendung. Auf die unterschiedlichen Modellierungstiefen wird im Folgenden eingegangen.
+Für die Abbildung des urbanen Kontextes dient das Format CityGML~@citygml_30 als internationaler Standard für semantische Stadtmodelle. In Ergänzung zur hohen Detailtiefe des IFC-Gebäudemodells liefert CityGML die notwendigen Umgebungsdaten zur Detektion von Fremdverschattung. Das effizientere Austauschformat CityJSON~@cityjson findet ebenfalls Anwendung. Auf die unterschiedlichen Modellierungstiefen wird im Folgenden eingegangen.
 
 // BIM, IFC, Simulationswerkzeuge (Überblick).
 // Folgende Dateiformate werden verwendet:
@@ -283,7 +283,7 @@ Mithilfe der Anwendung trigonometrischer Additionstheoreme lässt sich diese Aus
 
 $ beta = arcsin(frac(d, w) dot cos(alpha_p)) - alpha_p $
 
-Durch die Bereitstellung eines fensterspezifischen Sonnenazimuts und des globalen Sonnenhöhenwinkels kann sowohl der Profilwinkel als auch die daraus resultierende optimale Lamellenposition berechnet werden.
+Durch die Bereitstellung eines fensterspezifischen Sonnenazimuts (Fensterazimut) und des globalen Sonnenhöhenwinkels kann sowohl der Profilwinkel als auch die daraus resultierende optimale Lamellenposition berechnet werden.
 
 
 // === Cut-Off-Winkel und automatische Lamellennachführung
@@ -353,7 +353,7 @@ Deutlich höhere Anforderungen formuliert die nationale Normenreihe DIN/TS 18599
 Die methodischen Verfahren zur Berechnung des resultierenden Energiebedarfs für Heizung und Kühlung werden international in der Norm EN ISO 52016-1~@dineniso52120_1_2025 definiert. Diese berücksichtigt explizit den solaren Energieeintrag durch transparente Gebäudehüllen sowie dessen Reduktion durch Sonnenschutzsysteme. Obwohl die vorliegende Arbeit nicht auf die Durchführung einer thermischen Gebäudesimulation abzielt, verdeutlicht die Norm die bauphysikalische Relevanz des entwickelten Prozesses: Nur wenn die variierende Fremdverschattung auf der Fassade präzise ermittelt wird, kann der resultierende Energieeintrag akkurat berechnet werden.
 
 === Raumautomationsfunktionen<kap-vdi3813>
-In der VDI-Richtlinie 3813 Blatt 2~@vdi3813-2 werden normierte Funktionsblöcke definiert, um komplexe Raumautomationsfunktionen herstellerneutral und einheitlich darzustellen. Hierbei werden die einzelnen Funktionsblöcke informationstechnisch miteinander verknüpft, sodass Steuersignale generiert, modifiziert und in einer Kaskade weitergegeben werden können. Die programmtechnische Berechnung erfolgt meist auf Ebene der @as oder @ras.
+In der VDI-Richtlinie 3813 Blatt 2~@vdi3813-2 werden normierte Funktionsblöcke definiert, um komplexe Raumautomationsfunktionen herstellerneutral und einheitlich darzustellen. Hierbei werden die einzelnen Funktionsblöcke informationstechnisch miteinander verknüpft, sodass Steuersignale generiert, modifiziert und in einer Kaskade weitergegeben werden können. Die programmtechnische Berechnung erfolgt meist auf Ebene der @as oder @rae.
 
 An dieser Stelle ist anzumerken, dass die VDI 3813 im Zuge der Harmonisierung der nationalen Regelwerke formal durch die aktuelle Richtlinienreihe VDI 3814 Blatt 3.1~@vdi3814_3.1 abgelöst wurde. Da die Nachfolgenorm in ihrer aktuellen Fassung jedoch keine spezifischen Funktionsblöcke für die Verschattungskorrektur sowie die adaptive Lamellennachführung explizit ausweist, verbleibt die VDI 3813 Blatt 2 für die informationstechnische Modellierung dieser Gewerke die maßgebliche Referenz. Aus diesem Grund stützen sich die im Folgenden behandelten Funktionsmakros und deren informationstechnische Modifikationen weiterhin auf die methodischen Grundlagen der VDI 3813.
 
@@ -373,7 +373,7 @@ Gemäß VDI 3813-2 dient dieser Funktionsblock (siehe @fig-FunktionsblockThermo)
 Da die in dieser Arbeit entwickelte 3D-Simulation den Verschattungsstatus jedoch bereits extern und hochauflösend ermittelt, wird die interne Winkelkalkulation dieses normierten Blocks obsolet. Die Simulation ersetzt somit nicht nur den statischen Parameter #emph("PAR_SHAD"), sondern macht deutlich, dass die Architektur des gesamten Funktionsblocks im Kontext einer datengetriebenen, simulationsbasierten @ga konzeptionell neu gedacht werden muss (siehe @kap-neuerFunktionsblock).
 
 ==== Funktionsblock Lamellennachführung
-Dieser Funktionsblock dient primär der Sicherstellung des visuellen Komforts für den Gebäudenutzer. Sobald direkte Sonnenstrahlung auf die Fassade trifft -- und die Verschattungskorrektur keinen Fremdschatten meldet -- berechnet der Block anhand der aktuellen Sonnenelevation den optimalen Neigungswinkel (Cut-off Winkel) der Jalousielamellen. Ziel ist es, direkte Blendung an den Arbeitsplätzen konsequent zu verhindern, gleichzeitig jedoch ein Maximum an diffusem Tageslicht in die Raumtiefe zu lenken, um die Tageslichtautonomie zu steigern.
+Dieser Funktionsblock dient primär der Sicherstellung des visuellen Komforts für den Gebäudenutzer. Sobald direkte Sonnenstrahlung auf die Fassade trifft -- und die Verschattungskorrektur keinen Fremdschatten meldet -- berechnet der Block anhand der aktuellen Sonnenelevation, Fensterazimut und Lamellengeometrie den optimalen Cut-off Winkel der Jalousielamellen (vgl. @CutOffWinkelKapitel). Ziel ist es, direkte Blendung an den Arbeitsplätzen konsequent zu verhindern, gleichzeitig jedoch ein Maximum an diffusem Tageslicht in die Raumtiefe zu lenken, um die Tageslichtautonomie zu steigern.
 
 ==== Funktionsblock Dämmerungsautomatik
 Zur Reduktion von Lichtverschmutzung steuert dieser Block die Fassade in den Abend- und Nachtstunden. Nach dem rechnerischen oder sensorgestützten Sonnenuntergang erzwingt der Funktionsblock das Schließen der Behänge. Dies verhindert das störende Abstrahlen von künstlichem Raumlicht in die Umgebung.
