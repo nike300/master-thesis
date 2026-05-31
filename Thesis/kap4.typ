@@ -4,19 +4,22 @@
 Um den in Kapitel 3 konzipierten Systemansatz auf seine praktische Tragfähigkeit zu überprüfen, wird im Folgenden ein @poc durchgeführt. Ziel dieses Kapitels ist es, die softwaretechnische Machbarkeit der entwickelten Prozesskette - vom fehlerfreien Import heterogener Datensätze (@ifc#[] und GIS) über die raycastingbasierte Verschattungssimulation bis hin zum strukturierten Datenexport - exemplarisch nachzuweisen. Hierfür wurde ein funktionsfähiger Software-Prototyp auf Basis von Blender und Python implementiert. 
 Die Entwicklung und Validierung dieses Prototyps erfolgt anhand eines komplexen Referenzprojekts.
 
+
+== Vorstellung des Referenzprojekts<kap-VorstellungFOUR>
+
 #figure(
   image("assets/ÜbersichtFOUR.svg", width: 70%),
   caption: [Grafik des FOUR mit seinen Türmen 1 bis 4@four_frankfurt_about],
-  placement: bottom
-)
+  placement: auto
+)<four-übersicht>
 
-== Vorstellung des Referenzprojekts<kap-VorstellungFOUR>
-Das FOUR besteht aus vier zusammenhängenden Türmen mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Gebäuden (Podesten), die miteinander verbunden sind. Das Bauprojekt befindet sich momentan in der Endphase und soll im Laufe des Jahres 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am 233~m hohen Büroturm T1 angewendet. Der Turm besteht pro Geschoss aus vier Mietbereichen und hat pro Segment einen außenliegenden Sonnenschutz und einen innenliegenden Blendschutz. Es werden 5859 relevante Fenster gezählt. Die Türme stehen eng beieinander im Zentrum der Stadt zwischen verschiedenen Hochhäusern (z. B. dem Commerzbank-Tower und dem MAIN-Tower). Durch dieses eng bebaute Areal treten sehr dynamische Verschattungssituationen auf, die nur durch eine präzise Simulation der Umgebung korrekt dargestellt werden können.
+Das FOUR besteht aus vier zusammenhängenden Türmen (siehe @four-übersicht) mit Büro- und Wohnungsnutzung in der Innenstadt von Frankfurt am Main. Die vier Türme stehen auf vier Gebäuden (Podesten), die miteinander verbunden sind. Das Bauprojekt befindet sich in der Endphase und soll im Laufe des Jahres 2026 endgültig übergeben werden. In dieser Arbeit wird die Verschattungssimulation am 233~m hohen Büroturm T1 angewendet. Der Turm besteht pro Geschoss aus vier Mietbereichen und hat pro Segment einen außenliegenden Sonnenschutz und einen innenliegenden Blendschutz. Es werden 5859 relevante Fenster gezählt. Die Türme stehen eng beieinander im Zentrum der Stadt zwischen verschiedenen Hochhäusern (z. B. dem Commerzbank-Tower und dem MAIN-Tower). Durch dieses eng bebaute Areal treten sehr dynamische Verschattungssituationen auf, die nur durch eine präzise Simulation der Umgebung korrekt dargestellt werden können.
 Eine architektonische Besonderheit des FOUR sind die diagonal abgeschrägten Fassadenabschnitte (@fig-FourTageslicht), die den visuellen Freiraum und die Tageslichtzufuhr verbessern sollen und die Fenster, welche in unterschiedlichen Winkeln zur Fassade angeordnet sind.
 
 #figure(
   image("assets/FourTageslichtSchnitte.png"),
-  caption: [Darstellung und Erklärung der diagonalen Fassadenabschrägung des FOUR@four_frankfurt_about]
+  caption: [Darstellung und Erklärung der diagonalen Fassadenabschrägung des FOUR~@four_frankfurt_about],
+  placement: none
 )<fig-FourTageslicht>
 
 // Es liegen die Fassadenmodelle aller Türme und Podeste des FOUR als @ifc#[]-Dateien vor.
@@ -78,13 +81,13 @@ Der finale Import der Gebäudekörper in die 3D-Umgebung erfolgt über das Open-
 // + *Datentyp-Konvertierung (@lod):* Das Einleseskript wird dahingehend modifiziert, dass der im Datensatz als String vorliegende Wert für den Detailgrad (@lod) systematisch in einen Float umgewandelt wird.
 // + *Filterung geometrieloser Objekte:* Es wird eine Filterroutine integriert, die Datensätze ohne physische 3D-Geometrie (z. B. Grundstücksgrenzen) beim Import ignoriert, um Programmabbrüche zu verhindern.
 
-Im Anschluss erfolgt die räumliche Verortung des Stadtmodells in der Simulationsumgebung. Die originären CityJSON-Daten sind im globalen ETRS89/UTM-Koordinatensystem referenziert. Da der Projektbasispunkt (P1) in Blender auf (0,0,0) gesetzt ist, muss P1 von den Koordinaten der Umgebungsdaten subtrahiert werden. Die Koordinaten werden im Quellcode hinterlegt. Durch diese Nullpunktverschiebung wird das Makromodell der Umgebung präzise in das kartesische System der Software überführt. Zuletzt werden Gebäude, die in zweiter und dritter Reihe zum Turm 1 stehen, ausgewählt und aus der Szene gelöscht. Gebäude, die wie in @kap-ImportUmgebungsdaten beschrieben, nördlich des Referenzgebäudes (Turm 1) stehen, werden ebenfalls entfernt.
+Im Anschluss erfolgt die räumliche Verortung des Stadtmodells in der Simulationsumgebung. Die originären CityJSON-Daten sind im globalen ETRS89/UTM-Koordinatensystem referenziert. Da der Projektbasispunkt (P1) in Blender auf (0,0,0) gesetzt ist, muss P1 von den Koordinaten der Umgebungsdaten subtrahiert werden. Die Koordinaten werden im Quellcode hinterlegt. Durch diese Nullpunktverschiebung wird das Makromodell der Umgebung präzise in das kartesische System der Software überführt. Zuletzt werden Gebäude, die in zweiter und dritter Reihe zum Turm 1 stehen, ausgewählt und aus der Szene gelöscht. Gebäude, die wie in @kap-externeDaten beschrieben, nördlich des Referenzgebäudes (Turm 1) stehen, werden ebenfalls entfernt.
 @fig-Umgebungsszene zeigt die Szene mit den Gebäudedaten des @hvbg. Im Hintergrund ist der Nextower zu erkennen, welcher für die Validierung der Simulation von Bedeutung sein wird.
 
 #figure(
   image("assets/NurUmgebung.png", width: 70%),
   caption: [In Blender importierte Innenstadt von Frankfurt am Main],
-  placement: auto
+  placement: none
 )<fig-Umgebungsszene>
 
 ==== Import und Positionierung der Türme 2 bis 4 <ImportT24>
@@ -111,12 +114,18 @@ Die aggregierte Szene ist in @fig-fertigeSzene zu sehen. Man erkennt die vier FO
 #grid(
   columns: (1.5fr, 2fr),
   gutter: 0.5cm,
-  figure(
-    image("assets/BlenderSunSettings.png", width: 100%),
-    caption: [Einstellungen für Sun Position Add-On],
-  ),
+  
+  // 1. Eckige Klammer auf, # vor figure, Label ran, eckige Klammer zu, DANN das Komma
   [
-    Für die visuelle Darstellung und Validierung des Sonnenstandes innerhalb der 3D-Umgebung wird das in Blender integrierte Add-On Sun Position~@blender_sun_position verwendet. Die korrekte Ausrichtung des simulierten Sonnenlichts erfordert die Parametrierung folgender Randbedingungen:
+    #figure(
+      image("assets/BlenderSunSettings.png", width: 100%),
+      caption: [Einstellungen für Sun Position Add-On],
+    ) <fig-screenshot>
+  ], 
+  
+  // 2. Hier startet ganz normal dein Textblock
+  [
+    Für die visuelle Darstellung und Validierung des Sonnenstandes innerhalb der 3D-Umgebung wird das in Blender integrierte Add-On Sun Position~@blender_sun_position verwendet. Die korrekte Ausrichtung des simulierten Sonnenlichts erfordert die Parametrierung (@fig-screenshot) folgender Randbedingungen:
 
     Im Abschnitt Location werden die exakten geografischen Koordinaten des Projektstandorts definiert. Die Nordausrichtung des Modells (North Offset) bleibt in diesem Fall auf null Grad, da alle Gebäude bereits korrekt ausgerichtet sind. Die Distanz gibt den Abstand des Sonnenobjekts im Modell vom Ursprung an und hat keine Relevanz für den Sonnenstand.
     
@@ -252,7 +261,7 @@ Eine hochdynamische Verschattungssituation lässt sich exemplarisch im Zeitraum 
  
 === Berechnungsaufwand und Optimierung <Simulationsoptimierung>
 Für diese Arbeit wurde das Jahr 2026 für einen Tag pro Woche im 15-Minuten Takt simuliert. Die Simulation dauerte 14 Stunden und 23 Minuten#footnote[Die Berechnung der Jahressimulation erfolgte auf einer Workstation mit folgender Spezifikation: AMD Ryzen 5 7600X (6-Core, 4,7 GHz), 32 GB RAM, AMD Radeon RX 7800 XT, Windows 11 (64-bit), Blender Version 4.5.3]. Die Ergebnisdatei im CSV-Format hat ein Größe von 47~MB.
-Wenn jeder Tag im Jahr berechnet werden würde, käme man auf eine Rechendauer von 4 Tagen und 5 Stunden und eine Dateigröße von 328~MB. Da diese Simulation für ein gesamtes Gebäude nur einmal berechnet werden muss, liegt die Simulationsdauer im annehmbaren Bereich. Da Blender für Python-Skripte nur einen CPU-Kern benutzen kann, könnten weitere Blender-Instanzen geöffnet werden, um parallel Datumsbereiche des Jahres zu berechnen. Diese müssten dann final in eine Datei bzw. Datenbank zusammengeführt werden.
+Bei einer Berechnung jedes einzelnen Tages des Referenzjahres beliefe sich die Rechendauer auf 4 Tage und 5 Stunden und eine Dateigröße von 328~MB. Da diese Simulation für ein gesamtes Gebäude nur einmal berechnet werden muss, liegt die Simulationsdauer im annehmbaren Bereich. Da Blender für Python-Skripte nur einen CPU-Kern benutzen kann, könnten weitere Blender-Instanzen geöffnet werden, um parallel Datumsbereiche des Jahres zu berechnen. Diese müssten dann final in eine Datei bzw. Datenbank zusammengeführt werden.
 
 Durch Anwendung des Backface Culling konnte eine Verkürzung der Rechendauer um ca. 50% erreicht werden.
 
@@ -262,6 +271,7 @@ Die Validierung der virtuellen Szene erfolgt durch einen visuellen Abgleich zwis
 
 Das Ergebnis dieses Abgleichs ist in @fig-validierung_t1 dargestellt. Es zeigt sich eine visuell sehr hohe Übereinstimmung der Schattenkanten zwischen Referenzbild und Simulation. Dies belegt die korrekte geometrische Anordnung der Szene in Blender sowie die Präzision des integrierten Sonnenmodells für den gewählten Zeitpunkt.
 
+Eine alternative Validierungsmethode bestünde in der Installation von Helligkeitssensoren an Fenstern des FOUR zur Erfassung realer Messwerte an wolkenlosen Tagen. Dieser Ansatz wurde aufgrund des den Rahmen dieser Arbeit übersteigenden messtechnischen Aufwands nicht weiter verfolgt.
 #figure(
   grid(
     columns: (1fr, 1fr),
@@ -270,10 +280,8 @@ Das Ergebnis dieses Abgleichs ist in @fig-validierung_t1 dargestellt. Es zeigt s
     image("assets/blender_render.png", width: 100%)
   ),
   caption: [Validierung der Verschattungssimulation am Turm 1. Links: Webcam-Aufnahme vom 21.06.2025 (9:15 Uhr). Rechts: Simulationsergebnis zum identischen Zeitpunkt.],
-  placement: auto
+  placement: none
 ) <fig-validierung_t1>
-
-Eine alternative Validierungsmethode bestünde in der Installation von Helligkeitssensoren an Fenstern des FOUR zur Erfassung realer Messwerte an wolkenlosen Tagen. Dieser Ansatz wurde aufgrund des den Rahmen dieser Arbeit übersteigenden messtechnischen Aufwands nicht weiter verfolgt.
 
 ==== Validierung der skriptbasierten Simulation
 Während die visuelle Validierung die Geometrie und das interne Sonnenmodell der Software bestätigt, erfordert das entwickelte Simulationsskript eine separate Überprüfung. Dieses Skript greift nicht auf das interne Sonnenstands-Plug-in von Blender zurück, sondern implementiert direkt den @noaa#[]-Algorithmus zur Berechnung des Sonnenstandes.
@@ -292,5 +300,5 @@ Wie in @fig-validierungSkript zu erkennen ist, liegen die als verschattet identi
     ]
   ),
   caption: [Detailansicht der Szene zur Überprüfung der Simulationsergebnisse. Rot eingefärbte Elemente markieren eine algorithmisch ermittelte vollständige Verschattung.],
-  placement: auto
+  placement: none
 ) <fig-validierungSkript>

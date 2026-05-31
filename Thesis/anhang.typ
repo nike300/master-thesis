@@ -1,6 +1,6 @@
 #import "@preview/codly:1.3.0": *
 = Anhang<Anhang>
-== Digitale Anlage...<DigitaleAnlage>
+== Digitale Anlage<DigitaleAnlage>
 In der digitalen Anlage befinden sich die drei wichtigsten Skripte für diese Arbeit:
 - MainVerschattungssimulation.py
 - GenerateTempAKS.py
@@ -24,7 +24,7 @@ Im Verlauf dieser Arbeit kamen insgesamt 16 verschiedene Open-Source-Softwarelö
 - CityJSONEditor (Blender-Add-on für den Import von CityJSON-Daten)
 - Blosm\* (Blender-Add-on für den Import von OpenStreetMap-Daten)
 - Blender-GIS\* (Blender-Add-on für den Import von OpenStreetMap-Daten)
-
+#pagebreak()
 *Datenquellen*
 - 3D-Stadtmodell des Hessischen Landesamtes für Bodenmanagement und Geoinformation 
 - OpenStreetMap\* (öffentliche Gebäudemodell-Daten)
@@ -93,7 +93,7 @@ Im Folgenden wird ein vorläufiger Prozess stichpunktartig beschrieben:
 #figure(
   image("assets/PositionierungAKS.png", width: 60%),
   caption: [Draufsicht von FOUR Turm 1 mit an den Fenstern platzierten AKS-Texten für Etage 45 in Blender],
-  placement: none
+  placement: auto
 )<fig-AKSumFenster>
 Da dieser prototypische Weg sehr zeitaufwendig ist, wird im Rahmen dieser Arbeit nur ein Geschoss bearbeitet. Für die spätere Simulation wird der im Abschnitt davor festgelegte, temporäre @aks für die Bezeichnung der Fenster verwendet.
 

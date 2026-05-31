@@ -136,7 +136,7 @@ Wie in @fig-panorama_vergleich dargestellt, ergeben sich bei einer isolierten Be
     ]
   ),
   caption: [Schattenkante am Fenster FL39_W045 um 9:30 am 17. März (links) und am 24. März (rechts)],
-  placement: auto
+  placement: none
 )<fig-panorama_vergleich>
 
 Unter Berücksichtigung der zeitlichen Diskretisierung lässt sich der Einfluss dieser wöchentlichen Abweichung relativieren. Bei einem Berechnungsintervall von 15 Minuten verschiebt sich der Schattenwurf zwischen den einzelnen Zeitschritten bereits um nahezu drei Fensterbreiten. Tritt nun im ungünstigsten Szenario eine geometrische Abweichung von maximal einer Fensterbreite durch die wöchentliche Vereinfachung auf, spielt diese Abweichung angesichts des ohnehin schnell wandernden Schattens eine untergeordnete Rolle. Aus dieser Erkenntnis folgt, dass die Berechnung eines repräsentativen Tages pro Woche die benötigten Speicherkapazitäten auf der Automationsebene erheblich entlastet, ohne steuerungstechnisch relevante Einbußen bei der Präzision des Blendschutzes zu verursachen.
@@ -160,6 +160,7 @@ Da sich die räumlichen Abweichungen des Schattens lediglich im Zentimeterbereic
 // - durch analyse der simulation kommt raus, dass allerdings nur ca. 6 minuten braucht, bis die schattenkante von rechts nach links über das gesamte fenster gewandert ist
 // - das ist ja weniger, als die 15 minutüige auflösung. also sehr wahrscheinlich könnte man mit einer einwöchigen auflösung trotdem noch ein hohe genauigkeit erzielen
 // - es wäre vertretbar nur jeden zweiten tag zu berechnen, da 
+#pagebreak()
 ==== Räumliche Auflösung der Messpunkte <RaeumlicheAufloesung>
 Die räumliche Abtastung der Fensterflächen bestimmt die Genauigkeit der Verschattungsdaten. Es gilt festzulegen, wie viele Testpunkte pro Fenster berechnet werden sollen. Es werden zwei verschiedene Optionen untersucht:
 
@@ -179,17 +180,41 @@ Die Simulation prüft die vier Extrempunkte der Fenstergeometrie. Sobald mindest
 Um die Rechenzeit des Algorithmus signifikant zu reduzieren und unnötige Raycasts zu vermeiden, wird den eigentlichen Kollisionsabfragen ein Filterverfahren vorgeschaltet. Dieser Schritt basiert auf der mathematischen Logik des aus der 3D-Computergrafik stammenden Back-Face Cullings, fungiert im physikalischen Kontext der Gebäudeanalyse jedoch als Eigenschatten-Prüfung (Front-Face Check). Das Prinzip stellt sicher, dass Fensterflächen, die auf der abgewandten Schattenseite des Gebäudes liegen, frühzeitig identifiziert und von der weiteren Berechnung ausgeschlossen werden. Die technische Umsetzung erfolgt über die Auswertung des Skalarprodukts zwischen dem Normalenvektor der Fensterfläche und dem Richtungsvektor der Solarstrahlung (Strahl vom Fenster zur Sonne). 
 Wie in @fig-normalsCheck vereinfacht dargestellt, erkennt man eine Gebäudeecke in der Draufsicht mit Fenstern an der Außenseite. Es werden Strahlen horizontal von den Mittelpunkten der Fenster in Richtung der Sonne dargestellt.
 
-#figure(
-  image("assets/Back_Face_Culling.png", width: 70%),
-  caption: [Draufsicht einer Gebäudeecke mit der Sonne zugewandten und abgewandten Fenstern],
-  placement: auto
-)<fig-normalsCheck>
 
 Die Entscheidung, ob eine Fläche der Sonne zugewandt ist, hängt vom Winkel $alpha$ zwischen diesen beiden Vektoren ab:
 - *Fenster A (zugewandt)*: Da der Winkel $alpha_A$ weniger als 90° beträgt, weisen die Vektoren in dieselbe Richtungen (das Skalarprodukt ist positiv). Das System erkennt, dass die Fensterfläche der Sonne zugewandt ist und eine Verschattungsprüfung stattfinden muss.
 - *Fenster B (abgewandt)*: Da der Winkel $alpha_B$ mehr als 90° beträgt, zeigen die Vektoren in die entgegengesetzte Richtung --- der Strahl entspringt also von der Rückseite der Fensterfläche. Das Skalarprodukt ist in diesem Fall negativ, und die Geometrie wird durch den Front-Facing Check ignoriert.
 Um Fehlkalkulationen in diesem Schritt auszuschließen, sollte garantiert sein, dass alle Flächennormalen im 3D-Modell konsistent nach außen gerichtet sind.
 
+#figure(
+    box(
+    height: 5.5cm, // Wert anpassen! (Reduzieren, bis der Abstand unten passt)
+    clip: true,
+    width: 100%,
+  )[
+    // Kombiniert vertikale und horizontale Zentrierung
+    #align(center + horizon)[
+      #image("assets/Back_Face_Culling.png", width: 70%)
+    ]
+  ],
+  caption: [Draufsicht einer Gebäudeecke mit der Sonne zugewandten und abgewandten Fenstern],
+  placement: none
+)<fig-normalsCheck>
+
+// #figure(
+//   box(
+//     height: 8cm, // Wert anpassen! (Reduzieren, bis der Abstand unten passt)
+//     clip: true,
+//     width: 100%,
+//   )[
+//     // Kombiniert vertikale und horizontale Zentrierung
+//     #align(center + horizon)[
+//       #image("assets/Cut-OffWinkelDetail.pdf", width: 50%)
+//     ]
+//   ],
+//   caption: [Detailschnitt zweier Lamellen einer Jalousie für die Berechnung des Cut-off-Winkels $beta$ mit einfallendem Lichtstrahl im Profilwinkel $alpha_p$ (in Anlehnung an Athienitis und Tzempelikos~@athienitis2002methodology)],
+//   placement: auto
+// )<fig-CutOffWinkelDetail>
 ==== Vermeidung von Selbstverschattung
 Bei der Konzeption der auf Raycasting basierenden Simulationsarchitektur muss eine bekannte Problematik der 3D-Simulation berücksichtigt werden: sogenannte Self-Intersection-Fehler (Selbstverschattungen). Da Fenster in @bim#[]- und @ifc#[]-Modellen häufig als Volumenkörper modelliert sind, kann ein direkt an der Glasfläche startender Teststrahl aufgrund von minimalen mathematischen Rundungsfehlern (Floating-Point-Ungenauigkeiten) sofort mit der Innenseite oder dem Rahmen der eigenen Geometrie kollidieren. Das Fenster würde sich somit selbst verschatten.
 
@@ -205,6 +230,7 @@ Um die zu übertragenden Datenmengen und die Bus-Auslastung zu minimieren, wird 
 
 Der fensterspezifische Datensatz beschränkt sich somit auf den diskreten Verschattungszustand beziehungsweise den horizontalen Einfallswinkel (Fensterazimut) der Sonne. Die Ausgabe differenziert dabei zwischen folgenden Zuständen:
 
+#pagebreak()
 - *R (Rückseitenverschattung):* Die Sonne befindet sich hinter der Fassadenebene des Fensters.
 - *V (Verschattung durch Fremdobjekte):* Die Sonne wird durch umliegende Gebäude oder Topografie blockiert.
 - *N (Nacht):* Die Sonne befindet sich unterhalb des Horizonts.
@@ -234,27 +260,49 @@ Nach der erfolgreichen Übermittlung und temporären Speicherung des wöchentlic
 
 Im Falle einer Netzwerkstörung, bei der keine aktualisierten Daten die @as erreichen, können die zuletzt übermittelten Verschattungsinformationen weiterhin genutzt werden. Wie in @ZeitlicheAufloesungUmfang dargelegt, resultiert dies zwar in einem geringfügigen Qualitätsverlust bei der Jalousiesteuerung, die grundlegende Systemfunktionalität bleibt jedoch vollständig erhalten.
 
-=== Vorschlag eines modifizierten Funktionsblocks nach VDI 3813...(nicht fertig)<kap-neuerFunktionsblock>
-Basierend auf der Analyse der VDI 3813-2 (vgl. @kap-vdi3813) wird für die entwickelte Systemarchitektur ein modifizierter Funktionsblock konzipiert (siehe @fig-NeuerFunktionsblock). Dieser wird im Gegensatz zur Richtlinie, dem Funktionsblock der Lamellennachführung vorangestellt. Ziel ist es, sowohl die geometrische Kollisionsprüfung als auch die Verwaltung der fensterspezifischen Azimutwinkel in die Simulation auszulagern. 
+// === Vorschlag eines modifizierten Funktionsblocks nach VDI 3813...(nicht fertig)<kap-neuerFunktionsblock>
+// Basierend auf der Analyse der VDI 3813-2 (vgl. @kap-vdi3813) wird für die entwickelte Systemarchitektur ein modifizierter Funktionsblock konzipiert (siehe @fig-NeuerFunktionsblockk). 
+// Er soll im Gegensatz zur Richtlinie in der Lage sein zeitaufgelöste Verschattungsdaten pro Fenster zu verarbeiten. 
+// Er soll dem Funktionsblock der Lamellennachführung vorangestellt werden
 
-#figure(
-  image("assets/FunktionsblockNeu.png", width: 60%),
-  caption: [Konzept des modifizierten Funktionsblocks für eine simulationsbasierte Verschattungskorrektur],
-  placement: auto
-)<fig-NeuerFunktionsblock>
+// #figure(
+//   image("assets/FunktionsblockNeu.png", width: 60%),
+//   caption: [Konzept des modifizierten Funktionsblocks für eine simulationsbasierte Verschattungskorrektur],
+//   placement: auto
+// )<fig-NeuerFunktionsblockk>
 
-Der standardisierte Funktionsblock zur Verschattungskorrektur verarbeitet den globalen Sonnenstand, der in der @as für jede Fassadenseite mit einem lokalen Offset (Azimut) verrechnet werden muss. 
-Der hier konzipierte Funktionsblock empfängt stattdessen über den Dateneingang (`SIM_DATA`) einen Datensatz, der fensterspezifische Parameter enthält, und routet diese als Steuergrößen an die nachgelagerten Instanzen.
 
-Die interne Steuerungslogik wertet den eintreffenden Datentyp aus und schaltet die Signale:
+// Der hier konzipierte Funktionsblock empfängt über den Dateneingang (`SIM_DATA`) die fensterspezifischen Verschattungsdaten, und routet diese als Steuergrößen an die nachgelagerten Instanzen. Den Funktionsblock der Dämmerungsautomatik wird ebenfalls integriert. Die interne Steuerungslogik wertet den eintreffenden Datentyp aus und schaltet die Signale:
 
-- *Zustände V, R, N:*  Empfängt der Block eines der definierten Strings für Fremdverschattung (V), Rückseiten-Ausblendung (R) oder Nacht (N), wird ein anliegender Schließbefehl der Thermoautomatik blockiert. Der Block überschreibt das Stellsignal (`S_AUTO`) mit der parametrierten Parkposition (`PAR_PARK`). Zeitgleich wird über den binären Ausgang (`B_ON = FALSE`) die nachgelagerte Lamellennachführung deaktiviert, da ohne direkte Besonnung kein aktiver Blendschutz erforderlich ist. Dies integriert und vereinfach ebenfalls die Funktion der Dämmerungsautomatik.
+// Zustand N: Die Sonne steht unter dem Horizont und die Jalousie geht in eine voreingestellte Parkposition PAR_PARK???. Damit kann der Funktionsblock der Dämmerungsfunktion ersetzt werden. Der Helligkeitssensor könnte miteinbezogen werden, um sicherzustellen, dass es auch wirklich dunkel ist, obwohl die SOnne schon unter dem Horizont steht. Zusätzlich zu dem Ziel der Reduktion der Lichtverschmutzung wird auch das Ziel des winterlichen Wärmeschutzes erfüllt, da das Gebäude vor dem Auskühlen geschützt wird.
 
-- *Sonnenazimut:* Registriert der Eingang einen numerischen Gleitkommawert, wird dies vom System als direkte Besonnung gewertet. Das Stellsignal (`S_AUTO`) wird in diesem Fall unverändert durchgereicht und die Blendschutz-Automatik aktiviert (`B_ON = TRUE`). Der empfangene Zahlenwert entspricht dem in der Simulation berechneten Einfallswinkel der Sonne relativ zur Fensternormale. Dieser Wert wird über den Ausgang `A_SUN_AZ` direkt an die Lamellennachführung übergeben.
+// Zustand R: Die Sonne steht hinter der horizontalen Fensterachse und die Jalousie kann somit komplett geöffnet bleiben um den diffusen Lichteintrag zu maximieren und die Sichtverbindung nach draußen zu halten.
 
-Generell muss die Steuerung vorausschauend arbeiten, d.h. die Daten für den nächsten Zeitabschnitt geladen werden, um Blendungen, die vor dem nächsten berechnetet Zeitpunkt anfangen, abzufangen (wie bereits in @ZeitlicheAufloesungUmfang aufgezeigt). Der für die Lamellennachführung benötigte Höhenwinkel (`A_SUN_EL`) kann von einer intelligenten Wetterstation oder einer externen Datenquelle bereitgestellt werden.  
+// Zustand V: Das Fenster liegt im Schatten eines Gebäudes. Der Behang fährt herunter und öffnet seine Lamellen in eine horizontale Position. Dadurch kann im Gegensatz zu Zustand R auf dynamische Verschattungssituationen reagiert werden, indem die Lamellen bei Sonneneinstrahlung gekippt werden können. Das minimiert das Störpotential auf den Nutzer, durch Lamellenbewegungen anstatt von Änderungen in der Behanghöhe. Auch das Ziel der Sichtverbindung wird hier erreicht.
 
-Der Vorteil für die Systemintegration ist, dass durch diese Architektur es nicht mehr erforderlich ist, die fenster- oder fassadenspezifischen Gebäudegeometrien in der @as zu hinterlegen. Die statische Parametrierung von Grenzwinkeln bei der Systemintegration entfällt, was die Fehleranfälligkeit verringert und den Inbetriebnahmeaufwand der Automationslösung reduziert.
+// Fensterazimut: Registriert der Eingang einen numerischen Zahlenwert, wird dies vom System als direkte Besonnung gewertet. Das Stellsignal (`S_AUTO`) wird in diesem Fall unverändert durchgereicht und das Signal (`B_ON = TRUE`) für die Aktivierung der Lamellennachführung aktiviert . Der empfangene Zahlenwert entspricht dem in der Simulation berechneten Fensterazimut. Dieser Wert wird über den Ausgang `A_SUN_AZ` direkt an die Lamellennachführung übergeben. 
+
+// Die Lamellennachführung kann dann mithilfe des spezifischen Fensterazimuts `A_SUN_AZ` und der globalen Sonnenhöhe den jeweiligen Profilwinkel berechnen und den perfekten Anstellwinkel der Lamelle (Cut-Off-Winkel) berechnen. Zum schluss kann die Prioritätensteuerung noch festlegen, ob 
+
+// Insgesamt gibt es somit 4 verschiedene Zustände der Jalousie.
+// + PAR_Behang unten und Lamellen geschlossen (Zustand N)
+// + Behang komplett geöffnet (Zustand R)
+// + Behang unten und Lamellen horizontal (Zustand V)
+// + Behang unten und Lamellen im Cut-Off-Winkel (Fensterazimut)
+
+
+// Generell muss die Steuerung vorausschauend arbeiten, d.h. die Daten für den nächsten Zeitabschnitt geladen werden, um Blendungen, die vor dem nächsten berechnetet Zeitpunkt anfangen, abzufangen (wie bereits in @ZeitlicheAufloesungUmfang aufgezeigt). Der für die Lamellennachführung benötigte Höhenwinkel (`A_SUN_EL`) kann von einer intelligenten Wetterstation oder einer externen Datenquelle bereitgestellt werden.  
+
+// Der Vorteil für die Systemintegration ist, dass durch diese Architektur es nicht mehr erforderlich ist, die fenster- oder fassadenspezifischen Gebäudegeometrien in der @as zu hinterlegen. Die statische Parametrierung von Grenzwinkeln bei der Systemintegration entfällt, was die Fehleranfälligkeit verringert und den Inbetriebnahmeaufwand der Automationslösung reduziert.
+
+// Dies stellt eine optimierte Jalousiensteuerung dar, wobei die Ziele entsprechend ihrer Priorisierung berücksichtigt werden.
+
+
+
+
+
+
+
 
 
 
@@ -269,3 +317,30 @@ Der Vorteil für die Systemintegration ist, dass durch diese Architektur es nich
 // - Mit Azimut können sehr flache einfallende Sonnenstrahlen toleriert werden, wenn z.B. Säulen zwischen den Fenstern aufgestellt sind -> auch wenn säulen da sind, würden diese vielleicht sehr stark angeleuchtet und könnten unangenehm sein
 //- Negative Seiten von Jalousien: laute fahrbewegungen, visuell störend durch sich bewegende (auch bei Änderung Winkel lamelle) behänge und durch starkes abdunkeln während fahrbewegungen. 
 //  - beispiel von echtzeit tradern, die keine Jalousiebewegungen tolerieren und somit nur morgens
+#pagebreak()
+=== Vorschlag eines modifizierten Funktionsblocks nach VDI 3813 <kap-neuerFunktionsblockk>
+
+Basierend auf der Analyse der VDI 3813-2 (vgl. @kap-vdi3813) wird für die entwickelte Systemarchitektur ein modifizierter Funktionsblock konzipiert (siehe @fig-NeuerFunktionsblock). Im Gegensatz zu den in der Richtlinie beschriebenen Standardfunktionen ist dieser darauf ausgelegt, zeitaufgelöste Verschattungsdaten auf Ebene einzelner Fenster zu verarbeiten. Er wird dem Funktionsblock der Lamellennachführung logisch vorangestellt und integriert zugleich die Aufgaben der Dämmerungsautomatik.
+#figure(
+  image("assets/FunktionsblockNeu.png", width: 50%),
+  caption: [Konzept des modifizierten Funktionsblocks für eine simulationsbasierte Verschattungskorrektur],
+  placement: none
+)<fig-NeuerFunktionsblock>
+
+Der konzipierte Funktionsblock empfängt über den Dateneingang `SIM_DATA` die Verschattungsdaten, wertet den eintreffenden Datentyp aus und schaltet die Signale entsprechend der folgenden vier definierten Anlagenzustände:
+
++ *Zustand N (Nacht):* Die Sonne steht unter dem Horizont. Der Behang fährt in die voreingestellte Parkposition `PAR_POS_N`, in der standardmäßig die Jalousie herabgefahren und die Lamellen geschlossen sind. Diese Funktion ersetzt den regulären Funktionsblock der Dämmerungsautomatik. Zur Erhöhung der Zuverlässigkeit können die Daten des Helligkeitssensors `H_OUT` ergänzend eingebunden werden, um die tatsächliche Dunkelheit unabhängig vom berechneten Sonnenstand zu verifizieren. Neben der Reduktion von Lichtverschmutzung wird durch den geschlossenen Behang der winterliche Wärmeschutz unterstützt, da die Auskühlung des Gebäudes über die Fensterflächen verringert wird.
+
++ *Zustand R (Rückseite)*: Die Sonne befindet sich hinter der horizontalen Fensterachse. Der Behang wird bei einer Standardprogrammierung vollständig geöffnet (`PAR_POS_R`). Dies maximiert den Eintrag von diffusem Tageslicht und erhält die uneingeschränkte Sichtverbindung nach außen.
+
++ *Zustand V (Verschattung)*: Das Fenster liegt im Schatten eines anderen Gebäudes oder Objekts. Der Behang fährt standardmäßig herunter, während die Lamellen in eine horizontale Position gewendet werden (`PAR_POS_V`). Diese Konfiguration ermöglicht eine schnelle Reaktion auf dynamische Verschattungswechsel. Bei erneuter Sonneneinstrahlung müssen lediglich die Lamellen in den Cut-Off-Winkel gekippt werden, anstatt die gesamte Behanghöhe zu verändern. Dies minimiert das Störpotenzial für den Nutzer durch reduzierte Motorengeräusche und mechanische Bewegungen, während gleichzeitig die Sichtverbindung nach draußen erhalten bleibt.
+
++ *Zustand direkte Besonnung (Fensterazimut)*: Registriert der Eingang einen numerischen Wert, wird dies als direkte Besonnung gewertet und das Signal `B_ON = TRUE` zur Aktivierung der Lamellennachführung gesetzt. Der empfangene Zahlenwert entspricht dem in der Simulation berechneten Fensterazimut. Dieser Wert wird über den Ausgang `A_SUN_AZ` direkt an die Lamellennachführung übergeben.
+
+Die nachgelagerte Lamellennachführung berechnet aus dem übergebenen spezifischen Fensterazimut `A_SUN_AZ` und der globalen Sonnenhöhe den Profilwinkel und leitet daraus den optimalen Anstellwinkel der Lamellen, den sogenannten Cut-Off-Winkel, ab. Der für diese Berechnung erforderliche Sonnenhöhenwinkel `A_SUN_EL` kann von einer Wetterstation oder einer externen Datenquelle bereitgestellt werden. Eine Prioritätensteuerung legt abschließend fest, ob diese Automatikbefehle an die Aktorik weitergegeben werden oder ob höherwertige Befehle, wie beispielsweise ein Windalarm oder manuelle Nutzereingriffe, Vorrang haben.
+
+Um eine hohe Wiederverwendbarkeit des Funktionsblocks in unterschiedlichen Projekten zu gewährleisten, werden die Zielpositionen der Jalousie für die Zustände N, R und V nicht fest im Programmcode hinterlegt, sondern über dedizierte Eingangsparameter übergeben. Durch diese Parametrierbarkeit kann der Systemintegrator das Verhalten der Fassade flexibel an architektonische Vorgaben anpassen, beispielsweise wenn zur Wahrung eines homogenen Fassadenbildes der Behang auch auf der sonnenabgewandten Seite geschlossen bleiben soll.
+
+Um Blendungen zu vermeiden, die zwischen zwei Berechnungsintervallen auftreten können, muss die Steuerung vorausschauend agieren. Wie bereits in @ZeitlicheAufloesungUmfang dargelegt, werden die Daten für den jeweils nächsten Zeitabschnitt vorab in die Steuerung geladen. 
+
+Der wesentliche Vorteil dieser Architektur für die Systemintegration besteht darin, dass die fenster- oder fassadenspezifischen Gebäudegeometrien nicht mehr in der Automationsstation hinterlegt werden müssen. Dies verringert die Fehleranfälligkeit bei der Planung und reduziert den Aufwand bei der Inbetriebnahme der Automationslösung signifikant. Die entwickelte Logik stellt somit eine optimierte Jalousiesteuerung dar, welche die konkurrierenden Ziele von Blendschutz, Tageslichtnutzung und visueller Verbindung nach außen entsprechend ihrer Priorisierung systematisch umsetzt.

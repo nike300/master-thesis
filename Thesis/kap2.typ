@@ -105,7 +105,7 @@ Nachdem die Position der Sonne bestimmt wurde, muss im nächsten Schritt geprüf
 
 Eine etablierte Methode zur Visualisierung dieser Umgebungsverschattung für einen spezifischen Referenzpunkt am Gebäude ist das Sonnenbahndiagramm (siehe @fig-Sonnenbahndiagramm). Dafür müssen für alle Hindernisse in der Umgebung der Höhen- und Azimutwinkel ausgemessen werden. Aus dieser zweidimensionalen Darstellung der Sonnenbahnen und der Umgebungssilhouette lassen sich Grenzwinkel (Azimut- und Sonnenhöhenwinkel) ableiten, ab denen ein externes Objekt einen Schatten auf den betrachteten Punkt wirft. 
 #figure(
-  image("assets/Sonnenstandsdiagramm.png", width: 70%),
+  image("assets/Sonnenstandsdiagramm.png", width: 80%),
   caption: [Sonnenbahndiagramm mit Umgebungssilhouette @Quaschning.],
   placement: auto
 ) <fig-Sonnenbahndiagramm>
@@ -132,7 +132,7 @@ Dieser Vektor zeigt von einem beliebigen Punkt zur Sonne.
 === Raycasting-Verfahren zur Kollisionserkennung
 Das Raycasting (Strahlenverfolgung) ist ein grundlegendes Verfahren der 3D-Computergrafik, das primär zur Ermittlung von Sichtbarkeiten und geometrischen Schnittpunkten im dreidimensionalen Raum eingesetzt wird. Im Kontext der Gebäudeanalyse dient dieser Algorithmus dazu, Fremdverschattungen durch urbane Umgebungsstrukturen (wie Nachbargebäude oder Topografie) präzise zu detektieren.
 
-Anders als in der physikalischen Realität, in der Lichtstrahlen von der Lichtquelle emittiert werden, arbeitet das hier angewandte Verfahren aus Gründen der Recheneffizienz invers (Backward Raytracing). Ausgehend von den zu untersuchenden Empfängerflächen -- in der Verschattungssimulation den Messpunkten der Fenster -- wird ein linearer Prüfstrahl (Ray) generiert. Dieser Strahl wird exakt entlang des berechneten Sonnenrichtungsvektors $vec(r)$ in den Raum projiziert. Der zugrundeliegende Computeralgorithmus berechnet anschließend mathematisch, ob dieser Strahl auf seinem Weg eine andere Polygonfläche (Mesh) schneidet. Registriert der Algorithmus eine Kollision mit einem Mesh, bevor der Strahl die theoretische Distanz zur Lichtquelle erreicht, gilt der ausgehende Fensterpunkt als durch ein Hindernis verschattet. Hat der Strahl hingegen freie Bahn, wird direkte Besonnung protokolliert.
+Anders als in der physikalischen Realität, in der Lichtstrahlen von der Lichtquelle emittiert werden, arbeitet das hier angewandte Verfahren aus Gründen der Recheneffizienz invers. Ausgehend von den zu untersuchenden Empfängerflächen -- in der Verschattungssimulation den Messpunkten der Fenster -- wird ein linearer Prüfstrahl (Ray) generiert. Dieser Strahl wird exakt entlang des berechneten Sonnenrichtungsvektors in den Raum projiziert. Der zugrundeliegende Computeralgorithmus berechnet anschließend mathematisch, ob dieser Strahl auf seinem Weg eine andere Polygonfläche (Mesh) schneidet. Registriert der Algorithmus eine Kollision mit einem Mesh, bevor der Strahl die theoretische Distanz zur Lichtquelle erreicht, gilt der ausgehende Fensterpunkt als durch ein Hindernis verschattet. Hat der Strahl hingegen freie Bahn, wird direkte Besonnung protokolliert.
 
 === Raytracing und Reflexionen <RaytracingReflexionen>
 
@@ -173,20 +173,22 @@ In der BIM-Methodik beschreibt der @lod sowohl den geometrischen Detaillierungsg
 
 Wohingegen in der Geoinformatik und speziell im Kontext von CityGML der Begriff #gls("lodet", long: true) verwendet wird, um die Komplexität der äußeren Gebäudehülle im urbanen Raum zu definieren. Gemäß dem Standard des @ogc werden hierbei maßgeblich folgende Stufen unterschieden (siehe auch @fig-lod):
 
+
+- *@lodet#[]0 (Grundriss-/Geländemodell):* Das Gebäude wird lediglich als zweidimensionaler Grundriss oder Dachumriss dargestellt. Da keine echte vertikale Volumenausdehnung vorhanden ist, ist dieser Detailgrad für eine dreidimensionale Verschattungssimulation ungeeignet.
+- *@lodet#[]1 (Blockmodell):* Das Gebäude wird als einfacher Kubus mit Flachdach dargestellt, was einer Extrusion der Grundfläche entspricht. Diese Abstraktion ist für weit entfernte Verschattungsobjekte ausreichend, führt jedoch im Nahbereich zu Fehlern, da die tatsächliche Dachform ignoriert wird.
+- *@lodet#[]2 (Dachmodell):* Das Modell beinhaltet standardisierte Gebäudeformen und grobe Dachaufbauten. Für die Verschattungssimulation stellt @lodet#[]2 oft den optimalen Kompromiss aus geometrischer Genauigkeit und Dateigröße dar @Hessen3D. Komplexe Gebäudefassaden werden vereinfacht dargestellt.
+- *@lodet#[]3 (3D Mesh):* Hier werden detaillierte Gebäudehüllen mit Auskragungen, Fensterlaibungen und Texturen modelliert. @lodet#[]3 bietet eine sehr hohe Genauigkeit für die Simulation der Umgebungsverschattung, hat jedoch aufgrund der hohen Polygonanzahl einen negativen Einfluss auf die Rechenleistung.
+
+Während der BIM-@lod den Fokus auf die interne Intelligenz und die präzise Konstruktion des betrachteten Objekts legt, dient der CityGML-@lodet der effizienten Repräsentation der Silhouette der Nachbarbebauung. Für eine durchgängige Prozesskette müssen beide Welten so miteinander verknüpft werden, dass das hochdetaillierte @bim#[]-Modell präzise in das Stadtmodell eingebettet werden kann.
+
 #figure(
   image("assets/LOD1-3.png", width: 100%),
   caption: [Darstellung der CityGML-#gls("lodet", long: true) 0 bis 3 @ogcCityGeography],
-  placement: auto
+  placement: none
 )<fig-lod>
 
-- @lodet#[]0 (Grundriss-/Geländemodell): Das Gebäude wird lediglich als zweidimensionaler Grundriss oder Dachumriss dargestellt. Da keine echte vertikale Volumenausdehnung vorhanden ist, ist dieser Detailgrad für eine dreidimensionale Verschattungssimulation ungeeignet.
-- @lodet#[]1 (Blockmodell): Das Gebäude wird als einfacher Kubus mit Flachdach dargestellt, was einer Extrusion der Grundfläche entspricht. Diese Abstraktion ist für weit entfernte Verschattungsobjekte ausreichend, führt jedoch im Nahbereich zu Fehlern, da die tatsächliche Dachform ignoriert wird.
-- @lodet#[]2 (Dachmodell): Das Modell beinhaltet standardisierte Gebäudeformen und grobe Dachaufbauten. Für die Verschattungssimulation stellt @lodet#[]2 oft den optimalen Kompromiss aus geometrischer Genauigkeit und Dateigröße dar @Hessen3D. Komplexe Gebäudefassaden werden vereinfacht dargestellt.
-- @lodet#[]3 (3D Mesh): Hier werden detaillierte Gebäudehüllen mit Auskragungen, Fensterlaibungen und Texturen modelliert. @lodet#[]3 bietet eine sehr hohe Genauigkeit für die Simulation der Umgebungsverschattung, hat jedoch aufgrund der hohen Polygonanzahl einen negativen Einfluss auf die Rechenleistung.
 
 
-
-Während der BIM-@lod den Fokus auf die interne Intelligenz und die präzise Konstruktion des betrachteten Objekts legt, dient der CityGML-@lodet der effizienten Repräsentation der Silhouette der Nachbarbebauung. Für eine durchgängige Prozesskette müssen beide Welten so miteinander verknüpft werden, dass das hochdetaillierte @bim#[]-Modell präzise in das Stadtmodell eingebettet werden kann.
 
 === Koordinatenreferenzsysteme<Koordinatenreferenzsysteme>
 
@@ -246,7 +248,7 @@ Die physische Bewegung des Sonnenschutzes erfolgt in der Regel über integrierte
 
 
 
-=== Cut-off-Winkel und automatische Lamellennachführung <CutOffWinkelKapitel>
+=== Cut-off-Winkel und Lamellennachführung <CutOffWinkelKapitel>
 
 Ein zentraler steuerungstechnischer Mechanismus bei Jalousien ist die Einstellung des sogenannten Cut-off-Winkels. Hierbei wird der maximal geöffnete Neigungswinkel der Lamellen berechnet, bei dem "direkter Sonnenlichteintrag durch die Fassade gerade vermieden wird"~@dints18599_4_2025[S. 42]. Durch diese exakte Positionierung verbleibt ein maximaler Spalt zwischen den Lamellen, der den Eintritt von diffusem Himmelslicht in die Raumtiefe sowie den Sichtbezug nach außen ermöglicht. Abhängig von der Beschaffenheit und Geometrie der Lamellenoberfläche kann zudem ein Teil des einfallenden Lichts gezielt an die Raumdecke reflektiert werden (siehe @fig-cutoff). Dies stellt in der @ga eine ideale Balance zwischen Blendschutz, Sichtkontakt nach außen und Tageslichtautonomie dar.
 
@@ -258,17 +260,55 @@ Um diesen Zustand aufrechtzuerhalten, wird in der Raumautomation das Prinzip der
   placement: auto
 )<fig-cutoff>
 
+// #figure(
+//   image("assets/Cut-OffWinkelDetail.pdf", width: 40%),
+//   caption: [Detailschnitt zweier Lamellen einer Jalousie für die Berechnung des Cut-off-Winkels $beta$ mit einfallendem Lichtstrahl im Profilwinkel $alpha_p$ (in Anlehnung an Athienitis und Tzempelikos~@athienitis2002methodology)],
+//   placement: auto
+// )
 #figure(
-  image("assets/Cut-OffWinkelDetail.pdf", width: 60%),
+  box(
+    height: 8cm, // Wert anpassen! (Reduzieren, bis der Abstand unten passt)
+    clip: true,
+    width: 100%,
+  )[
+    // Kombiniert vertikale und horizontale Zentrierung
+    #align(center + horizon)[
+      #image("assets/Cut-OffWinkelDetail.pdf", width: 50%)
+    ]
+  ],
   caption: [Detailschnitt zweier Lamellen einer Jalousie für die Berechnung des Cut-off-Winkels $beta$ mit einfallendem Lichtstrahl im Profilwinkel $alpha_p$ (in Anlehnung an Athienitis und Tzempelikos~@athienitis2002methodology)],
   placement: auto
 )<fig-CutOffWinkelDetail>
 
-Für die exakte Berechnung des erforderlichen Neigungswinkels $beta$ wird der Lichteinfall durch den solaren Profilwinkel $alpha_p$ beschrieben. Da horizontale Lamellen konstruktionsbedingt keine seitliche Abschattung bieten, ist der Profilwinkel der maßgebliche Wert für den Lichtdurchlass durch die Lamellen in den Raum. Wie Athienitis und Tzempelikos~@athienitis2002methodology[S. 276] darlegen, projiziert dieser Winkel den realen dreidimensionalen Sonnenstand auf eine zweidimensionale Schnittebene orthogonal zur Fensterfläche. Er bestimmt sich aus der tatsächlichen Sonnenhöhe $gamma_s$ und dem relativen Sonnenazimut $Delta alpha$ — also der horizontalen Winkeldifferenz zwischen dem Sonnenstand und der Fassadennormalen:
+Für die exakte Berechnung des erforderlichen Neigungswinkels $beta$ wird der Lichteinfall durch den solaren Profilwinkel $alpha_p$ beschrieben. Da horizontale Lamellen konstruktionsbedingt keine seitliche Abschattung bieten, ist der Profilwinkel der maßgebliche Wert für den Lichtdurchlass durch die Lamellen in den Raum. Wie Athienitis und Tzempelikos~@athienitis2002methodology[S. 276] darlegen, projiziert dieser Winkel den realen dreidimensionalen Sonnenstand auf eine zweidimensionale Schnittebene orthogonal zur Fensterfläche. Er bestimmt sich aus der tatsächlichen Sonnenhöhe $gamma_s$ und dem relativen Sonnenazimut $Delta alpha$ — also der horizontalen Winkeldifferenz zwischen dem Sonnenstand und der Fassadennormalen (im Folgenden auch als Fensterazimut bezeichnet):
 
 $ alpha_p = arctan(frac(tan(gamma_s), cos(Delta alpha))) $
 
+// Der Profilwinkel ist folglich stets größer oder gleich der tatsächlichen Sonnenhöhe. Fällt das Licht schräg von der Seite auf die Fassade, vergrößert sich der Profilwinkel, sodass die Sonnenstrahlen aus Sicht der horizontalen Lamellen steiler einfallen. Die mathematische Umsetzung des Cut-off-Betriebs stützt sich hierbei auf die von Athienitis und Tzempelikos~@athienitis2002methodology dargelegte geometrische Beziehung für den Strahlenverlauf innerhalb einer Jalousie. Überträgt man diese fundamentale Gleichung auf getrennte Variablen für den Lamellenabstand $d$ und die Lamellenbreite $w$, ergeben sich folgende geometrische Zusammenhänge:
+
+
 Der Profilwinkel ist folglich stets größer oder gleich der tatsächlichen Sonnenhöhe. Fällt das Licht schräg von der Seite auf die Fassade, vergrößert sich der Profilwinkel, sodass die Sonnenstrahlen aus Sicht der horizontalen Lamellen steiler einfallen. Die mathematische Umsetzung des Cut-off-Betriebs stützt sich hierbei auf die von Athienitis und Tzempelikos~@athienitis2002methodology dargelegte geometrische Beziehung für den Strahlenverlauf innerhalb einer Jalousie. Überträgt man diese fundamentale Gleichung auf getrennte Variablen für den Lamellenabstand $d$ und die Lamellenbreite $w$, ergeben sich folgende geometrische Zusammenhänge:
+
+// zusammenhang wird in zeichnung anhand zwei vektoren dargestellt. v1 befindet in der horizontalen (Draufsicht) genau auf der Fenstnormalen und hat einen Elevationswinkel von 45° (Profilsicht). V1' dagegen ist um delta alpha in der horizontalen gedreht bei der gleichen Elevation. In der Profilansicht verläuft v1' nur steiler als v1, obwohl der elevationswinkel gamma 
+
+//Dieser geometrische Zusammenhang wird in @fig-profilwinkel durch die Aufteilung in zwei zweidimensionale Betrachtungsebenen veranschaulicht. Die linke Darstellung (Draufsicht) zeigt den Normalenvektor der Fassade $v_1$ und die horizontale Projektion des einfallenden Sonnenstrahls $v_(1')$, deren Winkeldifferenz den relativen Sonnenazimut $Delta alpha$ definiert. In der rechten Darstellung (Profilansicht) wird die Projektion des Strahls auf die vertikale Schnittebene der Fassadennormalen abgebildet. Hierbei wird grafisch ersichtlich, wie der wirksame Profilwinkel $alpha_p$ bei schrägem Lichteinfall gegenüber der tatsächlichen Sonnenhöhe $gamma_s$ zunimmt.
+
+
+// #figure(
+//   image("assets/Zeichnungen-Profilwinkel.pdf", width: 75%),
+//   caption: [
+//     Geometrischer Zusammenhang der solaren Einstrahlung am Fenster. Links: Draufsicht zur Darstellung des relativen Sonnenazimuts $Delta alpha$. Rechts: Profilansicht zur Projektion des Profilwinkels $alpha_p$ in Abhängigkeit von der wahren Sonnenhöhe $gamma_s$.
+//   ],
+//   placement: auto
+// ) <fig-profilwinkel>
+
+
+
+
+
+
+
+
 
 Für die vertikale Gegenkathete gilt:
 $ overline(B C) = d - w dot sin(beta) $
@@ -331,7 +371,7 @@ Diese bauphysikalischen und ergonomischen Zielgrößen stehen in der Praxis häu
 
 Neben den dargelegten Vorteilen ergeben sich in der praktischen Anwendung auch betriebstechnische Herausforderungen. Ein wesentlicher Aspekt ist die akustische Beeinträchtigung durch die integrierten Elektromotoren. Sowohl die vertikale Positionierung des Behanges als auch die kontinuierliche Nachführung der Lamellenwinkel verursachen motorische Betriebsgeräusche, die insbesondere in konzentrierten Arbeitsumgebungen als störend empfunden werden können. Zudem resultiert aus der mechanischen Konstruktion vieler Jalousien ein temporärer Verlust an visuellem Komfort: Während der Auf- oder Abwärtsbewegung schließen sich die Lamellen bauartbedingt meist vollständig, was zu einer kurzzeitigen Verdunkelung des Raumes und einer Unterbrechung der Sichtverbindung nach außen führt. Ein weiteres kritisches Risiko stellt die mechanische Belastung dar: Eine zu hohe Taktung und permanente Fahrbewegungen bei wechselnden Lichtverhältnissen führen zu einem erhöhten Verschleiß der Elektromotoren. Dies hat häufig vorzeitige Systemausfälle und hohe Wartungskosten zur Folge. Diese negativen Begleiterscheinungen unterstreichen die Relevanz einer vorausschauenden Steuerungslogik, welche unnötige Verstellvorgänge durch die Integration präziser Verschattungsdaten vermeidet und die Fahrbefehle auf ein funktional notwendiges Minimum reduziert.
 
-== Normative und regulatorische Rahmenbedingungen<NormativeGrundlagen>
+== Normative Rahmenbedingungen<NormativeGrundlagen>
 === Tageslichtversorgung und Blendschutz<kap-17037>
 Die DIN EN 17037~@dinen17037 der zentrale europäische Standard für die Tageslichtplanung in Gebäuden. Sie definiert vier wesentliche Bewertungskriterien: die Tageslichtversorgung, die Sichtverbindung nach außen, die Besonnung sowie den Blendschutz. Ziel der Norm ist es, ein angemessenes Niveau an natürlichem Licht im Rauminneren sicherzustellen und den visuellen Komfort der Nutzer zu gewährleisten. 
 
@@ -347,7 +387,8 @@ Die primäre Motivation für die Implementierung komplexer Raumautomationsfunkti
 Deutlich höhere Anforderungen formuliert die nationale Normenreihe DIN/TS 18599. In Teil 11~@dints18599_11_2025, welcher den Einfluss der @ga auf den Energiebedarf bewertet, wird für das Erreichen des höchsten Automatisierungsgrades A eine von zwei technischen Ausführungen explizit gefordert: entweder eine kombinierte Regelung von Beleuchtung, Sonnenschutzeinrichtungen und HLK-Anlagen -- obgleich die exakte informationstechnische Interaktion dieser Systeme normativ unbestimmt bleibt -- oder ein automatisch betriebener Sonnenschutz mit integrierter Lamellennachführung (siehe @fig-18599Ausschnit). Der Einsatz einer solchen kontinuierlichen Nachführung wirkt sich gemäß DIN/TS 18599 Teil 4~@dints18599_4_2025 unmittelbar positiv auf den Tageslichtversorgungsfaktor des Gebäudes aus. Für die steuerungstechnische Umsetzung dieser adaptiven Nachführung konstituieren präzise Daten über den lokalen Sonnenstand eine fundamentale Voraussetzung. Insbesondere im dicht bebauten urbanen Kontext lässt sich die Tageslichtversorgung durch die Integration hochauflösender Verschattungsdaten weiter optimieren: Detektiert das System eine temporäre Fremdverschattung der Fassade, können die Sonnenschutzbehänge oder Lamellen gezielt geöffnet werden. Dies ermöglicht eine maximale Ausnutzung des diffusen Tageslichts.
 #figure(
   image("assets/18599Ausschnitt.png"),
-  caption: [Übersicht zu den Automationsgraden für die Regelung bzw. Steuerung des Sonnenschutzes~@dints18599_11_2025[S. 32 - 33]]
+  caption: [Übersicht zu den Automationsgraden für die Regelung bzw. Steuerung des Sonnenschutzes~@dints18599_11_2025[S. 32 - 33]],
+  placement: none
 )<fig-18599Ausschnit>
 
 Die methodischen Verfahren zur Berechnung des resultierenden Energiebedarfs für Heizung und Kühlung werden international in der Norm EN ISO 52016-1~@dineniso52120_1_2025 definiert. Diese berücksichtigt explizit den solaren Energieeintrag durch transparente Gebäudehüllen sowie dessen Reduktion durch Sonnenschutzsysteme. Obwohl die vorliegende Arbeit nicht auf die Durchführung einer thermischen Gebäudesimulation abzielt, verdeutlicht die Norm die bauphysikalische Relevanz des entwickelten Prozesses: Nur wenn die variierende Fremdverschattung auf der Fassade präzise ermittelt wird, kann der resultierende Energieeintrag akkurat berechnet werden.
@@ -357,23 +398,26 @@ In der VDI-Richtlinie 3813 Blatt 2~@vdi3813-2 werden normierte Funktionsblöcke 
 
 An dieser Stelle ist anzumerken, dass die VDI 3813 im Zuge der Harmonisierung der nationalen Regelwerke formal durch die aktuelle Richtlinienreihe VDI 3814 Blatt 3.1~@vdi3814_3.1 abgelöst wurde. Da die Nachfolgenorm in ihrer aktuellen Fassung jedoch keine spezifischen Funktionsblöcke für die Verschattungskorrektur sowie die adaptive Lamellennachführung explizit ausweist, verbleibt die VDI 3813 Blatt 2 für die informationstechnische Modellierung dieser Gewerke die maßgebliche Referenz. Aus diesem Grund stützen sich die im Folgenden behandelten Funktionsmakros und deren informationstechnische Modifikationen weiterhin auf die methodischen Grundlagen der VDI 3813.
 
-
-==== Funktionsblock Thermoautomatik
-Die in @kap-Zielgroessen definierten Ziele des sommerlichen und winterlichen Wärmeschutzes werden durch den Funktionsblock der Thermoautomatik abgebildet. Dieser Funktionsblock wertet Parameter wie die Raum- und Außentemperatur aus. Im Winterfall soll er garantieren, dass in unbelegten Räumen der solare Wärmeeintrag durch geöffnete Behänge maximiert wird, um die Heizlast zu senken. Im Sommerfall hingegen erzwingt der Block das Schließen des Sonnenschutzes bei zu hoher Raumtemperatur, um den solaren Energieeintrag und damit die Kühllast zu minimieren. 
-
+Nachfolgend werden verschiedene für den Sonnenschutz relevante Funktionsblöcke vorgestellt:
 ==== Funktionsblock Verschattungskorrektur
 Gemäß VDI 3813-2 dient dieser Funktionsblock (siehe @fig-FunktionsblockThermo) als logischer Filter, der intern berechnet, „ob ein Fenster oder eine Gruppe von Fenstern [...] temporär durch umliegende Bebauung oder eigene Gebäudeteile verschattet werden“. Im Signalfluss empfängt der Block über den Eingang #emph("S_AUTO") den initialen Stellbefehl der vorgelagerten Automatikfunktionen. Konventionell gleicht der Algorithmus den aktuellen Sonnenstand (Azimut und Elevation) mit den im Parameter #emph("PAR_SHAD") hinterlegten statischen Verschattungsgrenzen ab. Detektiert die Logik eine Verschattung, wird der Schließbefehl blockiert und stattdessen eine definierte Parkposition an den Ausgang übergeben. 
 
 #figure(
   image("assets/FunktionsblockVerschattungAlt.png", width: 50%),
-  caption: [Funktionsblock für die Verschattungskorrektur@vdi3813-2.],
+  caption: [Funktionsblock für die Verschattungskorrektur~@vdi3813-2.],
   placement: auto
 )<fig-FunktionsblockThermo>
 
-Da die in dieser Arbeit entwickelte 3D-Simulation den Verschattungsstatus jedoch bereits extern und hochauflösend ermittelt, wird die interne Winkelkalkulation dieses normierten Blocks obsolet. Die Simulation ersetzt somit nicht nur den statischen Parameter #emph("PAR_SHAD"), sondern macht deutlich, dass die Architektur des gesamten Funktionsblocks im Kontext einer datengetriebenen, simulationsbasierten @ga konzeptionell neu gedacht werden muss (siehe @kap-neuerFunktionsblock).
-
 ==== Funktionsblock Lamellennachführung
 Dieser Funktionsblock dient primär der Sicherstellung des visuellen Komforts für den Gebäudenutzer. Sobald direkte Sonnenstrahlung auf die Fassade trifft -- und die Verschattungskorrektur keinen Fremdschatten meldet -- berechnet der Block anhand der aktuellen Sonnenelevation, Fensterazimut und Lamellengeometrie den optimalen Cut-off Winkel der Jalousielamellen (vgl. @CutOffWinkelKapitel). Ziel ist es, direkte Blendung an den Arbeitsplätzen konsequent zu verhindern, gleichzeitig jedoch ein Maximum an diffusem Tageslicht in die Raumtiefe zu lenken, um die Tageslichtautonomie zu steigern.
+
+
+==== Funktionsblock Thermoautomatik
+Die in @kap-Zielgroessen definierten Ziele des sommerlichen und winterlichen Wärmeschutzes werden durch den Funktionsblock der Thermoautomatik abgebildet. Dieser Funktionsblock wertet Parameter wie die Raum- und Außentemperatur aus. Im Winterfall soll er garantieren, dass in unbelegten Räumen der solare Wärmeeintrag durch geöffnete Behänge maximiert wird, um die Heizlast zu senken. Im Sommerfall hingegen erzwingt der Block das Schließen des Sonnenschutzes bei zu hoher Raumtemperatur, um den solaren Energieeintrag und damit die Kühllast zu minimieren. 
+
+
+
+Da die in dieser Arbeit entwickelte 3D-Simulation den Verschattungsstatus jedoch bereits extern und hochauflösend ermittelt, wird die interne Winkelkalkulation dieses normierten Blocks obsolet. Die Simulation ersetzt somit nicht nur den statischen Parameter #emph("PAR_SHAD"), sondern macht deutlich, dass die Architektur des gesamten Funktionsblocks im Kontext einer datengetriebenen, simulationsbasierten @ga konzeptionell neu gedacht werden muss (siehe @kap-neuerFunktionsblockk).
 
 ==== Funktionsblock Dämmerungsautomatik
 Zur Reduktion von Lichtverschmutzung steuert dieser Block die Fassade in den Abend- und Nachtstunden. Nach dem rechnerischen oder sensorgestützten Sonnenuntergang erzwingt der Funktionsblock das Schließen der Behänge. Dies verhindert das störende Abstrahlen von künstlichem Raumlicht in die Umgebung.
