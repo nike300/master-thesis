@@ -68,8 +68,8 @@ The final visual and algorithmic validation of the simulation results proves the
 #include "kap2.typ"
 #include "kap3.typ"
 #include "kap4.typ"
-// #include "kap5.typ"
-#include "kap6.typ"
+#include "kap5.typ"
+
 
 // = Arbeitsplan Masterarbeit (Verbleibende Phasen)
 

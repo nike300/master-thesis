@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jalousie Cut-off Kalkulator</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f9f9f9; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .controls { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
+        .slider-group { background: #f1f2f6; padding: 15px; border-radius: 5px; }
+        .slider-group label { font-weight: bold; display: block; margin-bottom: 8px; }
+        input[type=range] { width: 100%; cursor: pointer; }
+        .output { background: #2c3e50; color: white; padding: 15px; border-radius: 5px; font-size: 1.2em; text-align: center; margin-bottom: 20px; }
+        canvas { background: #ecf0f1; border-radius: 5px; border: 1px solid #bdc3c7; display: block; margin: 0 auto; }
+        .formula { text-align: center; font-style: italic; color: #7f8c8d; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>☀️ Jalousie Cut-off-Winkel Kalkulator</h2>
+    
+    <div class="controls">
+        <div class="slider-group">
+            <label for="slider-w">Lamellenbreite (w): <span id="val-w">80</span> mm</label>
+            <input type="range" id="slider-w" min="50" max="120" value="80">
+        </div>
+        <div class="slider-group">
+            <label for="slider-d">Lamellenabstand (d): <span id="val-d">70</span> mm</label>
+            <input type="range" id="slider-d" min="40" max="100" value="70">
+        </div>
+        <div class="slider-group">
+            <label for="slider-ap">Solarer Profilwinkel (αp): <span id="val-ap">30</span>°</label>
+            <input type="range" id="slider-ap" min="1" max="85" value="30">
+        </div>
+    </div>
+
+    <div class="output">
+        Benötigter Cut-off-Stellwinkel (β): <strong id="result">0.00°</strong>
+    </div>
+
+    <canvas id="simCanvas" width="600" height="300"></canvas>
+    <div class="formula">β = arcsin( (d / w) · cos(αp) ) - αp</div>
+</div>
+
+<script>
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const sliderW = document.getElementById('slider-w');
+    const sliderD = document.getElementById('slider-d');
+    const sliderAp = document.getElementById('slider-ap');
+
+    const valW = document.getElementById('val-w');
+    const valD = document.getElementById('val-d');
+    const valAp = document.getElementById('val-ap');
+    const resultText = document.getElementById('result');
+
+    function update() {
+        const w = parseFloat(sliderW.value);
+        const d = parseFloat(sliderD.value);
+        const ap_deg = parseFloat(sliderAp.value);
+        
+        valW.textContent = w;
+        valD.textContent = d;
+        valAp.textContent = ap_deg;
+
+        const ap_rad = ap_deg * Math.PI / 180;
+        const argument = (d / w) * Math.cos(ap_rad);
+        
+        let beta_deg = 0;
+        let error = false;
+
+        if (argument > 1) {
+            resultText.textContent = "Nicht möglich (Überlappung reicht nicht aus)";
+            error = true;
+        } else {
+            const beta_rad = Math.asin(argument) - ap_rad;
+            beta_deg = beta_rad * 180 / Math.PI;
+            
+            if (beta_deg < 0 || beta_deg > 90) {
+                 resultText.textContent = "Physisch nicht sinnvoll (" + beta_deg.toFixed(2) + "°)";
+                 error = true;
+            } else {
+                 resultText.textContent = beta_deg.toFixed(2) + "°";
+            }
+        }
+
+        draw(w, d, ap_rad, error ? 0 : beta_deg * Math.PI / 180, error);
+    }
+
+    function draw(w, d, ap_rad, beta_rad, error) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const scale = 3; 
+        const w_px = w * scale;
+        const d_px = d * scale;
+
+        const startX = canvas.width / 2;
+        const startY = canvas.height / 2 - d_px / 2;
+
+        if (!error) {
+            // Exakte Eckpunkte berechnen (Links = Außen, Rechts = Innen)
+            // Lamellen neigen sich nach außen unten
+            const p1x = startX - (w_px/2) * Math.cos(beta_rad); // Obere Lamelle: Vorderkante
+            const p1y = startY + (w_px/2) * Math.sin(beta_rad); 
+            
+            const p2x = startX + (w_px/2) * Math.cos(beta_rad); // Untere Lamelle: Hinterkante
+            const p2y = startY + d_px - (w_px/2) * Math.sin(beta_rad);
+
+            // Strahl exakt durch diese beiden Punkte ziehen
+            const dx = p2x - p1x;
+            const dy = p2y - p1y;
+            const len = Math.sqrt(dx*dx + dy*dy);
+            const dirX = dx / len;
+            const dirY = dy / len;
+
+            ctx.beginPath();
+            ctx.moveTo(p1x - dirX * 250, p1y - dirY * 250);
+            ctx.lineTo(p2x + dirX * 250, p2y + dirY * 250);
+            ctx.strokeStyle = "rgba(241, 196, 15, 0.8)"; 
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Rote Kontaktpunkte zeichnen
+            ctx.beginPath();
+            ctx.arc(p1x, p1y, 5, 0, Math.PI * 2);
+            ctx.arc(p2x, p2y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = "#e74c3c";
+            ctx.fill();
+        }
+
+        // Lamellen zeichnen
+        ctx.lineWidth = 6;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = "#34495e";
+
+        // Obere Lamelle
+        ctx.beginPath();
+        ctx.moveTo(startX - (w_px/2) * Math.cos(beta_rad), startY + (w_px/2) * Math.sin(beta_rad));
+        ctx.lineTo(startX + (w_px/2) * Math.cos(beta_rad), startY - (w_px/2) * Math.sin(beta_rad));
+        ctx.stroke();
+
+        // Untere Lamelle
+        ctx.beginPath();
+        ctx.moveTo(startX - (w_px/2) * Math.cos(beta_rad), startY + d_px + (w_px/2) * Math.sin(beta_rad));
+        ctx.lineTo(startX + (w_px/2) * Math.cos(beta_rad), startY + d_px - (w_px/2) * Math.sin(beta_rad));
+        ctx.stroke();
+    }
+
+    sliderW.addEventListener('input', update);
+    sliderD.addEventListener('input', update);
+    sliderAp.addEventListener('input', update);
+
+    update();
+</script>
+
+</body>
+</html>
